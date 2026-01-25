@@ -205,3 +205,10 @@ cython_debug/
 marimo/_static/
 marimo/_lsp/
 __marimo__/
+
+# PRISM run artifacts
+backend/runs/
+
+# Frontend deps and builds
+node_modules/
+frontend/dist/

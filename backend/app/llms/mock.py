@@ -12,8 +12,9 @@ class MockEchoClient(LLMClient):
     """
 
     name = "mock-echo"
+    provider = "mock"
 
-    async def generate(self, prompt: str) -> LLMGeneration:
+    async def generate(self, prompt: str, **_: object) -> LLMGeneration:
         await asyncio.sleep(0.05)
         content = f"[echo:{self.name}] {prompt.strip()}"
         return LLMGeneration(model=self.name, response=content, latency_ms=50.0, created_at=datetime.utcnow())
@@ -25,8 +26,9 @@ class MockReasonerClient(LLMClient):
     """
 
     name = "mock-reasoner"
+    provider = "mock"
 
-    async def generate(self, prompt: str) -> LLMGeneration:
+    async def generate(self, prompt: str, **_: object) -> LLMGeneration:
         await asyncio.sleep(0.1)
         seed = abs(hash(prompt)) % (2**32)
         rng = random.Random(seed)

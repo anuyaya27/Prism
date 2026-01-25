@@ -12,6 +12,10 @@ class LLMGeneration:
     latency_ms: float
     created_at: datetime = field(default_factory=datetime.utcnow)
     meta: dict[str, Any] = field(default_factory=dict)
+    provider: str | None = None
+    usage: dict[str, Any] | None = None
+    finish_reason: str | None = None
+    error: str | None = None
 
 
 class LLMClient(abc.ABC):
@@ -22,7 +26,7 @@ class LLMClient(abc.ABC):
     name: str
 
     @abc.abstractmethod
-    async def generate(self, prompt: str) -> LLMGeneration:
+    async def generate(self, prompt: str, **kwargs: Any) -> LLMGeneration:
         """
         Produce a response for the given prompt.
         Implementations should avoid mutating shared state.

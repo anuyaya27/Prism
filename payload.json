@@ -1,0 +1,4 @@
+﻿{
+  "prompt": "Explain PCA in 3 bullets.",
+  "models": ["mock:echo", "mock:pseudo"]
+}

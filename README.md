@@ -35,14 +35,30 @@ uvicorn app.main:app --reload --app-dir backend
 
 Open http://localhost:8000/docs to try the interactive API.
 
+### Environment variables
+Create a `.env` file at the repo root (already git-ignored). It is auto-loaded on startup:
+```
+OPENAI_API_KEY=sk-...
+GEMINI_API_KEY=...
+```
+See `.env.example` for the template.
+
 ## Example request
 ```bash
 curl -X POST http://localhost:8000/evaluate ^
   -H "Content-Type: application/json" ^
-  -d "{\"prompt\": \"List three benefits of testing\", \"models\": [\"mock-echo\", \"mock-reasoner\"]}"
+  -d "{\"prompt\": \"List three benefits of testing\", \"models\": [\"mock:echo\", \"mock:pseudo\"]}"
 ```
 
 Response fields include per-model generations, metrics, and the synthesized answer with its selection rationale.
+Discover available models at `GET /models`.
+
+### Response contract (stable)
+- `run_id`: unique identifier for the evaluation.
+- `request`: echoed request with defaults (prompt, models, temperature, max_tokens, timeout_s).
+- `responses[]`: `{ id, provider, model, text, latency_ms, usage, finish_reason, error, created_at }`
+- `metrics`: agreement, unique_responses, average_length, similarity, semantic_similarity.
+- `synthesis`: `{ strategy, response, rationale, explain }` (deterministic, rule-based).
 
 ## Tests
 ```bash
@@ -55,4 +71,25 @@ pytest backend/tests -q
 - Add metrics in `backend/app/evaluation/pipeline.py`.
 - Experiment with synthesis strategies in `backend/app/synthesis/`.
 
+### Real model support
+- OpenAI: set `OPENAI_API_KEY` and use model IDs like `openai:gpt-4o-mini`.
+- Gemini: set `GEMINI_API_KEY` and use `gemini:1.5-flash`.
+- Mock models remain available as `mock:echo` and `mock:pseudo` (alias of `mock:reasoner`).
+
 PRISM is intentionally minimal at this stage—no auth, databases, or external infra. Build on it as evaluation needs grow.
+
+## Frontend quickstart
+Prereqs: Node 18+.
+```bash
+cd frontend
+npm install
+npm run dev  # starts Vite on http://localhost:5173
+```
+The UI auto-fetches `/models`, lets you pick enabled models, run `/evaluate`, and shows per-model outputs, metrics, and the synthesized answer.
+
+## Demo flow
+1) Set API keys in `.env` (optional for real models).  
+2) Start backend: `PYTHONPATH=backend uvicorn app.main:app --reload --app-dir backend`.  
+3) Start frontend: `cd frontend && npm install && npm run dev`.  
+4) Visit http://localhost:5173, enter a prompt, select models, run, and inspect responses/metrics/synthesis.  
+5) Use `GET /models` to verify which providers are enabled.
