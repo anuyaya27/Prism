@@ -6,41 +6,46 @@ export interface ModelInfo {
   description?: string | null;
 }
 
-export interface ModelResponse {
-  id: string;
-  provider: string | null;
-  model: string | null;
-  text: string;
-  latency_ms: number;
-  usage?: Record<string, unknown> | null;
-  finish_reason?: string | null;
+export interface EvaluateRequestPayload {
+  prompt: string;
+  models: string[];
+  temperature: number;
+  max_tokens: number;
+  timeout_s: number;
+}
+
+export interface ModelResult {
+  model: string;
+  ok: boolean;
+  text?: string | null;
   error?: string | null;
-  created_at: string;
+  latency_ms?: number | null;
+  status: "success" | "error" | "timeout";
+  provider?: string | null;
 }
 
-export interface Metrics {
-  agreement: number;
-  unique_responses: number;
-  average_length: number;
-  similarity: number;
-  semantic_similarity?: number | null;
-  evaluated_at: string;
+export interface SynthesisPayload {
+  ok: boolean;
+  text: string | null;
+  method: string;
+  rationale?: string | null;
 }
 
-export interface Synthesis {
-  strategy: string;
-  response: string;
-  rationale: string;
-  explain: string;
+export interface ComparePair {
+  a: string;
+  b: string;
+  score: number;
+}
+
+export interface CompareResult {
+  pairs: ComparePair[];
+  note?: string | null;
 }
 
 export interface EvaluateResponse {
-  run_id: string;
-  request: {
-    prompt: string;
-    models?: string[] | null;
-  };
-  responses: ModelResponse[];
-  metrics: Metrics;
-  synthesis: Synthesis;
+  request_id: string;
+  prompt: string;
+  results: ModelResult[];
+  synthesis: SynthesisPayload;
+  compare: CompareResult;
 }

@@ -1,5 +1,4 @@
-from datetime import datetime
-from typing import Any, Literal
+from typing import Literal
 
 from pydantic import BaseModel, Field
 
@@ -12,37 +11,37 @@ class EvaluateRequest(BaseModel):
     timeout_s: float = Field(default=15.0, ge=1.0, le=120.0, description="Per-request timeout to external providers.")
 
 
-class ModelResponse(BaseModel):
-    id: str  # model identifier requested
-    provider: str | None
-    model: str | None
-    text: str
-    latency_ms: float
-    usage: dict[str, Any] | None = None
-    finish_reason: str | None = None
+class ModelResult(BaseModel):
+    model: str
+    ok: bool
+    text: str | None = None
     error: str | None = None
-    created_at: datetime
+    latency_ms: float | None = None
+    status: Literal["success", "error", "timeout"] = "success"
+    provider: str | None = None
 
 
-class EvaluationMetrics(BaseModel):
-    agreement: float = Field(ge=0, le=1)
-    unique_responses: int
-    average_length: float
-    similarity: float = Field(ge=0, le=1)
-    semantic_similarity: float | None = Field(default=None, ge=0, le=1)
-    evaluated_at: datetime
+class SynthesisPayload(BaseModel):
+    ok: bool
+    text: str | None
+    method: str
+    rationale: str | None = None
 
 
-class SynthesizedResponse(BaseModel):
-    strategy: Literal["consensus", "longest", "first"]
-    response: str
-    rationale: str
-    explain: str
+class ComparePair(BaseModel):
+    a: str
+    b: str
+    score: float
+
+
+class CompareResult(BaseModel):
+    pairs: list[ComparePair]
+    note: str | None = None
 
 
 class EvaluateResponse(BaseModel):
-    run_id: str
-    request: EvaluateRequest
-    responses: list[ModelResponse]
-    metrics: EvaluationMetrics
-    synthesis: SynthesizedResponse
+    request_id: str
+    prompt: str
+    results: list[ModelResult]
+    synthesis: SynthesisPayload
+    compare: CompareResult

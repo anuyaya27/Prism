@@ -212,3 +212,4 @@ backend/runs/
 # Frontend deps and builds
 node_modules/
 frontend/dist/
+frontend/.env.local

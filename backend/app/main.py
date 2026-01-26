@@ -1,7 +1,7 @@
 import logging
 import os
 from pathlib import Path
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
 from dotenv import load_dotenv
@@ -33,6 +33,12 @@ def build_app() -> FastAPI:
     load_environment()
     synthesizer = SimpleSynthesizer()
     registry = ModelRegistry()
+    allowed_origins = [
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+    ]
 
     # Mock models always available
     registry.register(
@@ -83,17 +89,15 @@ def build_app() -> FastAPI:
 
     api = FastAPI(title="PRISM", version="0.3.0")
 
+    allow_methods = ["*"]
+    allow_headers = ["*"]
+
     api.add_middleware(
         CORSMiddleware,
-        allow_origins=[
-            "http://localhost:3000",
-            "http://127.0.0.1:3000",
-            "http://localhost:5173",
-            "http://127.0.0.1:5173",
-        ],
-        allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_origins=allowed_origins,
+        allow_credentials=False,
+        allow_methods=allow_methods,
+        allow_headers=allow_headers,
     )
 
     @api.on_event("startup")
@@ -104,7 +108,13 @@ def build_app() -> FastAPI:
                 methods = ",".join(sorted(route.methods))
                 route_summaries.append(f"{methods} {route.path}")
         logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(message)s")
-        logging.info("PRISM is running. Routes: %s", "; ".join(route_summaries))
+        logging.info(
+            "PRISM is running with CORS enabled. Origins: %s; Methods: %s; Headers: %s",
+            ", ".join(allowed_origins),
+            ", ".join(allow_methods),
+            ", ".join(allow_headers),
+        )
+        logging.info("Available routes: %s", "; ".join(route_summaries))
 
     @api.get("/")
     async def root() -> dict[str, str]:
@@ -116,9 +126,29 @@ def build_app() -> FastAPI:
     async def health() -> dict[str, str]:
         return {"status": "ok"}
 
+    @api.get("/debug/cors")
+    async def cors_debug(request: Request) -> dict[str, object]:
+        origin = request.headers.get("origin")
+        return {
+            "origin": origin,
+            "allowed_origins": allowed_origins,
+            "version": api.version,
+            "base_url": str(request.base_url),
+        }
+
+    @api.get("/debug/ping")
+    async def debug_ping(request: Request) -> dict[str, object]:
+        origin = request.headers.get("origin")
+        host = request.headers.get("host")
+        return {"ok": True, "origin": origin, "host": host, "version": api.version}
+
     @api.get("/models")
     async def models() -> list[dict]:
         return registry.list_models()
+
+    @api.options("/models")
+    async def models_options(request: Request) -> dict[str, str]:
+        return {"status": "ok"}
 
     @api.post("/evaluate", response_model=EvaluateResponse)
     async def evaluate(request: EvaluateRequest) -> EvaluateResponse:
@@ -126,6 +156,10 @@ def build_app() -> FastAPI:
             return await engine.evaluate(request=request)
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
+
+    @api.options("/evaluate")
+    async def evaluate_options(request: Request) -> dict[str, str]:
+        return {"status": "ok"}
 
     return api
 

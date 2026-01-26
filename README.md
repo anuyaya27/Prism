@@ -11,8 +11,8 @@ PRISM is a research-grade system for running the same prompt across multiple LLM
 ## How it works (systems view)
 1. FastAPI receives an `/evaluate` request containing a prompt and optional model list.
 2. The evaluation engine fans the prompt out to each `LLMClient` asynchronously.
-3. Raw generations and timing metadata are captured.
-4. Metrics (agreement ratio, uniqueness, length, Jaccard similarity) are computed deterministically.
+3. Raw generations and timing metadata are captured with per-model timeouts.
+4. Lightweight similarity heuristics (Jaccard token overlap) are computed for pairwise comparison.
 5. A rule-based synthesizer returns either the majority response or, if none exists, the longest response as a coverage proxy, along with its rationale.
 
 ## Folder structure
@@ -30,7 +30,7 @@ pip install -r backend/requirements.txt
 
 # run the API (app dir ensures imports resolve)
 set PYTHONPATH=backend  # PowerShell: $env:PYTHONPATH='backend'
-uvicorn app.main:app --reload --app-dir backend
+uvicorn app.main:app --reload --app-dir backend --host 0.0.0.0 --port 8000
 ```
 
 Open http://localhost:8000/docs to try the interactive API.
@@ -45,20 +45,32 @@ See `.env.example` for the template.
 
 ## Example request
 ```bash
-curl -X POST http://localhost:8000/evaluate ^
-  -H "Content-Type: application/json" ^
-  -d "{\"prompt\": \"List three benefits of testing\", \"models\": [\"mock:echo\", \"mock:pseudo\"]}"
+curl -X POST http://localhost:8000/evaluate \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"List three benefits of testing","models":["mock:echo","mock:pseudo"],"temperature":0,"max_tokens":256,"timeout_s":12}'
 ```
 
-Response fields include per-model generations, metrics, and the synthesized answer with its selection rationale.
+PowerShell equivalent:
+```powershell
+Invoke-RestMethod -Method Post -Uri "http://localhost:8000/evaluate" `
+  -ContentType "application/json" `
+  -Body (@{
+    prompt      = "List three benefits of testing"
+    models      = @("mock:echo","mock:pseudo")
+    temperature = 0
+    max_tokens  = 256
+    timeout_s   = 12
+  } | ConvertTo-Json)
+```
+
 Discover available models at `GET /models`.
 
 ### Response contract (stable)
-- `run_id`: unique identifier for the evaluation.
-- `request`: echoed request with defaults (prompt, models, temperature, max_tokens, timeout_s).
-- `responses[]`: `{ id, provider, model, text, latency_ms, usage, finish_reason, error, created_at }`
-- `metrics`: agreement, unique_responses, average_length, similarity, semantic_similarity.
-- `synthesis`: `{ strategy, response, rationale, explain }` (deterministic, rule-based).
+- `request_id`: unique identifier for the evaluation.
+- `prompt`: echoed prompt text.
+- `results[]`: `{ model, ok, text?, error?, latency_ms?, status, provider? }` where `status` is `success | error | timeout`.
+- `synthesis`: `{ ok, text, method, rationale? }` representing the synthesized answer.
+- `compare`: `{ pairs: [{ a, b, score }], note }` where `score` is Jaccard overlap (lower = more disagreement).
 
 ## Tests
 ```bash
@@ -83,13 +95,14 @@ Prereqs: Node 18+.
 ```bash
 cd frontend
 npm install
+# optional: adjust .env.local (defaults to VITE_API_BASE_URL=http://127.0.0.1:8000)
 npm run dev  # starts Vite on http://localhost:5173
 ```
-The UI auto-fetches `/models`, lets you pick enabled models, run `/evaluate`, and shows per-model outputs, metrics, and the synthesized answer.
+The UI auto-fetches `/models`, lets you pick enabled models, run `/evaluate`, and shows per-model outputs, synthesis, and disagreement/comparison heuristics.
 
 ## Demo flow
 1) Set API keys in `.env` (optional for real models).  
 2) Start backend: `PYTHONPATH=backend uvicorn app.main:app --reload --app-dir backend`.  
 3) Start frontend: `cd frontend && npm install && npm run dev`.  
-4) Visit http://localhost:5173, enter a prompt, select models, run, and inspect responses/metrics/synthesis.  
+4) Visit http://localhost:5173, enter a prompt, select models, run, and inspect per-model responses, synthesis, and comparison pairs.  
 5) Use `GET /models` to verify which providers are enabled.

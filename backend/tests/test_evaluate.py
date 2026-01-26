@@ -16,12 +16,12 @@ def test_evaluate_endpoint_returns_results(client: TestClient) -> None:
 
     assert response.status_code == 200
     body = response.json()
-    assert body["run_id"]
-    assert body["request"]["prompt"] == payload["prompt"]
-    assert len(body["responses"]) == 2
-    assert body["metrics"]["agreement"] >= 0
-    assert "explain" in body["synthesis"]
-    assert body["synthesis"]["response"]
+    assert body["request_id"]
+    assert body["prompt"] == payload["prompt"]
+    assert len(body["results"]) == 2
+    assert all("ok" in r for r in body["results"])
+    assert "synthesis" in body and "method" in body["synthesis"]
+    assert "compare" in body and "pairs" in body["compare"]
 
 
 def test_models_endpoint_lists_alias_and_enabled(client: TestClient) -> None:

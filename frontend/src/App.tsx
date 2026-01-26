@@ -1,8 +1,12 @@
-import { useEffect, useMemo, useState } from "react";
-import { apiGet, apiPost } from "./api";
-import { EvaluateResponse, ModelInfo, ModelResponse } from "./types";
+import React, { useEffect, useMemo, useState } from "react";
+import { API_BASE_URL, debugPing, getModels, postEvaluate } from "./api/client";
+import ComparePanel from "./components/ComparePanel";
+import ModelPicker from "./components/ModelPicker";
+import ModelResultCard from "./components/ModelResultCard";
+import SynthesisCard from "./components/SynthesisCard";
+import { EvaluateRequestPayload, EvaluateResponse, ModelInfo } from "./types";
 
-const defaultRequest = {
+const requestDefaults: Pick<EvaluateRequestPayload, "temperature" | "max_tokens" | "timeout_s"> = {
   temperature: 0,
   max_tokens: 512,
   timeout_s: 15,
@@ -12,18 +16,48 @@ function App() {
   const [prompt, setPrompt] = useState("Compare the tradeoffs between unit tests and integration tests.");
   const [models, setModels] = useState<ModelInfo[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [loading, setLoading] = useState(false);
+  const [running, setRunning] = useState(false);
   const [result, setResult] = useState<EvaluateResponse | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [runError, setRunError] = useState<string | null>(null);
+  const [timeoutBanner, setTimeoutBanner] = useState<string | null>(null);
+  const [modelsLoading, setModelsLoading] = useState(true);
+  const [lastModelsStatus, setLastModelsStatus] = useState<"idle" | "success" | "error">("idle");
+  const [lastModelsError, setLastModelsError] = useState<string | null>(null);
+  const [pingResult, setPingResult] = useState<string | null>(null);
+  const [pingError, setPingError] = useState<string | null>(null);
+  const [pingLoading, setPingLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState<{ prompt?: string; models?: string }>({});
 
   useEffect(() => {
-    apiGet<ModelInfo[]>("/models")
-      .then((data) => {
-        setModels(data);
-        const enabled = new Set(data.filter((m) => m.enabled).map((m) => m.id));
-        setSelected(enabled);
-      })
-      .catch((err) => setError(err.message));
+    const loadModels = async () => {
+      setModelsLoading(true);
+      try {
+        const data = await getModels();
+        const safeModels = Array.isArray(data) ? data : [];
+        setModels(safeModels);
+        const defaults = ["mock:echo", "mock:pseudo"].filter((id) => safeModels.some((m) => m.id === id && m.enabled));
+        const enabledFallback = safeModels.filter((m) => m.enabled).map((m) => m.id);
+        const initial = new Set(defaults.length ? defaults : enabledFallback);
+        setSelected(initial);
+        setRunError(null);
+        setLastModelsStatus("success");
+        setLastModelsError(null);
+      } catch (err: any) {
+        console.error("Failed to load models", err);
+        const message = err?.message || "Failed to load models";
+        const isUnreachable = message.toLowerCase().includes("failed to fetch");
+        const reason = isUnreachable ? "Backend unreachable or blocked by CORS" : message;
+        setRunError(`Failed to load models from ${API_BASE_URL}. ${reason}. Check backend is running at ${API_BASE_URL} and CORS allows localhost:5173.`);
+        setLastModelsStatus("error");
+        setLastModelsError(message);
+        setModels([]);
+        setSelected(new Set());
+      } finally {
+        setModelsLoading(false);
+      }
+    };
+
+    loadModels();
   }, []);
 
   const toggleModel = (id: string) => {
@@ -38,130 +72,187 @@ function App() {
     });
   };
 
+  const enabledSelectionCount = useMemo(() => models.filter((m) => m.enabled && selected.has(m.id)).length, [models, selected]);
+
   const handleRun = async () => {
-    setLoading(true);
-    setError(null);
-    setResult(null);
+    const errors: { prompt?: string; models?: string } = {};
+    if (!prompt.trim()) {
+      errors.prompt = "Prompt is required.";
+    }
+    if (enabledSelectionCount === 0) {
+      errors.models = "Pick at least one enabled model.";
+    }
+    setFormErrors(errors);
+    if (Object.keys(errors).length > 0) return;
+
+    const controller = new AbortController();
+    const timeoutMs = requestDefaults.timeout_s * 1000;
+    const timer = window.setTimeout(() => controller.abort(), timeoutMs);
+
+    setRunning(true);
+    setRunError(null);
+    setTimeoutBanner(null);
+
     try {
-      const body = {
+      const body: EvaluateRequestPayload = {
         prompt,
         models: Array.from(selected),
-        ...defaultRequest,
+        ...requestDefaults,
       };
-      const data = await apiPost<EvaluateResponse>("/evaluate", body);
-      setResult(data);
+      const data = await postEvaluate(body, controller.signal);
+      setResult(data as EvaluateResponse);
     } catch (err: any) {
-      setError(err.message || "Failed to run evaluation");
+      console.error("Evaluation failed", err);
+      if (err?.name === "AbortError") {
+        setTimeoutBanner(`Timed out after ${requestDefaults.timeout_s}s (client-side AbortController).`);
+        setRunError("Request aborted due to timeout.");
+      } else {
+        const message = err?.message || "Failed to run evaluation";
+        setRunError(message);
+      }
     } finally {
-      setLoading(false);
+      window.clearTimeout(timer);
+      setRunning(false);
     }
   };
 
-  const enabledModels = useMemo(() => models.filter((m) => selected.has(m.id)), [models, selected]);
+  const testConnection = async () => {
+    setPingLoading(true);
+    setPingError(null);
+    setPingResult(null);
+    try {
+      const res = await debugPing();
+      setPingResult(JSON.stringify(res));
+    } catch (err: any) {
+      console.error("Ping failed", err);
+      const message = err?.message || "Failed to fetch";
+      const isUnreachable = message.toLowerCase().includes("failed to fetch");
+      const hint = isUnreachable ? "Backend unreachable or CORS blocked." : message;
+      setPingError(`${hint} (base: ${API_BASE_URL})`);
+    } finally {
+      setPingLoading(false);
+    }
+  };
 
   return (
     <div className="app">
-      <h1>PRISM</h1>
-      <p>Fan out prompts across models, view agreement, and see the synthesized answer.</p>
+      <header>
+        <div>
+          <h1>PRISM</h1>
+          <p>Multi-LLM Evaluation &amp; Response Synthesis</p>
+        </div>
+        <div className="connection">
+          <div className="muted">Connection</div>
+          <div className="connection-row">
+            <span className="badge">API: {API_BASE_URL}</span>
+          </div>
+          <div className="connection-row">
+            <span className={`badge ${lastModelsStatus === "success" ? "success" : lastModelsStatus === "error" ? "warn" : ""}`}>
+              /models: {lastModelsStatus === "idle" ? "pending" : lastModelsStatus}
+            </span>
+            {pingResult && <span className="badge success">ping ok</span>}
+            {pingError && <span className="badge warn">ping failed</span>}
+            <button className="ghost" onClick={testConnection} disabled={pingLoading}>
+              {pingLoading ? "Testing..." : "Test connection"}
+            </button>
+          </div>
+          {lastModelsError && <span className="muted small">models error: {lastModelsError}</span>}
+          {pingResult && <div className="muted small">ping: {pingResult}</div>}
+          {pingError && <div className="error small">ping error: {pingError}</div>}
+        </div>
+      </header>
+
+      {modelsLoading && <div className="spinner">Loading models...</div>}
+
+      {runError && (
+        <div className="banner error-banner">
+          <span>{runError}</span>
+          <button className="ghost" onClick={() => setRunError(null)}>
+            x
+          </button>
+        </div>
+      )}
+
+      {timeoutBanner && (
+        <div className="banner warn-banner">
+          <span>{timeoutBanner}</span>
+          <button className="ghost" onClick={() => setTimeoutBanner(null)}>
+            x
+          </button>
+        </div>
+      )}
 
       <div className="card grid">
         <label>
           <strong>Prompt</strong>
-          <textarea value={prompt} onChange={(e) => setPrompt(e.target.value)} placeholder="Enter your prompt..." />
+          <textarea
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Enter a prompt to evaluate across models..."
+            required
+          />
+          {formErrors.prompt && <div className="error small">{formErrors.prompt}</div>}
         </label>
-        <div className="grid two-col">
-          <div>
-            <strong>Models</strong>
-            <div className="model-list">
-              {models.map((m) => (
-                <label key={m.id}>
-                  <input
-                    type="checkbox"
-                    checked={selected.has(m.id)}
-                    onChange={() => toggleModel(m.id)}
-                    disabled={!m.enabled}
-                  />
-                  {m.id} {m.enabled ? "" : `(disabled: ${m.disabled_reason || "missing key"})`}
-                </label>
+
+        <ModelPicker models={models} selected={selected} onToggle={toggleModel} />
+        {formErrors.models && <div className="error small">{formErrors.models}</div>}
+        {!runError && models.length === 0 && !modelsLoading && <div className="muted">No models available.</div>}
+
+        <div className="controls">
+          <button onClick={handleRun} disabled={running}>
+            {running ? "Running..." : "Run"}
+          </button>
+          <div className="badges">
+            <span className="badge">temp: {requestDefaults.temperature}</span>
+            <span className="badge">max_tokens: {requestDefaults.max_tokens}</span>
+            <span className="badge">timeout: {requestDefaults.timeout_s}s</span>
+          </div>
+        </div>
+      </div>
+
+      <section className="results-section">
+        <div className="section-header">
+          <h2>Results</h2>
+          {running && <span className="badge">Running…</span>}
+          {result && <span className="badge">request_id: {result.request_id}</span>}
+        </div>
+
+        {!result && (
+          <div className="card muted">
+            {runError ? "Backend offline or failed request. Adjust settings and retry." : "Run an evaluation to see model outputs."}
+          </div>
+        )}
+
+        {result && (
+          <>
+            <SummaryBar results={result.results} />
+
+            <div className="responses">
+              {result.results.map((r) => (
+                <ModelResultCard key={r.model} result={r} />
               ))}
             </div>
-          </div>
-          <div>
-            <strong>Request params</strong>
-            <div className="badge">temp: {defaultRequest.temperature}</div>
-            <div className="badge">max_tokens: {defaultRequest.max_tokens}</div>
-            <div className="badge">timeout: {defaultRequest.timeout_s}s</div>
-          </div>
-        </div>
-        <div>
-          <button onClick={handleRun} disabled={loading || !prompt.trim() || selected.size === 0}>
-            {loading ? "Running..." : "Run evaluation"}
-          </button>
-        </div>
-        {error && <div className="error">{error}</div>}
-      </div>
 
-      {result && (
-        <>
-          <div className="card">
-            <h3>Synthesized response</h3>
-            <div className="badge">strategy: {result.synthesis.strategy}</div>
-            <p>{result.synthesis.response}</p>
-            <p style={{ color: "#475569", fontSize: 13 }}>{result.synthesis.explain}</p>
-          </div>
-
-          <div className="card">
-            <h3>Metrics</h3>
-            <div className="metrics">
-              <Metric label="agreement" value={result.metrics.agreement.toFixed(2)} />
-              <Metric label="unique_responses" value={result.metrics.unique_responses} />
-              <Metric label="jaccard" value={result.metrics.similarity.toFixed(2)} />
-              <Metric
-                label="semantic"
-                value={result.metrics.semantic_similarity !== null ? result.metrics.semantic_similarity?.toFixed(2) : "n/a"}
-              />
-              <Metric label="avg_length" value={result.metrics.average_length.toFixed(1)} />
+            <div className="grid two-col">
+              <SynthesisCard synthesis={result.synthesis} />
+              <ComparePanel compare={result.compare} />
             </div>
-          </div>
-
-          <div className="responses">
-            {result.responses.map((r) => (
-              <ResponseCard key={r.id} response={r} />
-            ))}
-          </div>
-        </>
-      )}
-
-      {!result && enabledModels.length > 0 && (
-        <div style={{ marginTop: 12, color: "#475569", fontSize: 13 }}>
-          Selected models: {enabledModels.map((m) => m.id).join(", ")}
-        </div>
-      )}
+          </>
+        )}
+      </section>
     </div>
   );
 }
 
-function Metric({ label, value }: { label: string; value: string | number }) {
+function SummaryBar({ results }: { results: EvaluateResponse["results"] }) {
+  const successes = results.filter((r) => r.ok).length;
+  const failures = results.length - successes;
+  const avgLatency = results.length ? results.reduce((s, r) => s + (r.latency_ms || 0), 0) / results.length : 0;
   return (
-    <div className="badge">
-      <strong>{label}</strong> {value}
-    </div>
-  );
-}
-
-function ResponseCard({ response }: { response: ModelResponse }) {
-  return (
-    <div className="card">
-      <div className="response-header">
-        <span>
-          {response.id} {response.provider ? `(${response.provider})` : ""}
-        </span>
-        <span className="badge">{response.latency_ms.toFixed(1)} ms</span>
-      </div>
-      {response.error ? <div className="error">{response.error}</div> : <div>{response.text}</div>}
-      <div style={{ marginTop: 8, color: "#475569", fontSize: 12 }}>
-        finish: {response.finish_reason || "n/a"} | usage: {response.usage ? JSON.stringify(response.usage) : "n/a"}
-      </div>
+    <div className="card summary">
+      <div className="badge">avg latency: {avgLatency.toFixed(1)} ms</div>
+      <div className="badge success">success: {successes}</div>
+      <div className="badge warn">failed: {failures}</div>
     </div>
   );
 }
