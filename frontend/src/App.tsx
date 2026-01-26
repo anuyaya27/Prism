@@ -224,7 +224,7 @@ function App() {
           {formErrors.prompt && <div className="error small">{formErrors.prompt}</div>}
 
           <div className="chips-row">
-            <div className="chips-label">Models</div>
+            <div className="chips-label">Models to run</div>
             <ModelChips models={models} selected={selected} onToggle={toggleModel} loading={modelsLoading} />
           </div>
           {formErrors.models && <div className="error small">{formErrors.models}</div>}
@@ -252,7 +252,7 @@ function App() {
           </div>
 
           <div className="cta-row">
-            <button className="primary" onClick={handleRun} disabled={running}>
+            <button className="primary" onClick={handleRun} disabled={running || !prompt.trim()}>
               {running ? "Running..." : "Run evaluation"}
             </button>
             <div className="switches">
@@ -275,6 +275,11 @@ function App() {
             <div>
               <p className="eyebrow">Results</p>
               <h2>Outputs</h2>
+              {result && (
+                <div className="muted small output-meta">
+                  {result.results.length} models • avg latency {(result.results.reduce((s, r) => s + (r.latency_ms || 0), 0) / Math.max(result.results.length, 1) / 1000).toFixed(1)}s
+                </div>
+              )}
             </div>
             <div className="actions-row">
               <button className="ghost" onClick={exportJson} disabled={!result}>
@@ -289,7 +294,7 @@ function App() {
           {!result && (
             <div className="empty-state">
               <img src="/prism-logo.png" alt="PRISM logo" className="logo-faint" />
-              <p className="muted">Run an evaluation to see model outputs.</p>
+              <p className="muted">PRISM compares responses across models and synthesizes the best answer.</p>
             </div>
           )}
 
