@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { ModelResult } from "../types";
+import { formatModelLabel } from "../utils/modelLabels";
 
 interface Props {
   result: ModelResult;
@@ -16,6 +17,7 @@ export default function ModelResultCard({ result, showUsage = false }: Props) {
 
   const text = result.text || "";
   const errorText = result.error_message;
+  const label = formatModelLabel(result.model);
 
   const copy = async () => {
     const content = text || errorText || "";
@@ -25,11 +27,11 @@ export default function ModelResultCard({ result, showUsage = false }: Props) {
   };
 
   return (
-    <div className="card model-card">
+    <div className="card model-card" title={`ID: ${result.model}`}>
       <div className="response-header">
         <div className="title-group">
-          <span className="title">{result.model}</span>
-          {result.provider && <span className="muted small">via {result.provider}</span>}
+          <span className="title">{label}</span>
+          <span className="muted small">ID: {result.model}</span>
         </div>
         <div className="chip-row">
           <span className={statusClass}>{result.status}</span>

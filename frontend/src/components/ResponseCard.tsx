@@ -1,31 +1,32 @@
 import { useState } from "react";
-import { ModelResponse } from "../types";
+import { ModelResult } from "../types";
+import { formatModelLabel } from "../utils/modelLabels";
 
 interface Props {
-  response: ModelResponse;
+  response: ModelResult;
 }
 
 export default function ResponseCard({ response }: Props) {
   const [copied, setCopied] = useState(false);
   const copy = async () => {
-    await navigator.clipboard.writeText(response.text || response.error || "");
+    await navigator.clipboard.writeText(response.text || response.error_message || "");
     setCopied(true);
     setTimeout(() => setCopied(false), 1500);
   };
 
+  const label = formatModelLabel(response.model);
+
   return (
-    <div className="card">
+    <div className="card" title={`ID: ${response.model}`}>
       <div className="response-header">
-        <span className="title">
-          {response.id} {response.provider ? `(${response.provider})` : ""}
-        </span>
-        <span className="badge">{response.latency_ms.toFixed(1)} ms</span>
+        <span className="title">{label}</span>
+        <span className="badge">{(response.latency_ms ?? 0).toFixed(1)} ms</span>
       </div>
       <div className="meta">
-        <span>finish: {response.finish_reason || "n/a"}</span>
-        <span>usage: {response.usage ? JSON.stringify(response.usage) : "n/a"}</span>
+        <span>ID: {response.model}</span>
+        <span>status: {response.status}</span>
       </div>
-      {response.error ? <div className="error">{response.error}</div> : <pre className="response-text">{response.text}</pre>}
+      {response.error_message ? <div className="error">{response.error_message}</div> : <pre className="response-text">{response.text}</pre>}
       <div className="actions">
         <button className="ghost" onClick={copy}>
           {copied ? "Copied" : "Copy"}

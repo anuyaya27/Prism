@@ -1,9 +1,12 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { API_BASE_URL, debugPing, getModels, postEvaluate } from "./api/client";
-import ComparePanel from "./components/ComparePanel";
-import ModelPicker from "./components/ModelPicker";
-import ModelResultCard from "./components/ModelResultCard";
+import ComparisonCard from "./components/ComparisonCard";
+import Header from "./components/Header";
+import ModelChips from "./components/ModelChips";
+import ResultCard from "./components/ResultCard";
+import StatusBadge from "./components/StatusBadge";
 import SynthesisCard from "./components/SynthesisCard";
+import Toast from "./components/Toast";
 import { EvaluateRequestPayload, EvaluateResponse, ModelInfo, SynthesisMethod } from "./types";
 
 const requestDefaults = {
@@ -23,8 +26,8 @@ function App() {
   const [runError, setRunError] = useState<string | null>(null);
   const [timeoutBanner, setTimeoutBanner] = useState<string | null>(null);
   const [modelsLoading, setModelsLoading] = useState(true);
-  const [lastModelsStatus, setLastModelsStatus] = useState<"idle" | "success" | "error">("idle");
-  const [lastModelsError, setLastModelsError] = useState<string | null>(null);
+  const [modelsStatus, setModelsStatus] = useState<"idle" | "ok" | "error">("idle");
+  const [healthStatus, setHealthStatus] = useState<"idle" | "ok" | "error">("idle");
   const [pingResult, setPingResult] = useState<string | null>(null);
   const [pingError, setPingError] = useState<string | null>(null);
   const [pingLoading, setPingLoading] = useState(false);
@@ -32,33 +35,37 @@ function App() {
   const [showUsage, setShowUsage] = useState(false);
   const [showRaw, setShowRaw] = useState(false);
   const [unavailableReason, setUnavailableReason] = useState<string | null>(null);
+  const [toast, setToast] = useState<{ message: string; tone: "success" | "error" } | null>(null);
+  const [showAdvanced, setShowAdvanced] = useState(false);
 
   useEffect(() => {
     const loadModels = async () => {
       setModelsLoading(true);
       try {
         const data = await getModels();
-        const safeModels = Array.isArray((data as any)?.models) ? (data as any).models : Array.isArray(data) ? data : [];
+        const safeModels: ModelInfo[] = Array.isArray((data as any)?.models)
+          ? (data as any).models
+          : Array.isArray(data)
+            ? (data as ModelInfo[])
+            : [];
         setModels(safeModels);
         const defaults = ["mock:echo", "mock:pseudo"].filter((id) => safeModels.some((m: ModelInfo) => m.id === id && m.available));
         const enabledFallback = safeModels.filter((m: ModelInfo) => m.available).map((m: ModelInfo) => m.id);
-        const initial = new Set(defaults.length ? defaults : enabledFallback);
+        const initial = new Set<string>(defaults.length ? defaults : enabledFallback);
         setSelected(initial);
         const unavailable = safeModels.find((m: ModelInfo) => !m.available && m.reason);
         setUnavailableReason(unavailable ? unavailable.reason || "Some providers are unavailable." : null);
         setRunError(null);
-        setLastModelsStatus("success");
-        setLastModelsError(null);
+        setModelsStatus("ok");
       } catch (err: any) {
         console.error("Failed to load models", err);
         const message = err?.message || "Failed to load models";
         const isUnreachable = message.toLowerCase().includes("failed to fetch");
         const reason = isUnreachable ? "Backend unreachable or blocked by CORS" : message;
         setRunError(`Failed to load models from ${API_BASE_URL}. ${reason}. Check backend is running at ${API_BASE_URL} and CORS allows localhost:5173.`);
-        setLastModelsStatus("error");
-        setLastModelsError(message);
+        setModelsStatus("error");
         setModels([]);
-        setSelected(new Set());
+        setSelected(new Set<string>());
       } finally {
         setModelsLoading(false);
       }
@@ -75,7 +82,7 @@ function App() {
       } else {
         next.add(id);
       }
-      return next;
+      return next as Set<string>;
     });
   };
 
@@ -133,16 +140,26 @@ function App() {
     try {
       const res = await debugPing();
       setPingResult(JSON.stringify(res));
+      setHealthStatus("ok");
+      setToast({ message: "Connection OK", tone: "success" });
     } catch (err: any) {
       console.error("Ping failed", err);
       const message = err?.message || "Failed to fetch";
       const isUnreachable = message.toLowerCase().includes("failed to fetch");
       const hint = isUnreachable ? "Backend unreachable or CORS blocked." : message;
       setPingError(`${hint} (base: ${API_BASE_URL})`);
+      setHealthStatus("error");
+      setToast({ message: "Connection failed", tone: "error" });
     } finally {
       setPingLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (!toast) return;
+    const t = setTimeout(() => setToast(null), 2400);
+    return () => clearTimeout(t);
+  }, [toast]);
 
   const exportJson = () => {
     if (!result) return;
@@ -171,154 +188,155 @@ function App() {
   };
 
   return (
-    <div className="app">
-      <header>
-        <div>
-          <h1>PRISM</h1>
-          <p>Multi-LLM Evaluation &amp; Response Synthesis</p>
-        </div>
-        <div className="connection">
-          <div className="muted">Connection</div>
-          <div className="connection-row">
-            <span className="badge">API: {API_BASE_URL}</span>
+    <div className="app-shell">
+      <Header
+        apiBase={API_BASE_URL}
+        modelsStatus={modelsStatus}
+        healthStatus={healthStatus}
+        onTestConnection={testConnection}
+        testing={pingLoading}
+        pingResult={pingResult}
+        pingError={pingError}
+      />
+
+      {toast && <Toast tone={toast.tone} message={toast.message} />}
+
+      <main className="layout">
+        <section className="pane hero">
+          <div className="pane-header">
+            <div>
+              <p className="eyebrow">Prompt</p>
+              <h2>Run an evaluation</h2>
+              <p className="muted">Send one prompt to multiple models and compare + synthesize the best response.</p>
+            </div>
+            <div className="status-row">
+              <StatusBadge label="Models" state={modelsStatus} />
+              <StatusBadge label="Health" state={healthStatus} />
+            </div>
           </div>
-          <div className="connection-row">
-            <span className={`badge ${lastModelsStatus === "success" ? "success" : lastModelsStatus === "error" ? "warn" : ""}`}>
-              /models: {lastModelsStatus === "idle" ? "pending" : lastModelsStatus}
-            </span>
-            {pingResult && <span className="badge success">ping ok</span>}
-            {pingError && <span className="badge warn">ping failed</span>}
-            <button className="ghost" onClick={testConnection} disabled={pingLoading}>
-              {pingLoading ? "Testing..." : "Test connection"}
-            </button>
-          </div>
-          {lastModelsError && <span className="muted small">models error: {lastModelsError}</span>}
-          {pingResult && <div className="muted small">ping: {pingResult}</div>}
-          {pingError && <div className="error small">ping error: {pingError}</div>}
-        </div>
-      </header>
 
-      {modelsLoading && <div className="spinner">Loading models...</div>}
-
-      {runError && (
-        <div className="banner error-banner">
-          <span>{runError}</span>
-          <button className="ghost" onClick={() => setRunError(null)}>
-            x
-          </button>
-        </div>
-      )}
-
-      {timeoutBanner && (
-        <div className="banner warn-banner">
-          <span>{timeoutBanner}</span>
-          <button className="ghost" onClick={() => setTimeoutBanner(null)}>
-            x
-          </button>
-        </div>
-      )}
-
-      {unavailableReason && (
-        <div className="banner warn-banner">
-          <span>Some providers unavailable: {unavailableReason}</span>
-        </div>
-      )}
-
-      <div className="card grid">
-        <label>
-          <strong>Prompt</strong>
           <textarea
+            className="prompt"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Enter a prompt to evaluate across models..."
-            required
+            placeholder="Describe the scenario to evaluate across models..."
           />
           {formErrors.prompt && <div className="error small">{formErrors.prompt}</div>}
-        </label>
 
-        <ModelPicker models={models} selected={selected} onToggle={toggleModel} />
-        {formErrors.models && <div className="error small">{formErrors.models}</div>}
-        {!runError && models.length === 0 && !modelsLoading && <div className="muted">No models available.</div>}
-
-        <div className="controls">
-          <button onClick={handleRun} disabled={running}>
-            {running ? "Running..." : "Run"}
-          </button>
-          <div className="badges">
-            <span className="badge">temp: {requestDefaults.temperature}</span>
-            <span className="badge">max_tokens: {requestDefaults.max_tokens}</span>
-            <span className="badge">timeout: {requestDefaults.timeout_s}s</span>
-            <select value={synthesisMethod} onChange={(e) => setSynthesisMethod(e.target.value as SynthesisMethod)}>
-              <option value="longest_nonempty">longest_nonempty</option>
-              <option value="consensus_overlap">consensus_overlap</option>
-              <option value="best_of_n">best_of_n</option>
-            </select>
+          <div className="chips-row">
+            <div className="chips-label">Models</div>
+            <ModelChips models={models} selected={selected} onToggle={toggleModel} loading={modelsLoading} />
           </div>
-        </div>
-      </div>
+          {formErrors.models && <div className="error small">{formErrors.models}</div>}
+          {!runError && models.length === 0 && !modelsLoading && <div className="muted">No models available.</div>}
 
-      <section className="results-section">
-        <div className="section-header">
-          <h2>Results</h2>
-          {running && <span className="badge">Running...</span>}
-          {result && <span className="badge">request_id: {result.request_id}</span>}
-          <div className="chip-row">
-            <label className="muted small">
-              <input type="checkbox" checked={showUsage} onChange={(e) => setShowUsage(e.target.checked)} /> show usage
-            </label>
-            <label className="muted small">
-              <input type="checkbox" checked={showRaw} onChange={(e) => setShowRaw(e.target.checked)} /> show raw JSON
-            </label>
-            <button className="ghost" onClick={exportJson} disabled={!result}>
-              Export JSON
+          <div className="advanced">
+            <button className="ghost" onClick={() => setShowAdvanced((s) => !s)}>
+              {showAdvanced ? "Hide advanced" : "Advanced"}
             </button>
-            <button className="ghost" onClick={copyAll} disabled={!result}>
-              Copy all
-            </button>
-          </div>
-        </div>
-
-        {!result && (
-          <div className="card muted">
-            {runError ? "Backend offline or failed request. Adjust settings and retry." : "Run an evaluation to see model outputs."}
-          </div>
-        )}
-
-        {result && (
-          <>
-            <SummaryBar results={result.results} createdAt={result.created_at} />
-
-            <div className="responses">
-              {result.results.map((r) => (
-                <ModelResultCard key={r.model} result={r} showUsage={showUsage} />
-              ))}
-            </div>
-
-            <div className="grid two-col">
-              <SynthesisCard synthesis={result.synthesis} />
-              <ComparePanel compare={result.compare} />
-            </div>
-
-            {showRaw && (
-              <pre className="response-text scrollable raw-block">{JSON.stringify(result, null, 2)}</pre>
+            {showAdvanced && (
+              <div className="advanced-grid">
+                <Setting label="Temperature" value={requestDefaults.temperature} />
+                <Setting label="Max tokens" value={requestDefaults.max_tokens} />
+                <Setting label="Timeout (s)" value={requestDefaults.timeout_s} />
+                <div className="setting">
+                  <div className="muted small">Synthesis</div>
+                  <select value={synthesisMethod} onChange={(e) => setSynthesisMethod(e.target.value as SynthesisMethod)}>
+                    <option value="longest_nonempty">longest_nonempty</option>
+                    <option value="consensus_overlap">consensus_overlap</option>
+                    <option value="best_of_n">best_of_n</option>
+                  </select>
+                </div>
+              </div>
             )}
-          </>
-        )}
-      </section>
+          </div>
+
+          <div className="cta-row">
+            <button className="primary" onClick={handleRun} disabled={running}>
+              {running ? "Running..." : "Run evaluation"}
+            </button>
+            <div className="switches">
+              <label>
+                <input type="checkbox" checked={showUsage} onChange={(e) => setShowUsage(e.target.checked)} /> show usage
+              </label>
+              <label>
+                <input type="checkbox" checked={showRaw} onChange={(e) => setShowRaw(e.target.checked)} /> show raw JSON
+              </label>
+            </div>
+          </div>
+
+          {runError && <div className="banner error-banner">{runError}</div>}
+          {timeoutBanner && <div className="banner warn-banner">{timeoutBanner}</div>}
+          {unavailableReason && <div className="banner warn-banner">Some providers unavailable: {unavailableReason}</div>}
+        </section>
+
+        <section className="pane results-pane">
+          <div className="pane-header">
+            <div>
+              <p className="eyebrow">Results</p>
+              <h2>Outputs</h2>
+            </div>
+            <div className="actions-row">
+              <button className="ghost" onClick={exportJson} disabled={!result}>
+                Download JSON
+              </button>
+              <button className="ghost" onClick={copyAll} disabled={!result}>
+                Copy all outputs
+              </button>
+            </div>
+          </div>
+
+          {!result && (
+            <div className="empty-state">
+              <img src="/prism-logo.png" alt="PRISM logo" className="logo-faint" />
+              <p className="muted">Run an evaluation to see model outputs.</p>
+            </div>
+          )}
+
+          {result && (
+            <>
+              <SummaryBar results={result.results} createdAt={result.created_at} requestId={result.request_id} />
+
+              <div className="responses-grid">
+                {result.results.map((r) => (
+                  <ResultCard key={r.model} result={r} showUsage={showUsage} />
+                ))}
+              </div>
+
+              <div className="grid two-col">
+                <SynthesisCard synthesis={result.synthesis} />
+                <ComparisonCard compare={result.compare} />
+              </div>
+
+              {showRaw && <pre className="raw-block">{JSON.stringify(result, null, 2)}</pre>}
+            </>
+          )}
+        </section>
+      </main>
     </div>
   );
 }
 
-function SummaryBar({ results, createdAt }: { results: EvaluateResponse["results"]; createdAt?: string }) {
+function Setting({ label, value }: { label: string; value: number }) {
+  return (
+    <div className="setting">
+      <div className="muted small">{label}</div>
+      <div className="setting-value">{value}</div>
+    </div>
+  );
+}
+
+function SummaryBar({ results, createdAt, requestId }: { results: EvaluateResponse["results"]; createdAt?: string; requestId?: string }) {
   const successes = results.filter((r) => r.ok).length;
   const failures = results.length - successes;
   const avgLatency = results.length ? results.reduce((s, r) => s + (r.latency_ms || 0), 0) / results.length : 0;
   return (
-    <div className="card summary">
-      <div className="badge">created: {createdAt ? new Date(createdAt).toLocaleTimeString() : "n/a"}</div>
-      <div className="badge">avg latency: {avgLatency.toFixed(1)} ms</div>
-      <div className="badge success">success: {successes}</div>
-      <div className="badge warn">failed: {failures}</div>
+    <div className="summary-bar">
+      <div className="summary-chip">Run ID: {requestId ?? "n/a"}</div>
+      <div className="summary-chip">Created: {createdAt ? new Date(createdAt).toLocaleTimeString() : "n/a"}</div>
+      <div className="summary-chip">Avg latency: {avgLatency.toFixed(1)} ms</div>
+      <div className="summary-chip success">Succeeded: {successes}</div>
+      <div className="summary-chip warn">Failed: {failures}</div>
     </div>
   );
 }

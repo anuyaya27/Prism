@@ -1,4 +1,5 @@
 import { ModelInfo } from "../types";
+import { formatModelLabel } from "../utils/modelLabels";
 
 interface Props {
   models: ModelInfo[];
@@ -19,7 +20,7 @@ export default function ModelPicker({ models, selected, onToggle }: Props) {
               onChange={() => onToggle(m.id)}
               disabled={!m.available}
             />
-            {m.id}
+            {formatModelLabel(m.id)} <span className="muted small">(ID: {m.id})</span>
             {!m.available && <span className="disabled-reason"> (disabled: {m.reason || "unavailable"})</span>}
           </label>
         ))}
