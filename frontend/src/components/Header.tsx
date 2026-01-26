@@ -1,3 +1,4 @@
+import { useState } from "react";
 import StatusBadge from "./StatusBadge";
 
 type Props = {
@@ -11,15 +12,46 @@ type Props = {
 };
 
 export default function Header({ apiBase, modelsStatus, healthStatus, onTestConnection, testing, pingResult, pingError }: Props) {
+  const [logoOk, setLogoOk] = useState(true);
+
+  const logoSize = "clamp(36px, 6vw, 44px)";
+  const logoStyle = {
+    width: logoSize,
+    height: logoSize,
+    borderRadius: 12,
+    boxShadow: "0 10px 28px rgba(0,0,0,0.35)",
+    objectFit: "cover" as const,
+  };
+
   return (
     <header className="topbar">
-      <div className="brand">
-        <img
-          src="/prism-logo.png"
-          alt="PRISM logo"
-          className="brand-logo"
-          style={{ width: 32, height: 32, borderRadius: 8, boxShadow: "0 2px 8px rgba(0,0,0,0.25)", objectFit: "cover" }}
-        />
+      <div className="brand" style={{ display: "flex", alignItems: "center", gap: 12 }}>
+        {logoOk ? (
+          <img
+            src="/prism-logo.png"
+            alt="PRISM logo"
+            className="brand-logo"
+            style={logoStyle}
+            onError={() => setLogoOk(false)}
+          />
+        ) : (
+          <div
+            aria-label="PRISM logo fallback"
+            style={{
+              ...logoStyle,
+              background: "#111827",
+              color: "#f9fafb",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontWeight: 700,
+              fontSize: 14,
+              boxShadow: "0 10px 28px rgba(0,0,0,0.35)",
+            }}
+          >
+            P
+          </div>
+        )}
         <div>
           <div className="brand-title">PRISM</div>
           <div className="brand-sub">Multi-LLM Evaluation &amp; Response Synthesis</div>
