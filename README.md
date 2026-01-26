@@ -47,7 +47,7 @@ See `.env.example` for the template.
 ```bash
 curl -X POST http://localhost:8000/evaluate \
   -H "Content-Type: application/json" \
-  -d '{"prompt":"List three benefits of testing","models":["mock:echo","mock:pseudo"],"temperature":0,"max_tokens":256,"timeout_s":12}'
+  -d '{"prompt":"List three benefits of testing","models":["mock:echo","mock:pseudo"],"temperature":0,"max_tokens":256,"timeout_s":12,"synthesis_method":"best_of_n"}'
 ```
 
 PowerShell equivalent:
@@ -55,22 +55,23 @@ PowerShell equivalent:
 Invoke-RestMethod -Method Post -Uri "http://localhost:8000/evaluate" `
   -ContentType "application/json" `
   -Body (@{
-    prompt      = "List three benefits of testing"
-    models      = @("mock:echo","mock:pseudo")
-    temperature = 0
-    max_tokens  = 256
-    timeout_s   = 12
+    prompt           = "List three benefits of testing"
+    models           = @("mock:echo","mock:pseudo")
+    temperature      = 0
+    max_tokens       = 256
+    timeout_s        = 12
+    synthesis_method = "best_of_n"
   } | ConvertTo-Json)
 ```
 
-Discover available models at `GET /models`.
+Discover available models at `GET /models` (includes availability + reason when API keys are missing).
 
 ### Response contract (stable)
-- `request_id`: unique identifier for the evaluation.
-- `prompt`: echoed prompt text.
-- `results[]`: `{ model, ok, text?, error?, latency_ms?, status, provider? }` where `status` is `success | error | timeout`.
-- `synthesis`: `{ ok, text, method, rationale? }` representing the synthesized answer.
-- `compare`: `{ pairs: [{ a, b, score }], note }` where `score` is Jaccard overlap (lower = more disagreement).
+- `request_id`, `created_at`, `prompt`, `params` (echoed models/temp/max_tokens/timeout_s/synthesis_method)
+- `results[]`: `{ model, provider, ok, status, text?, error_code?, error_message?, latency_ms?, usage?, meta? }`
+- `synthesis`: `{ ok, method, text, rationale? }`
+- `compare`: `{ pairs: [{ a, b, token_overlap_jaccard, length_ratio, keyword_coverage }], summary: { avg_similarity, most_disagree_pair?, notes } }`
+
 
 ## Tests
 ```bash

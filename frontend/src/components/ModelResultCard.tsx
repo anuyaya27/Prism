@@ -3,9 +3,10 @@ import { ModelResult } from "../types";
 
 interface Props {
   result: ModelResult;
+  showUsage?: boolean;
 }
 
-export default function ModelResultCard({ result }: Props) {
+export default function ModelResultCard({ result, showUsage = false }: Props) {
   const [copied, setCopied] = useState(false);
   const statusClass = useMemo(() => {
     if (result.status === "success") return "status success";
@@ -14,7 +15,7 @@ export default function ModelResultCard({ result }: Props) {
   }, [result.status]);
 
   const text = result.text || "";
-  const errorText = result.error;
+  const errorText = result.error_message;
 
   const copy = async () => {
     const content = text || errorText || "";
@@ -41,9 +42,16 @@ export default function ModelResultCard({ result }: Props) {
       {errorText ? (
         <div className="error-block">
           <div className="error">{errorText}</div>
+          {result.error_code && <div className="muted small">code: {result.error_code}</div>}
         </div>
       ) : (
         <pre className="response-text scrollable">{text || "No output returned."}</pre>
+      )}
+
+      {showUsage && (
+        <div className="muted small usage">
+          usage: {result.usage ? JSON.stringify(result.usage) : "n/a"}
+        </div>
       )}
 
       <div className="actions">

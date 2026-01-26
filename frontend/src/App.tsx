@@ -4,18 +4,20 @@ import ComparePanel from "./components/ComparePanel";
 import ModelPicker from "./components/ModelPicker";
 import ModelResultCard from "./components/ModelResultCard";
 import SynthesisCard from "./components/SynthesisCard";
-import { EvaluateRequestPayload, EvaluateResponse, ModelInfo } from "./types";
+import { EvaluateRequestPayload, EvaluateResponse, ModelInfo, SynthesisMethod } from "./types";
 
-const requestDefaults: Pick<EvaluateRequestPayload, "temperature" | "max_tokens" | "timeout_s"> = {
+const requestDefaults = {
   temperature: 0,
   max_tokens: 512,
   timeout_s: 15,
+  synthesis_method: "best_of_n" as SynthesisMethod,
 };
 
 function App() {
   const [prompt, setPrompt] = useState("Compare the tradeoffs between unit tests and integration tests.");
   const [models, setModels] = useState<ModelInfo[]>([]);
   const [selected, setSelected] = useState<Set<string>>(new Set());
+  const [synthesisMethod, setSynthesisMethod] = useState<SynthesisMethod>(requestDefaults.synthesis_method);
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<EvaluateResponse | null>(null);
   const [runError, setRunError] = useState<string | null>(null);
@@ -27,18 +29,23 @@ function App() {
   const [pingError, setPingError] = useState<string | null>(null);
   const [pingLoading, setPingLoading] = useState(false);
   const [formErrors, setFormErrors] = useState<{ prompt?: string; models?: string }>({});
+  const [showUsage, setShowUsage] = useState(false);
+  const [showRaw, setShowRaw] = useState(false);
+  const [unavailableReason, setUnavailableReason] = useState<string | null>(null);
 
   useEffect(() => {
     const loadModels = async () => {
       setModelsLoading(true);
       try {
         const data = await getModels();
-        const safeModels = Array.isArray(data) ? data : [];
+        const safeModels = Array.isArray((data as any)?.models) ? (data as any).models : Array.isArray(data) ? data : [];
         setModels(safeModels);
-        const defaults = ["mock:echo", "mock:pseudo"].filter((id) => safeModels.some((m) => m.id === id && m.enabled));
-        const enabledFallback = safeModels.filter((m) => m.enabled).map((m) => m.id);
+        const defaults = ["mock:echo", "mock:pseudo"].filter((id) => safeModels.some((m: ModelInfo) => m.id === id && m.available));
+        const enabledFallback = safeModels.filter((m: ModelInfo) => m.available).map((m: ModelInfo) => m.id);
         const initial = new Set(defaults.length ? defaults : enabledFallback);
         setSelected(initial);
+        const unavailable = safeModels.find((m: ModelInfo) => !m.available && m.reason);
+        setUnavailableReason(unavailable ? unavailable.reason || "Some providers are unavailable." : null);
         setRunError(null);
         setLastModelsStatus("success");
         setLastModelsError(null);
@@ -72,7 +79,7 @@ function App() {
     });
   };
 
-  const enabledSelectionCount = useMemo(() => models.filter((m) => m.enabled && selected.has(m.id)).length, [models, selected]);
+  const enabledSelectionCount = useMemo(() => models.filter((m) => m.available && selected.has(m.id)).length, [models, selected]);
 
   const handleRun = async () => {
     const errors: { prompt?: string; models?: string } = {};
@@ -80,7 +87,7 @@ function App() {
       errors.prompt = "Prompt is required.";
     }
     if (enabledSelectionCount === 0) {
-      errors.models = "Pick at least one enabled model.";
+      errors.models = "Pick at least one available model.";
     }
     setFormErrors(errors);
     if (Object.keys(errors).length > 0) return;
@@ -97,7 +104,10 @@ function App() {
       const body: EvaluateRequestPayload = {
         prompt,
         models: Array.from(selected),
-        ...requestDefaults,
+        temperature: requestDefaults.temperature,
+        max_tokens: requestDefaults.max_tokens,
+        timeout_s: requestDefaults.timeout_s,
+        synthesis_method: synthesisMethod,
       };
       const data = await postEvaluate(body, controller.signal);
       setResult(data as EvaluateResponse);
@@ -132,6 +142,32 @@ function App() {
     } finally {
       setPingLoading(false);
     }
+  };
+
+  const exportJson = () => {
+    if (!result) return;
+    const blob = new Blob([JSON.stringify(result, null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `prism-eval-${result.request_id}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const copyAll = async () => {
+    if (!result) return;
+    const lines = [
+      `# PRISM Evaluation (${result.request_id})`,
+      ``,
+      `Prompt: ${result.prompt}`,
+      `Synthesis (${result.synthesis.method}):`,
+      result.synthesis.text || "_no synthesis available_",
+      ``,
+      `## Per-model outputs`,
+      ...result.results.map((r) => `### ${r.model} (${r.status})\n${r.text || r.error_message || "_no output_"}\n`),
+    ];
+    await navigator.clipboard.writeText(lines.join("\n"));
   };
 
   return (
@@ -182,6 +218,12 @@ function App() {
         </div>
       )}
 
+      {unavailableReason && (
+        <div className="banner warn-banner">
+          <span>Some providers unavailable: {unavailableReason}</span>
+        </div>
+      )}
+
       <div className="card grid">
         <label>
           <strong>Prompt</strong>
@@ -206,6 +248,11 @@ function App() {
             <span className="badge">temp: {requestDefaults.temperature}</span>
             <span className="badge">max_tokens: {requestDefaults.max_tokens}</span>
             <span className="badge">timeout: {requestDefaults.timeout_s}s</span>
+            <select value={synthesisMethod} onChange={(e) => setSynthesisMethod(e.target.value as SynthesisMethod)}>
+              <option value="longest_nonempty">longest_nonempty</option>
+              <option value="consensus_overlap">consensus_overlap</option>
+              <option value="best_of_n">best_of_n</option>
+            </select>
           </div>
         </div>
       </div>
@@ -213,8 +260,22 @@ function App() {
       <section className="results-section">
         <div className="section-header">
           <h2>Results</h2>
-          {running && <span className="badge">Running…</span>}
+          {running && <span className="badge">Running...</span>}
           {result && <span className="badge">request_id: {result.request_id}</span>}
+          <div className="chip-row">
+            <label className="muted small">
+              <input type="checkbox" checked={showUsage} onChange={(e) => setShowUsage(e.target.checked)} /> show usage
+            </label>
+            <label className="muted small">
+              <input type="checkbox" checked={showRaw} onChange={(e) => setShowRaw(e.target.checked)} /> show raw JSON
+            </label>
+            <button className="ghost" onClick={exportJson} disabled={!result}>
+              Export JSON
+            </button>
+            <button className="ghost" onClick={copyAll} disabled={!result}>
+              Copy all
+            </button>
+          </div>
         </div>
 
         {!result && (
@@ -225,11 +286,11 @@ function App() {
 
         {result && (
           <>
-            <SummaryBar results={result.results} />
+            <SummaryBar results={result.results} createdAt={result.created_at} />
 
             <div className="responses">
               {result.results.map((r) => (
-                <ModelResultCard key={r.model} result={r} />
+                <ModelResultCard key={r.model} result={r} showUsage={showUsage} />
               ))}
             </div>
 
@@ -237,6 +298,10 @@ function App() {
               <SynthesisCard synthesis={result.synthesis} />
               <ComparePanel compare={result.compare} />
             </div>
+
+            {showRaw && (
+              <pre className="response-text scrollable raw-block">{JSON.stringify(result, null, 2)}</pre>
+            )}
           </>
         )}
       </section>
@@ -244,12 +309,13 @@ function App() {
   );
 }
 
-function SummaryBar({ results }: { results: EvaluateResponse["results"] }) {
+function SummaryBar({ results, createdAt }: { results: EvaluateResponse["results"]; createdAt?: string }) {
   const successes = results.filter((r) => r.ok).length;
   const failures = results.length - successes;
   const avgLatency = results.length ? results.reduce((s, r) => s + (r.latency_ms || 0), 0) / results.length : 0;
   return (
     <div className="card summary">
+      <div className="badge">created: {createdAt ? new Date(createdAt).toLocaleTimeString() : "n/a"}</div>
       <div className="badge">avg latency: {avgLatency.toFixed(1)} ms</div>
       <div className="badge success">success: {successes}</div>
       <div className="badge warn">failed: {failures}</div>

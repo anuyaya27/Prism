@@ -1,23 +1,34 @@
 import asyncio
 import json
 import os
+import re
 import statistics
 import time
+from datetime import datetime
 from typing import Iterable, Sequence
 from uuid import uuid4
 
-from app.llms.base import LLMClient, LLMGeneration
-from app.llms.registry import ModelRegistry
-from app.models.schemas import ComparePair, CompareResult, EvaluateRequest, EvaluateResponse, ModelResult
-from app.synthesis.aggregator import ResponseSynthesizer
+from app.models.schemas import (
+    ComparePair,
+    CompareResult,
+    CompareSummary,
+    EvaluateParams,
+    EvaluateRequest,
+    EvaluateResponse,
+    ModelResult,
+)
+from app.providers.base import GenerationResult, Provider, ProviderModel
+from app.providers.registry import ProviderRegistry
+from app.synthesis.aggregator import MultiStrategySynthesizer
+from app.synthesis.keywords import extract_keywords
 
 
 class EvaluationEngine:
     """
-    Coordinates running prompts across LLM clients and computing lightweight comparisons.
+    Coordinates running prompts across providers and computing comparison + synthesis.
     """
 
-    def __init__(self, registry: ModelRegistry, synthesizer: ResponseSynthesizer, runs_dir: str = "backend/runs"):
+    def __init__(self, registry: ProviderRegistry, synthesizer: MultiStrategySynthesizer, runs_dir: str = "backend/runs"):
         self._registry = registry
         self._synthesizer = synthesizer
         self._runs_dir = runs_dir
@@ -27,28 +38,41 @@ class EvaluationEngine:
         if not prompt:
             raise ValueError("Prompt cannot be empty")
 
-        model_ids = list(request.models or self._registry.available_ids())
-        clients = self._registry.resolve(model_ids)
-        if not clients:
+        selected_models = self._registry.resolve_models(request.models)
+        if not selected_models:
             raise ValueError("No models available for evaluation")
 
-        request_id = uuid4().hex
-        generations = await self._gather(
-            prompt=prompt,
-            model_ids=model_ids,
-            clients=clients,
-            timeout_s=request.timeout_s,
+        params = EvaluateParams(
+            models=[m.id for m in selected_models],
             temperature=request.temperature,
             max_tokens=request.max_tokens,
+            timeout_s=request.timeout_s,
+            synthesis_method=request.synthesis_method,
         )
 
-        synthesis = self._synthesizer.synthesize(prompt=prompt, generations=generations)
-        compare = self._compare(generations)
+        request_id = uuid4().hex
+        created_at = datetime.utcnow()
+
+        provider_map = {p.name: p for p in self._registry.providers()}
+
+        generations = await self._gather(
+            prompt=prompt,
+            models=selected_models,
+            timeout_s=params.timeout_s,
+            temperature=params.temperature,
+            max_tokens=params.max_tokens,
+            provider_map=provider_map,
+        )
+
+        synthesis = self._synthesizer.synthesize(prompt=prompt, generations=generations, method=params.synthesis_method)
+        compare = self._compare(prompt, generations)
         results = [self._map_generation(gen) for gen in generations]
 
         response = EvaluateResponse(
             request_id=request_id,
+            created_at=created_at,
             prompt=prompt,
+            params=params,
             results=results,
             synthesis=synthesis,
             compare=compare,
@@ -61,116 +85,173 @@ class EvaluationEngine:
         self,
         *,
         prompt: str,
-        model_ids: Iterable[str],
-        clients: Iterable[LLMClient],
+        models: Iterable[ProviderModel],
         timeout_s: float,
         temperature: float,
         max_tokens: int,
-    ) -> list[LLMGeneration]:
+        provider_map: dict[str, Provider],
+    ) -> list[GenerationResult]:
         tasks = [
             asyncio.create_task(
                 self._safe_generate(
-                    requested_id=model_id,
-                    client=client,
+                    provider=self._provider_for(model.provider, provider_map),
+                    model=model,
                     prompt=prompt,
                     timeout_s=timeout_s,
                     temperature=temperature,
                     max_tokens=max_tokens,
                 )
             )
-            for model_id, client in zip(model_ids, clients)
+            for model in models
         ]
         return list(await asyncio.gather(*tasks))
+
+    def _provider_for(self, provider_name: str, provider_map: dict[str, Provider]) -> Provider:
+        if provider_name not in provider_map:
+            raise ValueError(f"Provider {provider_name} not registered")
+        return provider_map[provider_name]
 
     async def _safe_generate(
         self,
         *,
-        requested_id: str,
-        client: LLMClient,
+        provider: Provider,
+        model: ProviderModel,
         prompt: str,
         timeout_s: float,
         temperature: float,
         max_tokens: int,
-    ) -> LLMGeneration:
+    ) -> GenerationResult:
         start = time.perf_counter()
-        try:
-            generation = await asyncio.wait_for(
-                client.generate(prompt, temperature=temperature, max_tokens=max_tokens), timeout=timeout_s
-            )
-            elapsed_ms = (time.perf_counter() - start) * 1000
-            if not getattr(generation, "latency_ms", None):
-                generation.latency_ms = elapsed_ms
-            provider_model = generation.model
-            if hasattr(generation, "meta") and isinstance(generation.meta, dict):
-                generation.meta.setdefault("requested_id", requested_id)
-                generation.meta.setdefault("provider_model", provider_model)
-            generation.model = requested_id
-            if not getattr(generation, "provider", None) and hasattr(client, "provider"):
-                generation.provider = getattr(client, "provider")
-            return generation
-        except asyncio.TimeoutError as exc:
+        if not model.available:
             latency_ms = (time.perf_counter() - start) * 1000
-            provider = getattr(client, "provider", None)
-            return LLMGeneration(
-                model=requested_id,
-                response="",
+            return GenerationResult(
+                model_id=model.id,
+                provider=model.provider,
+                text=None,
+                usage=None,
+                meta=None,
                 latency_ms=latency_ms,
-                provider=provider,
-                error=f"timeout after {timeout_s} seconds",
+                error_code="unavailable",
+                error_message=model.reason or "Model unavailable",
+            )
+
+        try:
+            return await asyncio.wait_for(
+                provider.generate(model.id, prompt, temperature=temperature, max_tokens=max_tokens), timeout=timeout_s
+            )
+        except asyncio.TimeoutError:
+            latency_ms = (time.perf_counter() - start) * 1000
+            return GenerationResult(
+                model_id=model.id,
+                provider=model.provider,
+                text=None,
+                usage=None,
+                meta=None,
+                latency_ms=latency_ms,
+                error_code="timeout",
+                error_message=f"timeout after {timeout_s}s",
             )
         except Exception as exc:  # noqa: BLE001
             latency_ms = (time.perf_counter() - start) * 1000
-            provider = getattr(client, "provider", None)
-            return LLMGeneration(
-                model=requested_id,
-                response="",
+            return GenerationResult(
+                model_id=model.id,
+                provider=model.provider,
+                text=None,
+                usage=None,
+                meta=None,
                 latency_ms=latency_ms,
-                provider=provider,
-                error=str(exc),
+                error_code="provider_error",
+                error_message=str(exc),
             )
 
-    def _map_generation(self, gen: LLMGeneration) -> ModelResult:
+    def _map_generation(self, gen: GenerationResult) -> ModelResult:
         status: str
-        if gen.error:
-            status = "timeout" if "timeout" in gen.error.lower() else "error"
+        if gen.error_code == "timeout":
+            status = "timeout"
+        elif gen.error_code:
+            status = "error"
         else:
             status = "success"
 
         return ModelResult(
-            model=gen.model,
-            provider=getattr(gen, "provider", None),
-            ok=not gen.error,
-            text=gen.response if not gen.error else None,
-            error=gen.error,
+            model=gen.model_id,
+            provider=gen.provider,
+            ok=gen.ok,
+            status=status,  # type: ignore[arg-type]
+            text=gen.text,
+            error_code=gen.error_code,
+            error_message=gen.error_message,
             latency_ms=gen.latency_ms,
-            status=status,
+            usage=gen.usage,
+            meta=gen.meta,
         )
 
-    def _compare(self, generations: Sequence[LLMGeneration]) -> CompareResult:
-        usable = [gen for gen in generations if gen.response]
+    def _compare(self, prompt: str, generations: Sequence[GenerationResult]) -> CompareResult:
+        usable = [gen for gen in generations if gen.text]
         if len(usable) < 2:
-            return CompareResult(pairs=[], note="Not enough responses to compare; need at least two non-empty outputs.")
+            empty_summary = CompareSummary(
+                avg_similarity=1.0,
+                most_disagree_pair=None,
+                notes="Not enough responses to compare; need at least two non-empty outputs.",
+            )
+            return CompareResult(pairs=[], summary=empty_summary)
 
+        prompt_keywords = extract_keywords(prompt)
         pairs: list[ComparePair] = []
         for i in range(len(usable)):
             for j in range(i + 1, len(usable)):
-                score = self._jaccard(usable[i].response, usable[j].response)
-                pairs.append(ComparePair(a=usable[i].model, b=usable[j].model, score=score))
+                a, b = usable[i], usable[j]
+                tokens_a = self._tokens(a.text or "")
+                tokens_b = self._tokens(b.text or "")
+                jaccard = self._jaccard(tokens_a, tokens_b)
+                length_ratio = self._length_ratio(tokens_a, tokens_b)
+                keyword_coverage = self._keyword_coverage(prompt_keywords, tokens_a, tokens_b)
+                pairs.append(
+                    ComparePair(
+                        a=a.model_id,
+                        b=b.model_id,
+                        token_overlap_jaccard=jaccard,
+                        length_ratio=length_ratio,
+                        keyword_coverage=keyword_coverage,
+                    )
+                )
 
-        pairs = sorted(pairs, key=lambda p: p.score)
-        avg_score = statistics.mean(p.score for p in pairs) if pairs else 0.0
-        note = "score=jaccard(token overlap) where 1.0 means identical; lower scores indicate disagreement"
-        note += f"; avg_score={avg_score:.2f}"
-        return CompareResult(pairs=pairs, note=note)
+        avg_similarity = statistics.mean(p.token_overlap_jaccard for p in pairs) if pairs else 0.0
+        sorted_pairs = sorted(pairs, key=lambda p: p.token_overlap_jaccard)
+        summary = CompareSummary(
+            avg_similarity=avg_similarity,
+            most_disagree_pair=sorted_pairs[0] if sorted_pairs else None,
+            notes="token_overlap_jaccard: 1.0 = identical; length_ratio: shorter/longer; keyword_coverage vs prompt keywords.",
+        )
+        return CompareResult(pairs=pairs, summary=summary)
 
     @staticmethod
-    def _jaccard(a: str, b: str) -> float:
-        aset, bset = set(a.split()), set(b.split())
+    def _tokens(text: str) -> list[str]:
+        return [t for t in re.findall(r"\b\w+\b", text.lower()) if t]
+
+    @staticmethod
+    def _jaccard(tokens_a: list[str], tokens_b: list[str]) -> float:
+        aset, bset = set(tokens_a), set(tokens_b)
         if not aset and not bset:
             return 1.0
         intersection = len(aset & bset)
         union = len(aset | bset)
         return intersection / union if union else 0.0
+
+    @staticmethod
+    def _length_ratio(tokens_a: list[str], tokens_b: list[str]) -> float:
+        len_a, len_b = len(tokens_a), len(tokens_b)
+        if len_a == 0 or len_b == 0:
+            return 0.0
+        shorter, longer = sorted([len_a, len_b])
+        return shorter / longer if longer else 0.0
+
+    @staticmethod
+    def _keyword_coverage(prompt_keywords: set[str], tokens_a: list[str], tokens_b: list[str]) -> float:
+        if not prompt_keywords:
+            return 0.0
+        combined = set(tokens_a) | set(tokens_b)
+        return len(combined & prompt_keywords) / len(prompt_keywords)
 
     def _persist_run(self, request_id: str, request: EvaluateRequest, response: EvaluateResponse) -> None:
         os.makedirs(self._runs_dir, exist_ok=True)

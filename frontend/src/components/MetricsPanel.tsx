@@ -20,7 +20,7 @@ export default function MetricsPanel({ results, compare }: Props) {
         <Metric label="avg latency (ms)" value={avgLatency.toFixed(1)} />
         <Metric
           label="lowest jaccard"
-          value={topDisagreement ? `${topDisagreement.a} vs ${topDisagreement.b}: ${topDisagreement.score.toFixed(2)}` : "n/a"}
+          value={topDisagreement ? `${topDisagreement.a} vs ${topDisagreement.b}: ${topDisagreement.token_overlap_jaccard.toFixed(2)}` : "n/a"}
         />
       </div>
     </div>

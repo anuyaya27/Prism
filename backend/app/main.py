@@ -1,18 +1,18 @@
 import logging
 import os
 from pathlib import Path
+from dataclasses import asdict
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
 from dotenv import load_dotenv
 
 from app.evaluation.pipeline import EvaluationEngine
-from app.llms.gemini_client import GeminiClient
-from app.llms.mock import MockEchoClient, MockReasonerClient
-from app.llms.openai_client import OpenAIClient
-from app.llms.registry import ModelRegistry
 from app.models.schemas import EvaluateRequest, EvaluateResponse
-from app.synthesis.aggregator import SimpleSynthesizer
+from app.providers.registry import ProviderRegistry
+from app.providers.mock import MockProvider
+from app.providers.openai import OpenAIProvider
+from app.synthesis.aggregator import MultiStrategySynthesizer
 
 
 def load_environment() -> None:
@@ -31,8 +31,8 @@ def build_app() -> FastAPI:
     This keeps creation side-effect free for easier testing.
     """
     load_environment()
-    synthesizer = SimpleSynthesizer()
-    registry = ModelRegistry()
+    synthesizer = MultiStrategySynthesizer()
+    registry = ProviderRegistry()
     allowed_origins = [
         "http://localhost:3000",
         "http://127.0.0.1:3000",
@@ -40,50 +40,10 @@ def build_app() -> FastAPI:
         "http://127.0.0.1:5173",
     ]
 
-    # Mock models always available
-    registry.register(
-        "mock:echo",
-        lambda: MockEchoClient(),
-        provider="mock",
-        enabled=True,
-        description="Deterministic echo model",
-    )
-    registry.register(
-        "mock:reasoner",
-        lambda: MockReasonerClient(),
-        provider="mock",
-        enabled=True,
-        description="Pseudo reasoning model",
-    )
-    # Backward compatibility alias
-    registry.register(
-        "mock:pseudo",
-        lambda: MockReasonerClient(),
-        provider="mock",
-        enabled=True,
-        description="Alias of mock:reasoner",
-    )
-
-    # Real providers (enabled only if keys are present)
-    openai_key = os.getenv("OPENAI_API_KEY")
-    registry.register(
-        "openai:gpt-4o-mini",
-        lambda: OpenAIClient(model="gpt-4o-mini", api_key=openai_key),
-        provider="openai",
-        enabled=bool(openai_key),
-        description="OpenAI GPT-4o-mini",
-        disabled_reason=None if openai_key else "OPENAI_API_KEY missing",
-    )
-
-    gemini_key = os.getenv("GEMINI_API_KEY")
-    registry.register(
-        "gemini:1.5-flash",
-        lambda: GeminiClient(model="gemini-1.5-flash", api_key=gemini_key),
-        provider="gemini",
-        enabled=bool(gemini_key),
-        description="Gemini 1.5 Flash",
-        disabled_reason=None if gemini_key else "GEMINI_API_KEY missing",
-    )
+    # Providers
+    registry.register("mock", lambda: MockProvider())
+    registry.register("openai", lambda: OpenAIProvider(api_key=os.getenv("OPENAI_API_KEY")))
+    # Gemini disabled per request; not registered.
 
     engine = EvaluationEngine(registry=registry, synthesizer=synthesizer)
 
@@ -143,8 +103,12 @@ def build_app() -> FastAPI:
         return {"ok": True, "origin": origin, "host": host, "version": api.version}
 
     @api.get("/models")
-    async def models() -> list[dict]:
-        return registry.list_models()
+    async def models() -> dict:
+        models = registry.list_models()
+        grouped: dict[str, list[dict]] = {}
+        for m in models:
+            grouped.setdefault(m.provider, []).append(asdict(m))
+        return {"models": [asdict(m) for m in models], "grouped": grouped}
 
     @api.options("/models")
     async def models_options(request: Request) -> dict[str, str]:

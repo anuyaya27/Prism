@@ -1,0 +1,72 @@
+{
+  "request_id": "660fdf76110248a29b0eea400f1b4731",
+  "request": {
+    "prompt": "Summarize the value of testing.",
+    "models": [
+      "mock:echo",
+      "openai:gpt-4o-mini"
+    ],
+    "temperature": 0.0,
+    "max_tokens": 512,
+    "timeout_s": 15.0,
+    "synthesis_method": "longest_nonempty"
+  },
+  "response": {
+    "request_id": "660fdf76110248a29b0eea400f1b4731",
+    "created_at": "2026-01-26T03:41:10.164368",
+    "prompt": "Summarize the value of testing.",
+    "params": {
+      "models": [
+        "mock:echo",
+        "openai:gpt-4o-mini"
+      ],
+      "temperature": 0.0,
+      "max_tokens": 512,
+      "timeout_s": 15.0,
+      "synthesis_method": "longest_nonempty"
+    },
+    "results": [
+      {
+        "model": "mock:echo",
+        "provider": "mock",
+        "ok": true,
+        "status": "success",
+        "text": "[echo:mock-echo] Summarize the value of testing.",
+        "error_code": null,
+        "error_message": null,
+        "latency_ms": 49.93740003556013,
+        "usage": null,
+        "meta": {
+          "provider_model": {},
+          "model": "mock-echo"
+        }
+      },
+      {
+        "model": "openai:gpt-4o-mini",
+        "provider": "openai",
+        "ok": false,
+        "status": "error",
+        "text": null,
+        "error_code": "unavailable",
+        "error_message": "OPENAI_API_KEY missing",
+        "latency_ms": 0.000600004568696022,
+        "usage": null,
+        "meta": null
+      }
+    ],
+    "synthesis": {
+      "ok": true,
+      "method": "longest_nonempty",
+      "text": "[echo:mock-echo] Summarize the value of testing.",
+      "rationale": "Selected longest response from mock:echo."
+    },
+    "compare": {
+      "pairs": [],
+      "summary": {
+        "avg_similarity": 1.0,
+        "most_disagree_pair": null,
+        "notes": "Not enough responses to compare; need at least two non-empty outputs."
+      }
+    }
+  }
+}

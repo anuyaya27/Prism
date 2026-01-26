@@ -89,6 +89,13 @@ button.ghost {
   border: 1px solid #cbd5e1;
 }
 
+select {
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+}
+
 .responses {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
@@ -355,4 +362,12 @@ button.ghost {
   border: 1px solid #fecdd3;
   padding: 8px;
   border-radius: 8px;
+}
+
+.raw-block {
+  margin-top: 8px;
+}
+
+.usage {
+  margin-top: -4px;
 }
