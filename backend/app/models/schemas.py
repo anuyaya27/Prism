@@ -29,11 +29,15 @@ class ModelResult(BaseModel):
     ok: bool
     status: Literal["success", "error", "timeout"]
     text: str | None = None
+    raw_request: dict | None = None
+    raw_response: dict | None = None
     error_code: str | None = None
     error_message: str | None = None
     latency_ms: float | None = None
     usage: dict[str, Any] | None = None
     meta: dict[str, Any] | None = None
+    format_compliance: float | None = None
+    hedge_count: int | None = None
 
 
 class ComparePair(BaseModel):
@@ -42,12 +46,14 @@ class ComparePair(BaseModel):
     token_overlap_jaccard: float
     length_ratio: float
     keyword_coverage: float
+    rouge_l: float
 
 
 class CompareSummary(BaseModel):
     avg_similarity: float
     most_disagree_pair: ComparePair | None = None
     notes: str | None = None
+    disagreement_summary: dict | None = None
 
 
 class CompareResult(BaseModel):
@@ -55,18 +61,33 @@ class CompareResult(BaseModel):
     summary: CompareSummary
 
 
+class Attribution(BaseModel):
+    source_model_id: str
+    span: str | None = None
+    sentence_index: int | None = None
+
+
 class SynthesisPayload(BaseModel):
     ok: bool
+    strategy_id: Literal["longest", "consensus_overlap", "best_of_n", "none"]
     method: Literal["longest_nonempty", "consensus_overlap", "best_of_n"]
     text: str | None
     rationale: str | None = None
+    confidence: float | None = None
+    attribution: list[Attribution] | None = None
+    synthesized_text: str | None = None
 
 
 class EvaluateResponse(BaseModel):
     request_id: str
     created_at: datetime
+    run_hash: str
+    schema_version: str
+    api_version: str
     prompt: str
     params: EvaluateParams
     results: list[ModelResult]
     synthesis: SynthesisPayload
     compare: CompareResult
+    status: Literal["success", "partial", "failed"]
+    partial_success: bool | None = None

@@ -48,6 +48,7 @@ def build_app() -> FastAPI:
     engine = EvaluationEngine(registry=registry, synthesizer=synthesizer)
 
     api = FastAPI(title="PRISM", version="0.3.0")
+    api.state.engine = engine
 
     allow_methods = ["*"]
     allow_headers = ["*"]
@@ -115,15 +116,26 @@ def build_app() -> FastAPI:
         return {"status": "ok"}
 
     @api.post("/evaluate", response_model=EvaluateResponse)
-    async def evaluate(request: EvaluateRequest) -> EvaluateResponse:
+    async def evaluate(request: EvaluateRequest, http_request: Request) -> EvaluateResponse:
         try:
-            return await engine.evaluate(request=request)
+            return await engine.evaluate(request=request, client_request=http_request)
         except ValueError as exc:
             raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @api.options("/evaluate")
     async def evaluate_options(request: Request) -> dict[str, str]:
         return {"status": "ok"}
+
+    @api.get("/runs")
+    async def list_runs(limit: int = 20, status: str | None = None) -> dict:
+        return {"runs": engine.list_runs(limit=limit, status=status)}
+
+    @api.get("/runs/{run_id}")
+    async def get_run(run_id: str) -> dict:
+        run = engine.get_run(run_id)
+        if run is None:
+            raise HTTPException(status_code=404, detail="Run not found")
+        return run
 
     return api
 

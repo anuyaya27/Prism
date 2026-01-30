@@ -1,0 +1,214 @@
+{
+  "api_version": "0.3.0",
+  "canonical_request": {
+    "models": [
+      "mock:echo",
+      "mock:pseudo"
+    ],
+    "params": {
+      "max_tokens": 512,
+      "synthesis_method": "consensus_overlap",
+      "temperature": 0.0,
+      "timeout_s": 15.0
+    },
+    "prompt": "List two benefits of unit testing."
+  },
+  "execution_context": {
+    "providers": [
+      {
+        "model_id": "mock:echo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.0,
+          "timeout_s": 15.0
+        }
+      },
+      {
+        "model_id": "mock:pseudo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.0,
+          "timeout_s": 15.0
+        }
+      }
+    ],
+    "runtime": {
+      "git_commit": "484eaa9835844937a6fe95e83fc2c328190ffb97",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "python_version": "3.11.9"
+    }
+  },
+  "raw_generations": [
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:echo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:echo",
+        "prompt": "List two benefits of unit testing."
+      },
+      "raw_response": {
+        "response": "[echo:mock-echo] List two benefits of unit testing."
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:pseudo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:pseudo",
+        "prompt": "List two benefits of unit testing."
+      },
+      "raw_response": {
+        "response": "analysis:\n- step 1: compare tradeoff\n- step 2: contrast path"
+      }
+    }
+  ],
+  "request": {
+    "max_tokens": 512,
+    "models": [
+      "mock:echo",
+      "mock:pseudo"
+    ],
+    "prompt": "List two benefits of unit testing.",
+    "synthesis_method": "consensus_overlap",
+    "temperature": 0.0,
+    "timeout_s": 15.0
+  },
+  "request_id": "c14de52c303940558aa8dc4da48d78e7",
+  "response": {
+    "api_version": "0.3.0",
+    "compare": {
+      "pairs": [
+        {
+          "a": "mock:echo",
+          "b": "mock:pseudo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 1.0,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.0,
+        "disagreement_summary": {
+          "max_distance": 2.0,
+          "pair": {
+            "a": "mock:echo",
+            "b": "mock:pseudo"
+          },
+          "reason": "Low overlap: rouge_l=0.00, jaccard=0.00"
+        },
+        "most_disagree_pair": {
+          "a": "mock:echo",
+          "b": "mock:pseudo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 1.0,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        "notes": "token_overlap_jaccard: 1.0 = identical; length_ratio: shorter/longer; keyword_coverage vs prompt keywords."
+      }
+    },
+    "created_at": "2026-01-29T23:44:06.887193",
+    "params": {
+      "max_tokens": 512,
+      "models": [
+        "mock:echo",
+        "mock:pseudo"
+      ],
+      "synthesis_method": "consensus_overlap",
+      "temperature": 0.0,
+      "timeout_s": 15.0
+    },
+    "partial_success": false,
+    "prompt": "List two benefits of unit testing.",
+    "request_id": "c14de52c303940558aa8dc4da48d78e7",
+    "results": [
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 51.04369999753544,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-echo",
+          "provider_model": {}
+        },
+        "model": "mock:echo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:echo",
+          "prompt": "List two benefits of unit testing."
+        },
+        "raw_response": {
+          "response": "[echo:mock-echo] List two benefits of unit testing."
+        },
+        "status": "success",
+        "text": "[echo:mock-echo] List two benefits of unit testing.",
+        "usage": null
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 114.06500000157394,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-reasoner",
+          "provider_model": {
+            "stance": "cautious"
+          }
+        },
+        "model": "mock:pseudo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:pseudo",
+          "prompt": "List two benefits of unit testing."
+        },
+        "raw_response": {
+          "response": "analysis:\n- step 1: compare tradeoff\n- step 2: contrast path"
+        },
+        "status": "success",
+        "text": "analysis:\n- step 1: compare tradeoff\n- step 2: contrast path",
+        "usage": null
+      }
+    ],
+    "run_hash": "d5dd62f976f246523c029e7324239d977a9c65c5bb55efe186594f599c236e45",
+    "schema_version": "1.1.0",
+    "status": "success",
+    "synthesis": {
+      "attribution": [
+        {
+          "sentence_index": 0,
+          "source_model_id": "mock:pseudo",
+          "span": null
+        }
+      ],
+      "confidence": 0.4,
+      "method": "longest_nonempty",
+      "ok": true,
+      "rationale": "No overlapping sentences; fell back to longest.",
+      "strategy_id": "longest",
+      "synthesized_text": "analysis:\n- step 1: compare tradeoff\n- step 2: contrast path",
+      "text": "analysis:\n- step 1: compare tradeoff\n- step 2: contrast path"
+    }
+  },
+  "run_hash": "d5dd62f976f246523c029e7324239d977a9c65c5bb55efe186594f599c236e45",
+  "schema_version": "1.1.0",
+  "timestamp_utc": "2026-01-29T23:44:06.887193Z"
+}

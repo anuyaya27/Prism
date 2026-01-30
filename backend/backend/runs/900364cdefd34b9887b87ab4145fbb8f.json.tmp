@@ -1,0 +1,178 @@
+{
+  "api_version": "0.3.0",
+  "canonical_request": {
+    "models": [
+      "mock:echo",
+      "openai:gpt-4o-mini"
+    ],
+    "params": {
+      "max_tokens": 512,
+      "synthesis_method": "longest_nonempty",
+      "temperature": 0.0,
+      "timeout_s": 15.0
+    },
+    "prompt": "Summarize the value of testing."
+  },
+  "execution_context": {
+    "providers": [
+      {
+        "model_id": "mock:echo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.0,
+          "timeout_s": 15.0
+        }
+      },
+      {
+        "model_id": "openai:gpt-4o-mini",
+        "provider_name": "openai",
+        "runtime": {
+          "base_url": "https://api.openai.com/v1/chat/completions",
+          "max_tokens": 512,
+          "retries": 2,
+          "temperature": 0.0,
+          "timeout_s": 20.0
+        }
+      }
+    ],
+    "runtime": {
+      "git_commit": "484eaa9835844937a6fe95e83fc2c328190ffb97",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "python_version": "3.11.9"
+    }
+  },
+  "raw_generations": [
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:echo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:echo",
+        "prompt": "Summarize the value of testing."
+      },
+      "raw_response": {
+        "response": "[echo:mock-echo] Summarize the value of testing."
+      }
+    },
+    {
+      "error_code": "unavailable",
+      "error_message": "OPENAI_API_KEY missing",
+      "model_id": "openai:gpt-4o-mini",
+      "provider": "openai",
+      "raw_request": null,
+      "raw_response": null
+    }
+  ],
+  "request": {
+    "max_tokens": 512,
+    "models": [
+      "mock:echo",
+      "openai:gpt-4o-mini"
+    ],
+    "prompt": "Summarize the value of testing.",
+    "synthesis_method": "longest_nonempty",
+    "temperature": 0.0,
+    "timeout_s": 15.0
+  },
+  "request_id": "900364cdefd34b9887b87ab4145fbb8f",
+  "response": {
+    "api_version": "0.3.0",
+    "compare": {
+      "pairs": [],
+      "summary": {
+        "avg_similarity": 1.0,
+        "disagreement_summary": {
+          "max_distance": 0.0,
+          "pair": null,
+          "reason": "Insufficient responses"
+        },
+        "most_disagree_pair": null,
+        "notes": "Not enough responses to compare; need at least two non-empty outputs."
+      }
+    },
+    "created_at": "2026-01-29T23:42:07.791485",
+    "params": {
+      "max_tokens": 512,
+      "models": [
+        "mock:echo",
+        "openai:gpt-4o-mini"
+      ],
+      "synthesis_method": "longest_nonempty",
+      "temperature": 0.0,
+      "timeout_s": 15.0
+    },
+    "partial_success": true,
+    "prompt": "Summarize the value of testing.",
+    "request_id": "900364cdefd34b9887b87ab4145fbb8f",
+    "results": [
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 50.328600002103485,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-echo",
+          "provider_model": {}
+        },
+        "model": "mock:echo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:echo",
+          "prompt": "Summarize the value of testing."
+        },
+        "raw_response": {
+          "response": "[echo:mock-echo] Summarize the value of testing."
+        },
+        "status": "success",
+        "text": "[echo:mock-echo] Summarize the value of testing.",
+        "usage": null
+      },
+      {
+        "error_code": "unavailable",
+        "error_message": "OPENAI_API_KEY missing",
+        "format_compliance": null,
+        "hedge_count": null,
+        "latency_ms": 0.0006000009307172149,
+        "meta": null,
+        "model": "openai:gpt-4o-mini",
+        "ok": false,
+        "provider": "openai",
+        "raw_request": null,
+        "raw_response": null,
+        "status": "error",
+        "text": null,
+        "usage": null
+      }
+    ],
+    "run_hash": "0ea57f4f2ad4b92b7a34a35682bb2c5af7bfd0c70c573288de4603d972880427",
+    "schema_version": "1.1.0",
+    "status": "partial",
+    "synthesis": {
+      "attribution": [
+        {
+          "sentence_index": 0,
+          "source_model_id": "mock:echo",
+          "span": null
+        }
+      ],
+      "confidence": 0.4,
+      "method": "longest_nonempty",
+      "ok": true,
+      "rationale": "Selected longest response from mock:echo.",
+      "strategy_id": "longest",
+      "synthesized_text": "[echo:mock-echo] Summarize the value of testing.",
+      "text": "[echo:mock-echo] Summarize the value of testing."
+    }
+  },
+  "run_hash": "0ea57f4f2ad4b92b7a34a35682bb2c5af7bfd0c70c573288de4603d972880427",
+  "schema_version": "1.1.0",
+  "timestamp_utc": "2026-01-29T23:42:07.791485Z"
+}

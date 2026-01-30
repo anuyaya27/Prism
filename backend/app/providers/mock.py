@@ -31,6 +31,8 @@ class MockProvider(Provider):
                 text=None,
                 usage=None,
                 meta=None,
+                raw_request={"model_id": model_id, "prompt": prompt},
+                raw_response=None,
                 latency_ms=None,
                 error_code="unknown_model",
                 error_message=f"Model {model_id} is not registered",
@@ -48,6 +50,8 @@ class MockProvider(Provider):
                 text=generation.response,
                 usage=generation.usage,
                 meta={"provider_model": getattr(generation, "meta", None), "model": getattr(generation, "model", None)},
+                raw_request={"model_id": model_id, "prompt": prompt},
+                raw_response={"response": generation.response[:500]},
                 latency_ms=latency_ms,
             )
         except Exception as exc:  # noqa: BLE001
@@ -58,6 +62,8 @@ class MockProvider(Provider):
                 text=None,
                 usage=None,
                 meta=None,
+                raw_request={"model_id": model_id, "prompt": prompt},
+                raw_response=None,
                 latency_ms=latency_ms,
                 error_code="mock_error",
                 error_message=str(exc),

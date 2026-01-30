@@ -4,7 +4,7 @@ from typing import Sequence
 
 from app.providers.base import GenerationResult
 from app.synthesis.keywords import extract_keywords
-from app.models.schemas import SynthesisPayload
+from app.models.schemas import Attribution, SynthesisPayload
 
 
 class ResponseSynthesizer:
@@ -19,16 +19,23 @@ class MultiStrategySynthesizer(ResponseSynthesizer):
         if not usable:
             return SynthesisPayload(
                 ok=False,
+                strategy_id="none",
                 method="longest_nonempty",
-                text=None,
+                text="",
+                synthesized_text="",
                 rationale="No responses were available to synthesize.",
+                confidence=0.0,
+                attribution=[],
             )
 
-        if method == "consensus_overlap":
-            return self._consensus_overlap(usable)
-        if method == "best_of_n":
-            return self._best_of_n(prompt, usable)
-        return self._longest_nonempty(usable)
+        try:
+            if method == "consensus_overlap":
+                return self._consensus_overlap(usable)
+            if method == "best_of_n":
+                return self._best_of_n(prompt, usable)
+            return self._longest_nonempty(usable)
+        except Exception as exc:  # noqa: BLE001
+            return self._longest_nonempty(usable, rationale=f"Synthesis failed ({exc}); fell back to longest.")
 
     def _consensus_overlap(self, generations: Sequence[GenerationResult]) -> SynthesisPayload:
         sentence_counter: Counter[str] = Counter()
@@ -47,7 +54,21 @@ class MultiStrategySynthesizer(ResponseSynthesizer):
         overlapping_sorted = sorted(overlapping, key=lambda s: (-sentence_counter[s], -len(s)))
         text = "\n".join(overlapping_sorted)
         rationale = f"Selected {len(overlapping_sorted)} overlapping sentence(s) appearing in multiple outputs."
-        return SynthesisPayload(ok=True, method="consensus_overlap", text=text, rationale=rationale)
+        attribution = [
+            Attribution(source_model_id=next(iter(sentence_source[s])), span=s, sentence_index=i)
+            for i, s in enumerate(overlapping_sorted)
+        ]
+        confidence = min(1.0, max(sentence_counter.values()) / max(len(generations), 1))
+        return SynthesisPayload(
+            ok=True,
+            strategy_id="consensus_overlap",
+            method="consensus_overlap",
+            text=text,
+            synthesized_text=text,
+            rationale=rationale,
+            confidence=confidence,
+            attribution=attribution,
+        )
 
     def _best_of_n(self, prompt: str, generations: Sequence[GenerationResult]) -> SynthesisPayload:
         prompt_keywords = extract_keywords(prompt)
@@ -74,15 +95,30 @@ class MultiStrategySynthesizer(ResponseSynthesizer):
             f"Selected {gen.model_id} via best_of_n scoring: "
             f"coverage={coverage:.2f}, redundancy={redundancy:.2f}, conciseness={conciseness:.2f}, score={score:.2f}."
         )
-        return SynthesisPayload(ok=True, method="best_of_n", text=gen.text, rationale=rationale)
+        attribution = [Attribution(source_model_id=gen.model_id, span=None, sentence_index=0)]
+        confidence = min(1.0, score / 3)
+        return SynthesisPayload(
+            ok=True,
+            strategy_id="best_of_n",
+            method="best_of_n",
+            text=gen.text,
+            synthesized_text=gen.text,
+            rationale=rationale,
+            confidence=confidence,
+            attribution=attribution,
+        )
 
     def _longest_nonempty(self, generations: Sequence[GenerationResult], rationale: str | None = None) -> SynthesisPayload:
         target = max(generations, key=lambda g: len(g.text or ""))
         return SynthesisPayload(
             ok=True,
+            strategy_id="longest",
             method="longest_nonempty",
             text=target.text,
+            synthesized_text=target.text,
             rationale=rationale or f"Selected longest response from {target.model_id}.",
+            confidence=0.4,
+            attribution=[Attribution(source_model_id=target.model_id, span=None, sentence_index=0)],
         )
 
     @staticmethod

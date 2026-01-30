@@ -20,6 +20,8 @@ class GenerationResult:
     usage: dict[str, Any] | None
     meta: dict[str, Any] | None
     latency_ms: float | None
+    raw_request: dict | None = None
+    raw_response: dict | None = None
     error_code: str | None = None
     error_message: str | None = None
 

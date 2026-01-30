@@ -6,6 +6,7 @@ from typing import Any, Optional
 import httpx
 
 from app.providers.base import GenerationResult, Provider, ProviderModel
+from app.utils.redact import sanitize_raw_io
 
 
 class OpenAIProvider(Provider):
@@ -16,6 +17,7 @@ class OpenAIProvider(Provider):
         self.timeout = timeout
         self.max_retries = max_retries
         self._models = ["gpt-4o-mini"]
+        self.base_url = os.getenv("OPENAI_BASE_URL", "https://api.openai.com/v1/chat/completions")
 
     def list_models(self) -> list[ProviderModel]:
         available = bool(self.api_key)
@@ -44,12 +46,14 @@ class OpenAIProvider(Provider):
                 usage=None,
                 meta=None,
                 latency_ms=latency_ms,
+                raw_request=None,
+                raw_response=None,
                 error_code="missing_api_key",
                 error_message="OPENAI_API_KEY is missing",
             )
 
         model_name = model_id.split(":", 1)[1] if ":" in model_id else model_id
-        url = "https://api.openai.com/v1/chat/completions"
+        url = self.base_url
         headers = {
             "Authorization": f"Bearer {self.api_key}",
             "Content-Type": "application/json",
@@ -62,6 +66,7 @@ class OpenAIProvider(Provider):
         }
 
         last_error: str | None = None
+        sanitized_request = sanitize_raw_io(url=url, headers=headers, body=payload)
         for attempt in range(self.max_retries + 1):
             try:
                 async with httpx.AsyncClient(timeout=self.timeout) as client:
@@ -77,6 +82,12 @@ class OpenAIProvider(Provider):
                     text=message,
                     usage=data.get("usage"),
                     meta={"finish_reason": choice.get("finish_reason"), "model": model_name},
+                    raw_request=sanitized_request,
+                    raw_response=sanitize_raw_io(
+                        url=str(response.url),
+                        headers=dict(response.headers),
+                        body={"status_code": response.status_code, "body_snippet": str(response.text)[:500]},
+                    ),
                     latency_ms=latency_ms,
                 )
             except httpx.HTTPStatusError as exc:
@@ -95,6 +106,8 @@ class OpenAIProvider(Provider):
             text=None,
             usage=None,
             meta=None,
+            raw_request=sanitized_request,
+            raw_response=None,
             latency_ms=latency_ms,
             error_code=last_error or "unknown_error",
             error_message="OpenAI generation failed",
