@@ -36,6 +36,9 @@ export default function ResultCard({ result, showUsage }: Props) {
           <pre className="code-block">{result.text || "No output returned."}</pre>
         )}
       </div>
+      <div className="muted small">
+        format {result.format_compliance?.toFixed(2) ?? "n/a"} · hedge {result.hedge_count ?? "n/a"}
+      </div>
       {showUsage && <div className="muted small">usage: {result.usage ? JSON.stringify(result.usage) : "n/a"}</div>}
       <div className="actions">
         <button className="ghost" onClick={copy}>

@@ -18,7 +18,10 @@ export default function SynthesisCard({ synthesis }: { synthesis: SynthesisPaylo
       <div className="response-header">
         <h3 style={{ margin: 0 }}>Synthesis</h3>
         <div className="chip-row">
-          <span className={badgeClass}>{synthesis.method}</span>
+          <span className={badgeClass}>{synthesis.strategy_id || synthesis.method}</span>
+          {typeof synthesis.confidence === "number" && (
+            <span className="badge">{Math.round(synthesis.confidence * 100)}%</span>
+          )}
           {synthesis.rationale && <span className="badge">{synthesis.rationale}</span>}
         </div>
       </div>

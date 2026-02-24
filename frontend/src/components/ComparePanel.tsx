@@ -16,6 +16,7 @@ export default function ComparePanel({ compare }: Props) {
 
   const pairs = [...compare.pairs].sort((a, b) => a.token_overlap_jaccard - b.token_overlap_jaccard);
   const topDisagreements = pairs.slice(0, 2);
+  const disagreement = compare.summary?.disagreement_summary;
 
   return (
     <div className="card">
@@ -31,6 +32,11 @@ export default function ComparePanel({ compare }: Props) {
         {compare.summary?.most_disagree_pair && (
           <span className="badge warn">
             <strong>most disagree</strong> {compare.summary.most_disagree_pair.a} vs {compare.summary.most_disagree_pair.b}
+          </span>
+        )}
+        {disagreement && (
+          <span className="badge warn">
+            <strong>max dist</strong> {disagreement.max_distance?.toFixed(2)} · {disagreement.reason}
           </span>
         )}
       </div>
@@ -49,7 +55,7 @@ export default function ComparePanel({ compare }: Props) {
                     <strong>{pair.a}</strong> vs <strong>{pair.b}</strong>
                   </div>
                   <div className="pair-score">
-                    jaccard {pair.token_overlap_jaccard.toFixed(2)} Â· len {pair.length_ratio.toFixed(2)} Â· kw {pair.keyword_coverage.toFixed(2)}
+                    jaccard {pair.token_overlap_jaccard.toFixed(2)} · len {pair.length_ratio.toFixed(2)} · kw {pair.keyword_coverage.toFixed(2)} · rouge {pair.rouge_l.toFixed(2)}
                   </div>
                 </div>
               );
@@ -57,8 +63,7 @@ export default function ComparePanel({ compare }: Props) {
           </div>
 
           <div className="muted small" style={{ marginTop: 8 }}>
-            Highlighted disagreements:{" "}
-            {topDisagreements.map((pair) => `${pair.a} vs ${pair.b}`).join(", ") || "n/a"}
+            Highlighted disagreements: {topDisagreements.map((pair) => `${pair.a} vs ${pair.b}`).join(", ") || "n/a"}
           </div>
         </>
       )}

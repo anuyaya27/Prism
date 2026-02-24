@@ -1,0 +1,387 @@
+{
+  "api_version": "0.3.0",
+  "canonical_request": {
+    "models": [
+      "mock:echo",
+      "mock:pseudo",
+      "openai:gpt-4o-mini"
+    ],
+    "params": {
+      "max_tokens": 512,
+      "synthesis_method": "best_of_n",
+      "temperature": 0.0,
+      "timeout_s": 15.0
+    },
+    "prompt": "what is the temperature in san diego?"
+  },
+  "execution_context": {
+    "providers": [
+      {
+        "model_id": "mock:echo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.0,
+          "timeout_s": 15.0
+        }
+      },
+      {
+        "model_id": "mock:pseudo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.0,
+          "timeout_s": 15.0
+        }
+      },
+      {
+        "model_id": "openai:gpt-4o-mini",
+        "provider_name": "openai",
+        "runtime": {
+          "base_url": "https://api.openai.com/v1/chat/completions",
+          "max_tokens": 512,
+          "retries": 2,
+          "temperature": 0.0,
+          "timeout_s": 20.0
+        }
+      }
+    ],
+    "runtime": {
+      "git_commit": "6a639c40a70ba085a875e699893871235a3bc42e",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "python_version": "3.11.9"
+    }
+  },
+  "raw_generations": [
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:echo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:echo",
+        "prompt": "what is the temperature in san diego?"
+      },
+      "raw_response": {
+        "response": "[echo:mock-echo] what is the temperature in san diego?"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:pseudo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:pseudo",
+        "prompt": "what is the temperature in san diego?"
+      },
+      "raw_response": {
+        "response": "analysis:\n- step 1: compare opportunity\n- step 2: compare impact\n- step 3: estimate tradeoff"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "openai:gpt-4o-mini",
+      "provider": "openai",
+      "raw_request": {
+        "body": {
+          "max_tokens": 512,
+          "messages": [
+            {
+              "content": "what is the temperature in san diego?",
+              "role": "user"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "temperature": 0.0
+        },
+        "headers": {
+          "Authorization": "***REDACTED***",
+          "Content-Type": "application/json"
+        },
+        "url": "https://api.openai.com/v1/chat/completions"
+      },
+      "raw_response": {
+        "body": {
+          "body_snippet": "{\n  ***REDACTED*** \"lo",
+          "status_code": 200
+        },
+        "headers": {
+          "access-control-expose-headers": "X-Request-ID",
+          "alt-svc": "h3=\":443\"; ma=86400",
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "9c5d0819dc63196e-LAX",
+          "connection": "keep-alive",
+          "content-encoding": "gzip",
+          "content-type": "application/json",
+          "date": "Fri, 30 Jan 2026 01:00:20 GMT",
+          "openai-organization": "user-riqxe1sh4tn9y09bmfp1dnnz",
+          "openai-processing-ms": "747",
+          "openai-project": "proj_7ZhJ9OB3ZWvXUVQnILY00wKJ",
+          "openai-version": "2020-10-01",
+          "server": "cloudflare",
+          "set-cookie": "__cf_bm=vvIJ3LGv_WAHlob6zSZ2g34TSSBlo4TxdnMrrPFwe5o-1769734820-1.0.1.1-ETOCfmjb4s3wHVHw0sPrzcQt4syJm.P8.H57MILx2Xv5oVQyHVg52QNu_l.xYUIniHg1cswrr2__is7juOH8iSvOKJrsJxHWP63zyf5XOKk; path=/; expires=Fri, 30-Jan-26 01:30:20 GMT; domain=.api.openai.com; HttpOnly; Secure; SameSite=None, _cfuvid=yGoDTO48HQzJRrjIK1gf_wXw8ShENxxqml30bFbDVsg-1769734820663-0.0.1.1-604800000; path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None",
+          "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+          "transfer-encoding": "chunked",
+          "x-content-type-options": "nosniff",
+          "x-openai-proxy-wasm": "v0.1",
+          "x-ratelimit-limit-requests": "5000",
+          "x-ratelimit-limit-tokens": "***REDACTED***",
+          "x-ratelimit-remaining-requests": "4999",
+          "x-ratelimit-remaining-tokens": "***REDACTED***",
+          "x-ratelimit-reset-requests": "12ms",
+          "x-ratelimit-reset-tokens": "***REDACTED***",
+          "x-request-id": "req_d76254c972a347179dcab00a791bd6ea"
+        },
+        "url": "https://api.openai.com/v1/chat/completions"
+      }
+    }
+  ],
+  "request": {
+    "max_tokens": 512,
+    "models": [
+      "mock:echo",
+      "mock:pseudo",
+      "openai:gpt-4o-mini"
+    ],
+    "prompt": "what is the temperature in san diego?",
+    "synthesis_method": "best_of_n",
+    "temperature": 0.0,
+    "timeout_s": 15.0
+  },
+  "request_id": "f65a22011b3e4e1d84e9103f0f9a91c8",
+  "response": {
+    "api_version": "0.3.0",
+    "compare": {
+      "pairs": [
+        {
+          "a": "mock:echo",
+          "b": "mock:pseudo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.7692307692307693,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "mock:echo",
+          "b": "openai:gpt-4o-mini",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.3333333333333333,
+          "rouge_l": 0.16666666666666666,
+          "token_overlap_jaccard": 0.16666666666666666
+        },
+        {
+          "a": "mock:pseudo",
+          "b": "openai:gpt-4o-mini",
+          "keyword_coverage": 0.75,
+          "length_ratio": 0.43333333333333335,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.05555555555555555,
+        "disagreement_summary": {
+          "max_distance": 2.0,
+          "pair": {
+            "a": "mock:echo",
+            "b": "mock:pseudo"
+          },
+          "reason": "Low overlap: rouge_l=0.00, jaccard=0.00"
+        },
+        "most_disagree_pair": {
+          "a": "mock:echo",
+          "b": "mock:pseudo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.7692307692307693,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        "notes": "token_overlap_jaccard: 1.0 = identical; length_ratio: shorter/longer; keyword_coverage vs prompt keywords."
+      }
+    },
+    "created_at": "2026-01-30T01:00:17.769647",
+    "params": {
+      "max_tokens": 512,
+      "models": [
+        "mock:echo",
+        "mock:pseudo",
+        "openai:gpt-4o-mini"
+      ],
+      "synthesis_method": "best_of_n",
+      "temperature": 0.0,
+      "timeout_s": 15.0
+    },
+    "partial_success": false,
+    "prompt": "what is the temperature in san diego?",
+    "request_id": "f65a22011b3e4e1d84e9103f0f9a91c8",
+    "results": [
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 545.0640999988536,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-echo",
+          "provider_model": {}
+        },
+        "model": "mock:echo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:echo",
+          "prompt": "what is the temperature in san diego?"
+        },
+        "raw_response": {
+          "response": "[echo:mock-echo] what is the temperature in san diego?"
+        },
+        "status": "success",
+        "text": "[echo:mock-echo] what is the temperature in san diego?",
+        "usage": null
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 545.1289999982691,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-reasoner",
+          "provider_model": {
+            "stance": "cautious"
+          }
+        },
+        "model": "mock:pseudo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:pseudo",
+          "prompt": "what is the temperature in san diego?"
+        },
+        "raw_response": {
+          "response": "analysis:\n- step 1: compare opportunity\n- step 2: compare impact\n- step 3: estimate tradeoff"
+        },
+        "status": "success",
+        "text": "analysis:\n- step 1: compare opportunity\n- step 2: compare impact\n- step 3: estimate tradeoff",
+        "usage": null
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 2540.863800000807,
+        "meta": {
+          "finish_reason": "stop",
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "gpt-4o-mini"
+        },
+        "model": "openai:gpt-4o-mini",
+        "ok": true,
+        "provider": "openai",
+        "raw_request": {
+          "body": {
+            "max_tokens": 512,
+            "messages": [
+              {
+                "content": "what is the temperature in san diego?",
+                "role": "user"
+              }
+            ],
+            "model": "gpt-4o-mini",
+            "temperature": 0.0
+          },
+          "headers": {
+            "Authorization": "***REDACTED***",
+            "Content-Type": "application/json"
+          },
+          "url": "https://api.openai.com/v1/chat/completions"
+        },
+        "raw_response": {
+          "body": {
+            "body_snippet": "{\n  ***REDACTED*** \"lo",
+            "status_code": 200
+          },
+          "headers": {
+            "access-control-expose-headers": "X-Request-ID",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9c5d0819dc63196e-LAX",
+            "connection": "keep-alive",
+            "content-encoding": "gzip",
+            "content-type": "application/json",
+            "date": "Fri, 30 Jan 2026 01:00:20 GMT",
+            "openai-organization": "user-riqxe1sh4tn9y09bmfp1dnnz",
+            "openai-processing-ms": "747",
+            "openai-project": "proj_7ZhJ9OB3ZWvXUVQnILY00wKJ",
+            "openai-version": "2020-10-01",
+            "server": "cloudflare",
+            "set-cookie": "__cf_bm=vvIJ3LGv_WAHlob6zSZ2g34TSSBlo4TxdnMrrPFwe5o-1769734820-1.0.1.1-ETOCfmjb4s3wHVHw0sPrzcQt4syJm.P8.H57MILx2Xv5oVQyHVg52QNu_l.xYUIniHg1cswrr2__is7juOH8iSvOKJrsJxHWP63zyf5XOKk; path=/; expires=Fri, 30-Jan-26 01:30:20 GMT; domain=.api.openai.com; HttpOnly; Secure; SameSite=None, _cfuvid=yGoDTO48HQzJRrjIK1gf_wXw8ShENxxqml30bFbDVsg-1769734820663-0.0.1.1-604800000; path=/; domain=.api.openai.com; HttpOnly; Secure; SameSite=None",
+            "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+            "transfer-encoding": "chunked",
+            "x-content-type-options": "nosniff",
+            "x-openai-proxy-wasm": "v0.1",
+            "x-ratelimit-limit-requests": "5000",
+            "x-ratelimit-limit-tokens": "***REDACTED***",
+            "x-ratelimit-remaining-requests": "4999",
+            "x-ratelimit-remaining-tokens": "***REDACTED***",
+            "x-ratelimit-reset-requests": "12ms",
+            "x-ratelimit-reset-tokens": "***REDACTED***",
+            "x-request-id": "req_d76254c972a347179dcab00a791bd6ea"
+          },
+          "url": "https://api.openai.com/v1/chat/completions"
+        },
+        "status": "success",
+        "text": "I don't have real-time data access to provide current weather information. To find the current temperature in San Diego, I recommend checking a reliable weather website or app.",
+        "usage": {
+          "completion_tokens": 32,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": 0
+          },
+          "prompt_tokens": 16,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0
+          },
+          "total_tokens": 48
+        }
+      }
+    ],
+    "run_hash": "a6161df716e31520b00e3c6c9dc713f9e79b992fe0325a437c5e1bef51602820",
+    "schema_version": "1.1.0",
+    "status": "success",
+    "synthesis": {
+      "attribution": [
+        {
+          "sentence_index": 0,
+          "source_model_id": "mock:echo",
+          "span": null
+        }
+      ],
+      "confidence": 0.9507936507936506,
+      "method": "best_of_n",
+      "ok": true,
+      "rationale": "Selected mock:echo via best_of_n scoring: coverage=1.00, redundancy=0.10, conciseness=0.95, score=2.85.",
+      "strategy_id": "best_of_n",
+      "synthesized_text": "[echo:mock-echo] what is the temperature in san diego?",
+      "text": "[echo:mock-echo] what is the temperature in san diego?"
+    }
+  },
+  "run_hash": "a6161df716e31520b00e3c6c9dc713f9e79b992fe0325a437c5e1bef51602820",
+  "schema_version": "1.1.0",
+  "timestamp_utc": "2026-01-30T01:00:17.769647Z"
+}

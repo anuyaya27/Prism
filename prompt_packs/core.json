@@ -1,0 +1,14 @@
+{
+  "id": "core",
+  "title": "Core coverage pack",
+  "prompts": [
+    {"id": "fact-short", "title": "Short factual", "prompt": "What is the capital of Canada?", "tags": ["factual"]},
+    {"id": "bullets-3", "title": "Three bullet list", "prompt": "List 3 bullets on why testing matters.", "tags": ["bullets", "testing"], "expected_format": {"bullets_count": 3}},
+    {"id": "reasoning", "title": "Reasoning chain", "prompt": "Explain why sky is blue in two sentences.", "tags": ["reasoning"]},
+    {"id": "coding", "title": "Coding snippet", "prompt": "Show a Python function that reverses a string.", "tags": ["code"]},
+    {"id": "compare", "title": "Compare options", "prompt": "Compare React and Vue in one paragraph.", "tags": ["compare"]},
+    {"id": "creative", "title": "Creative", "prompt": "Write a 2-line poem about winter sunsets.", "tags": ["creative"]},
+    {"id": "json-shape", "title": "JSON shape", "prompt": "Return a JSON object with keys a, b, c and short values.", "tags": ["json"]},
+    {"id": "table", "title": "Simple table", "prompt": "Provide a 2-row markdown table of fruits and colors.", "tags": ["table"]}
+  ]
+}

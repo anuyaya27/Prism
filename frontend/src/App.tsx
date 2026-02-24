@@ -16,6 +16,10 @@ const requestDefaults = {
   synthesis_method: "best_of_n" as SynthesisMethod,
 };
 
+// Frontend timeout should exceed backend PRISM_RUN_TIMEOUT_S (defaults ~30s).
+const CLIENT_TIMEOUT_MS =
+  Number(import.meta.env.VITE_EVALUATE_TIMEOUT_MS ?? 120_000) || 120_000; // 2 minutes default
+
 function App() {
   const [prompt, setPrompt] = useState("Compare the tradeoffs between unit tests and integration tests.");
   const [models, setModels] = useState<ModelInfo[]>([]);
@@ -100,8 +104,7 @@ function App() {
     if (Object.keys(errors).length > 0) return;
 
     const controller = new AbortController();
-    const timeoutMs = requestDefaults.timeout_s * 1000;
-    const timer = window.setTimeout(() => controller.abort(), timeoutMs);
+    const timer = window.setTimeout(() => controller.abort(), CLIENT_TIMEOUT_MS);
 
     setRunning(true);
     setRunError(null);
@@ -118,11 +121,13 @@ function App() {
       };
       const data = await postEvaluate(body, controller.signal);
       setResult(data as EvaluateResponse);
+      setTimeoutBanner(null);
     } catch (err: any) {
       console.error("Evaluation failed", err);
       if (err?.name === "AbortError") {
-        setTimeoutBanner(`Timed out after ${requestDefaults.timeout_s}s (client-side AbortController).`);
-        setRunError("Request aborted due to timeout.");
+        setTimeoutBanner("Evaluation is taking longer than expected. The backend may still be running.");
+        // keep previous results; non-fatal
+        setRunError(null);
       } else {
         const message = err?.message || "Failed to run evaluation";
         setRunError(message);

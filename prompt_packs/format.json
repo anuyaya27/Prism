@@ -1,0 +1,11 @@
+{
+  "id": "format",
+  "title": "Format stress pack",
+  "prompts": [
+    {"id": "bullets-5", "title": "Five bullets", "prompt": "Give 5 bullet points on healthy sleep habits.", "tags": ["bullets"], "expected_format": {"bullets_count": 5}},
+    {"id": "json-config", "title": "JSON config", "prompt": "Return JSON with fields host, port, secure (boolean).", "tags": ["json"], "expected_format": {"expects_json": true}},
+    {"id": "three-steps", "title": "Three steps", "prompt": "Provide 3 numbered steps to brew coffee.", "tags": ["steps"], "expected_format": {"bullets_count": 3}},
+    {"id": "checklist", "title": "Checklist", "prompt": "List a 4-item checklist for code review as bullets.", "tags": ["bullets"], "expected_format": {"bullets_count": 4}},
+    {"id": "table-req", "title": "Table required", "prompt": "Make a markdown table with two rows: language and key feature.", "tags": ["table"]}
+  ]
+}

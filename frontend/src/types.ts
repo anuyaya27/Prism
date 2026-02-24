@@ -23,11 +23,15 @@ export interface ModelResult {
   ok: boolean;
   status: "success" | "error" | "timeout";
   text?: string | null;
+   raw_request?: Record<string, unknown> | null;
+   raw_response?: Record<string, unknown> | null;
   error_code?: string | null;
   error_message?: string | null;
   latency_ms?: number | null;
   usage?: Record<string, unknown> | null;
   meta?: Record<string, unknown> | null;
+   format_compliance?: number | null;
+   hedge_count?: number | null;
 }
 
 export interface ComparePair {
@@ -36,12 +40,18 @@ export interface ComparePair {
   token_overlap_jaccard: number;
   length_ratio: number;
   keyword_coverage: number;
+  rouge_l: number;
 }
 
 export interface CompareSummary {
   avg_similarity: number;
   most_disagree_pair: ComparePair | null;
   notes?: string | null;
+  disagreement_summary?: {
+    max_distance: number;
+    pair: { a: string; b: string } | null;
+    reason?: string | null;
+  } | null;
 }
 
 export interface CompareResult {
@@ -51,9 +61,13 @@ export interface CompareResult {
 
 export interface SynthesisPayload {
   ok: boolean;
+  strategy_id: "longest" | "consensus_overlap" | "best_of_n" | "none";
   method: SynthesisMethod;
   text: string | null;
   rationale?: string | null;
+  confidence?: number | null;
+  attribution?: { source_model_id: string; span?: string | null; sentence_index?: number | null }[] | null;
+  synthesized_text?: string | null;
 }
 
 export interface EvaluateParams {
@@ -67,9 +81,14 @@ export interface EvaluateParams {
 export interface EvaluateResponse {
   request_id: string;
   created_at: string;
+  run_hash: string;
+  schema_version: string;
+  api_version: string;
   prompt: string;
   params: EvaluateParams;
   results: ModelResult[];
   synthesis: SynthesisPayload;
   compare: CompareResult;
+  status: "success" | "partial" | "failed";
+  partial_success?: boolean | null;
 }
