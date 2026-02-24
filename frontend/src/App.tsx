@@ -1,353 +1,414 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { API_BASE_URL, debugPing, getModels, postEvaluate } from "./api/client";
-import ComparisonCard from "./components/ComparisonCard";
-import Header from "./components/Header";
-import ModelChips from "./components/ModelChips";
-import ResultCard from "./components/ResultCard";
-import StatusBadge from "./components/StatusBadge";
-import SynthesisCard from "./components/SynthesisCard";
-import Toast from "./components/Toast";
-import { EvaluateRequestPayload, EvaluateResponse, ModelInfo, SynthesisMethod } from "./types";
 
-const requestDefaults = {
-  temperature: 0,
-  max_tokens: 512,
-  timeout_s: 15,
-  synthesis_method: "best_of_n" as SynthesisMethod,
-};
+import { useEffect, useMemo, useState } from "react";
+import { EvaluateResponse, ModelInfo, SynthesisMethod } from "./types";
 
-// Frontend timeout should exceed backend PRISM_RUN_TIMEOUT_S (defaults ~30s).
-const CLIENT_TIMEOUT_MS =
-  Number(import.meta.env.VITE_EVALUATE_TIMEOUT_MS ?? 120_000) || 120_000; // 2 minutes default
+const DEFAULT_API_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
+const CLIENT_TIMEOUT_MS = Number(import.meta.env.VITE_EVALUATE_TIMEOUT_MS ?? 120_000) || 120_000;
+
+type StatusState = "idle" | "connecting" | "online" | "offline";
+
+function normalizeBaseUrl(url: string): string {
+  return (url || DEFAULT_API_URL).trim().replace(/\/$/, "");
+}
 
 function App() {
-  const [prompt, setPrompt] = useState("Compare the tradeoffs between unit tests and integration tests.");
+  const [apiUrl, setApiUrl] = useState(() => normalizeBaseUrl(localStorage.getItem("prism_api_url") || DEFAULT_API_URL));
+  const [status, setStatus] = useState<StatusState>("idle");
   const [models, setModels] = useState<ModelInfo[]>([]);
+  const [modelsLoading, setModelsLoading] = useState(false);
+  const [prompt, setPrompt] = useState("Compare the tradeoffs between unit tests and integration tests.");
+  const [temperature, setTemperature] = useState(0.7);
+  const [maxTokens, setMaxTokens] = useState(512);
+  const [timeoutS, setTimeoutS] = useState(30);
+  const [synthesisMethod, setSynthesisMethod] = useState<SynthesisMethod>("best_of_n");
   const [selected, setSelected] = useState<Set<string>>(new Set());
-  const [synthesisMethod, setSynthesisMethod] = useState<SynthesisMethod>(requestDefaults.synthesis_method);
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<EvaluateResponse | null>(null);
-  const [runError, setRunError] = useState<string | null>(null);
-  const [timeoutBanner, setTimeoutBanner] = useState<string | null>(null);
-  const [modelsLoading, setModelsLoading] = useState(true);
-  const [modelsStatus, setModelsStatus] = useState<"idle" | "ok" | "error">("idle");
-  const [healthStatus, setHealthStatus] = useState<"idle" | "ok" | "error">("idle");
-  const [pingResult, setPingResult] = useState<string | null>(null);
-  const [pingError, setPingError] = useState<string | null>(null);
-  const [pingLoading, setPingLoading] = useState(false);
-  const [formErrors, setFormErrors] = useState<{ prompt?: string; models?: string }>({});
-  const [showUsage, setShowUsage] = useState(false);
-  const [showRaw, setShowRaw] = useState(false);
-  const [unavailableReason, setUnavailableReason] = useState<string | null>(null);
-  const [toast, setToast] = useState<{ message: string; tone: "success" | "error" } | null>(null);
-  const [showAdvanced, setShowAdvanced] = useState(false);
+  const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
-    const loadModels = async () => {
-      setModelsLoading(true);
-      try {
-        const data = await getModels();
-        const safeModels: ModelInfo[] = Array.isArray((data as any)?.models)
-          ? (data as any).models
-          : Array.isArray(data)
-            ? (data as ModelInfo[])
-            : [];
-        setModels(safeModels);
-        const defaults = ["mock:echo", "mock:pseudo"].filter((id) => safeModels.some((m: ModelInfo) => m.id === id && m.available));
-        const enabledFallback = safeModels.filter((m: ModelInfo) => m.available).map((m: ModelInfo) => m.id);
-        const initial = new Set<string>(defaults.length ? defaults : enabledFallback);
-        setSelected(initial);
-        const unavailable = safeModels.find((m: ModelInfo) => !m.available && m.reason);
-        setUnavailableReason(unavailable ? unavailable.reason || "Some providers are unavailable." : null);
-        setRunError(null);
-        setModelsStatus("ok");
-      } catch (err: any) {
-        console.error("Failed to load models", err);
-        const message = err?.message || "Failed to load models";
-        const isUnreachable = message.toLowerCase().includes("failed to fetch");
-        const reason = isUnreachable ? "Backend unreachable or blocked by CORS" : message;
-        setRunError(`Failed to load models from ${API_BASE_URL}. ${reason}. Check backend is running at ${API_BASE_URL} and CORS allows localhost:5173.`);
-        setModelsStatus("error");
-        setModels([]);
-        setSelected(new Set<string>());
-      } finally {
-        setModelsLoading(false);
-      }
-    };
+    if (!toast) return;
+    const t = window.setTimeout(() => setToast(null), 4000);
+    return () => window.clearTimeout(t);
+  }, [toast]);
 
-    loadModels();
+  const statusText = useMemo(() => {
+    if (status === "connecting") return "CONNECTING...";
+    if (status === "online") return "STATUS: ONLINE";
+    if (status === "offline") return "STATUS: OFFLINE";
+    return "INIT...";
+  }, [status]);
+
+  const selectedIds = useMemo(() => [...selected].filter((id) => models.some((m) => m.id === id && m.available)), [selected, models]);
+
+  const requestJson = async <T,>(path: string, init?: RequestInit): Promise<T> => {
+    const response = await fetch(`${normalizeBaseUrl(apiUrl)}${path}`, {
+      headers: { "Content-Type": "application/json" },
+      ...init,
+    });
+
+    if (!response.ok) {
+      throw new Error(`HTTP ${response.status}`);
+    }
+
+    return response.json() as Promise<T>;
+  };
+
+  const ping = async (): Promise<boolean> => {
+    setStatus("connecting");
+    try {
+      try {
+        await requestJson("/health");
+      } catch {
+        await requestJson("/models");
+      }
+      setStatus("online");
+      return true;
+    } catch {
+      setStatus("offline");
+      return false;
+    }
+  };
+
+  const loadModels = async () => {
+    setModelsLoading(true);
+    try {
+      const data = await requestJson<{ models?: ModelInfo[] } | ModelInfo[]>("/models");
+      const payload = Array.isArray(data) ? data : data.models || [];
+      setModels(payload);
+      setSelected(new Set(payload.filter((m) => m.available).map((m) => m.id)));
+    } catch {
+      const fallback: ModelInfo[] = [
+        { id: "mock:echo", provider: "mock", available: true, reason: null },
+        { id: "mock:pseudo", provider: "mock", available: true, reason: null },
+      ];
+      setModels(fallback);
+      setSelected(new Set(fallback.map((m) => m.id)));
+      setToast("Unable to fetch models; using mock fallback list.");
+    } finally {
+      setModelsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    const initialize = async () => {
+      const ok = await ping();
+      if (ok) await loadModels();
+    };
+    void initialize();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const toggleModel = (id: string) => {
-    setSelected((prev) => {
-      const next = new Set(prev);
+  const toggleModel = (id: string, available: boolean) => {
+    if (!available) return;
+    setSelected((previous) => {
+      const next = new Set(previous);
       if (next.has(id)) {
         next.delete(id);
       } else {
         next.add(id);
       }
-      return next as Set<string>;
+      return next;
     });
   };
 
-  const enabledSelectionCount = useMemo(() => models.filter((m) => m.available && selected.has(m.id)).length, [models, selected]);
-
-  const handleRun = async () => {
-    const errors: { prompt?: string; models?: string } = {};
+  const run = async () => {
     if (!prompt.trim()) {
-      errors.prompt = "Prompt is required.";
+      setToast("Prompt required.");
+      return;
     }
-    if (enabledSelectionCount === 0) {
-      errors.models = "Pick at least one available model.";
+    if (!selectedIds.length) {
+      setToast("No models selected.");
+      return;
     }
-    setFormErrors(errors);
-    if (Object.keys(errors).length > 0) return;
 
     const controller = new AbortController();
     const timer = window.setTimeout(() => controller.abort(), CLIENT_TIMEOUT_MS);
-
     setRunning(true);
-    setRunError(null);
-    setTimeoutBanner(null);
 
     try {
-      const body: EvaluateRequestPayload = {
-        prompt,
-        models: Array.from(selected),
-        temperature: requestDefaults.temperature,
-        max_tokens: requestDefaults.max_tokens,
-        timeout_s: requestDefaults.timeout_s,
+      const payload = {
+        prompt: prompt.trim(),
+        models: selectedIds,
+        temperature,
+        max_tokens: maxTokens,
+        timeout_s: timeoutS,
         synthesis_method: synthesisMethod,
       };
-      const data = await postEvaluate(body, controller.signal);
-      setResult(data as EvaluateResponse);
-      setTimeoutBanner(null);
-    } catch (err: any) {
-      console.error("Evaluation failed", err);
-      if (err?.name === "AbortError") {
-        setTimeoutBanner("Evaluation is taking longer than expected. The backend may still be running.");
-        // keep previous results; non-fatal
-        setRunError(null);
-      } else {
-        const message = err?.message || "Failed to run evaluation";
-        setRunError(message);
-      }
+
+      const response = await requestJson<EvaluateResponse>("/evaluate", {
+        method: "POST",
+        signal: controller.signal,
+        body: JSON.stringify(payload),
+      });
+      setResult(response);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Evaluation failed.";
+      setToast(message);
     } finally {
       window.clearTimeout(timer);
       setRunning(false);
     }
   };
 
-  const testConnection = async () => {
-    setPingLoading(true);
-    setPingError(null);
-    setPingResult(null);
-    try {
-      const res = await debugPing();
-      setPingResult(JSON.stringify(res));
-      setHealthStatus("ok");
-      setToast({ message: "Connection OK", tone: "success" });
-    } catch (err: any) {
-      console.error("Ping failed", err);
-      const message = err?.message || "Failed to fetch";
-      const isUnreachable = message.toLowerCase().includes("failed to fetch");
-      const hint = isUnreachable ? "Backend unreachable or CORS blocked." : message;
-      setPingError(`${hint} (base: ${API_BASE_URL})`);
-      setHealthStatus("error");
-      setToast({ message: "Connection failed", tone: "error" });
-    } finally {
-      setPingLoading(false);
-    }
+  const persistApiUrl = (value: string) => {
+    const next = normalizeBaseUrl(value);
+    setApiUrl(next);
+    localStorage.setItem("prism_api_url", next);
   };
 
-  useEffect(() => {
-    if (!toast) return;
-    const t = setTimeout(() => setToast(null), 2400);
-    return () => clearTimeout(t);
-  }, [toast]);
-
-  const exportJson = () => {
-    if (!result) return;
+  const exportResult = () => {
+    if (!result) {
+      setToast("No result.");
+      return;
+    }
     const blob = new Blob([JSON.stringify(result, null, 2)], { type: "application/json" });
     const url = URL.createObjectURL(blob);
-    const a = document.createElement("a");
-    a.href = url;
-    a.download = `prism-eval-${result.request_id}.json`;
-    a.click();
+    const anchor = document.createElement("a");
+    anchor.href = url;
+    anchor.download = `prism-${result.request_id || Date.now()}.json`;
+    anchor.click();
     URL.revokeObjectURL(url);
   };
 
-  const copyAll = async () => {
-    if (!result) return;
-    const lines = [
-      `# PRISM Evaluation (${result.request_id})`,
-      ``,
-      `Prompt: ${result.prompt}`,
-      `Synthesis (${result.synthesis.method}):`,
-      result.synthesis.text || "_no synthesis available_",
-      ``,
-      `## Per-model outputs`,
-      ...result.results.map((r) => `### ${r.model} (${r.status})\n${r.text || r.error_message || "_no output_"}\n`),
-    ];
-    await navigator.clipboard.writeText(lines.join("\n"));
+  const clearResult = () => {
+    setPrompt("");
+    setResult(null);
   };
 
+  const compareSummary = result?.compare?.summary;
+  const disagreePair = compareSummary?.most_disagree_pair;
+  const disagreeLabel = disagreePair ? `${disagreePair.a} :: ${disagreePair.b}` : "-";
+
   return (
-    <div className="app-shell">
-      <Header
-        apiBase={API_BASE_URL}
-        modelsStatus={modelsStatus}
-        healthStatus={healthStatus}
-        onTestConnection={testConnection}
-        testing={pingLoading}
-        pingResult={pingResult}
-        pingError={pingError}
-      />
+    <>
+      <div className="boot-header">
+        <div className="boot-line">// PRISM v0.1.0 - PARALLEL REASONING &amp; INFERENCE SYNTHESIS MACHINE</div>
+        <div className="boot-title glow">
+          <em>PRI</em>SM<span className="cursor" />
+        </div>
+        <div className="boot-sub">Evaluation Framework // Multi-model comparison engine</div>
+      </div>
 
-      {toast && <Toast tone={toast.tone} message={toast.message} />}
-
-      <main className="layout">
-        <section className="pane hero">
-          <div className="pane-header">
-            <div>
-              <p className="eyebrow">Prompt</p>
-              <h2>Run an evaluation</h2>
-              <p className="muted">Send one prompt to multiple models and compare + synthesize the best response.</p>
-            </div>
-            <div className="status-row">
-              <StatusBadge label="Models" state={modelsStatus} />
-              <StatusBadge label="Health" state={healthStatus} />
-            </div>
-          </div>
-
-          <textarea
-            className="prompt"
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Describe the scenario to evaluate across models..."
+      <div className="statusbar">
+        <div className="sb-item active">
+          <div className={`sdot ${status === "online" ? "on" : status === "offline" ? "off" : "chk"}`} />
+          <span>{statusText}</span>
+        </div>
+        <div className="sb-item">
+          <span className="dim">API_URL:</span>
+          <input
+            className="sb-input"
+            value={apiUrl}
+            onChange={(event) => setApiUrl(event.target.value)}
+            onBlur={(event) => persistApiUrl(event.target.value)}
+            type="text"
+            spellCheck={false}
+            placeholder="http://127.0.0.1:8000"
           />
-          {formErrors.prompt && <div className="error small">{formErrors.prompt}</div>}
+          <button
+            className="tb"
+            onClick={() =>
+              ping().then((ok) => {
+                if (ok) return loadModels();
+                return undefined;
+              })
+            }
+            disabled={modelsLoading}
+          >
+            PING
+          </button>
+        </div>
+        <div className="ml">
+          <button className="tb" onClick={exportResult}>
+            EXPORT
+          </button>
+          <button className="tb" onClick={clearResult}>
+            CLEAR
+          </button>
+        </div>
+      </div>
 
-          <div className="chips-row">
-            <div className="chips-label">Models to run</div>
-            <ModelChips models={models} selected={selected} onToggle={toggleModel} loading={modelsLoading} />
+      <div className="shell">
+        <div className="pane">
+          <div className="prompt-label">PROMPT INPUT</div>
+          <textarea
+            value={prompt}
+            onChange={(event) => setPrompt(event.target.value)}
+            onKeyDown={(event) => {
+              if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
+                void run();
+              }
+            }}
+            placeholder="Enter prompt... (Ctrl+Enter to run)"
+            rows={5}
+          />
+          <div className="params-grid">
+            <div className="pg">
+              <label>Temperature</label>
+              <input type="number" value={temperature} onChange={(event) => setTemperature(Number(event.target.value))} min={0} max={2} step={0.1} />
+            </div>
+            <div className="pg">
+              <label>Max Tokens</label>
+              <input type="number" value={maxTokens} onChange={(event) => setMaxTokens(Number(event.target.value))} min={1} max={4096} />
+            </div>
+            <div className="pg">
+              <label>Timeout (s)</label>
+              <input type="number" value={timeoutS} onChange={(event) => setTimeoutS(Number(event.target.value))} min={1} max={120} />
+            </div>
+            <div className="pg">
+              <label>Synthesis</label>
+              <select value={synthesisMethod} onChange={(event) => setSynthesisMethod(event.target.value as SynthesisMethod)}>
+                <option value="best_of_n">best_of_n</option>
+                <option value="consensus_overlap">consensus_overlap</option>
+                <option value="longest_nonempty">longest_nonempty</option>
+              </select>
+            </div>
           </div>
-          {formErrors.models && <div className="error small">{formErrors.models}</div>}
-          {!runError && models.length === 0 && !modelsLoading && <div className="muted">No models available.</div>}
 
-          <div className="advanced">
-            <button className="ghost" onClick={() => setShowAdvanced((s) => !s)}>
-              {showAdvanced ? "Hide advanced" : "Advanced"}
-            </button>
-            {showAdvanced && (
-              <div className="advanced-grid">
-                <Setting label="Temperature" value={requestDefaults.temperature} />
-                <Setting label="Max tokens" value={requestDefaults.max_tokens} />
-                <Setting label="Timeout (s)" value={requestDefaults.timeout_s} />
-                <div className="setting">
-                  <div className="muted small">Synthesis</div>
-                  <select value={synthesisMethod} onChange={(e) => setSynthesisMethod(e.target.value as SynthesisMethod)}>
-                    <option value="longest_nonempty">longest_nonempty</option>
-                    <option value="consensus_overlap">consensus_overlap</option>
-                    <option value="best_of_n">best_of_n</option>
-                  </select>
+          <button className={`run-btn ${running ? "loading" : ""}`} onClick={() => void run()} disabled={running}>
+            {running ? (
+              <>
+                <span className="spinner" /> PROCESSING...
+              </>
+            ) : (
+              "EXECUTE EVALUATION"
+            )}
+          </button>
+
+          <div className={`results ${result ? "vis" : ""}`}>
+            <div className="rsect-head">
+              <span className="rsh-tag">OUT</span>SYNTHESIS
+            </div>
+            <div className="syn-box">
+              <div className="syn-meta">
+                <span>//SYNTHESIS</span>
+                <span>METHOD:{result?.synthesis?.method || "-"}</span>
+              </div>
+              <div className="syn-text">{result?.synthesis?.text || ""}</div>
+              {result?.synthesis?.rationale && <div className="syn-rat">// {result.synthesis.rationale}</div>}
+            </div>
+
+            <div className="rsect-head">
+              <span className="rsh-tag">OUT</span>MODEL RESPONSES
+            </div>
+            <div className="resp-grid">
+              {result?.results.map((entry, index) => (
+                <div key={`${entry.model}-${index}`} className="resp-card" style={{ animationDelay: `${index * 0.05}s` }}>
+                  <div className="resp-head">
+                    <span className="resp-model">{entry.model}</span>
+                    <span className={`resp-meta ${entry.ok ? "resp-ok" : "resp-err"}`}>
+                      [{entry.ok ? "OK" : "ERR"}] {entry.latency_ms != null ? `${entry.latency_ms.toFixed(1)}ms` : ""}
+                    </span>
+                  </div>
+                  {entry.ok ? (
+                    <div className="resp-body">{entry.text || ""}</div>
+                  ) : (
+                    <div className="resp-error">{(entry.error_code || "ERR") + (entry.error_message ? `: ${entry.error_message}` : "")}</div>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            <div className="rsect-head">
+              <span className="rsh-tag">OUT</span>COMPARISON
+            </div>
+            <div className="cmp-box">
+              <div className="cmp-summary">
+                <div>
+                  <div className="cs-label">AVG_SIM</div>
+                  <div className="cs-val glow-sm">{compareSummary?.avg_similarity != null ? `${(compareSummary.avg_similarity * 100).toFixed(1)}%` : "-"}</div>
+                </div>
+                <div>
+                  <div className="cs-label">DIVERGE</div>
+                  <div className="cs-val small-val">{disagreeLabel}</div>
                 </div>
               </div>
-            )}
-          </div>
 
-          <div className="cta-row">
-            <button className="primary" onClick={handleRun} disabled={running || !prompt.trim()}>
-              {running ? "Running..." : "Run evaluation"}
-            </button>
-            <div className="switches">
-              <label>
-                <input type="checkbox" checked={showUsage} onChange={(e) => setShowUsage(e.target.checked)} /> show usage
-              </label>
-              <label>
-                <input type="checkbox" checked={showRaw} onChange={(e) => setShowRaw(e.target.checked)} /> show raw JSON
-              </label>
-            </div>
-          </div>
+              {!!compareSummary?.notes && <div className="cmp-notes">// {compareSummary.notes}</div>}
 
-          {runError && <div className="banner error-banner">{runError}</div>}
-          {timeoutBanner && <div className="banner warn-banner">{timeoutBanner}</div>}
-          {unavailableReason && <div className="banner warn-banner">Some providers unavailable: {unavailableReason}</div>}
-        </section>
-
-        <section className="pane results-pane">
-          <div className="pane-header">
-            <div>
-              <p className="eyebrow">Results</p>
-              <h2>Outputs</h2>
-              {result && (
-                <div className="muted small output-meta">
-                  {result.results.length} models • avg latency {(result.results.reduce((s, r) => s + (r.latency_ms || 0), 0) / Math.max(result.results.length, 1) / 1000).toFixed(1)}s
-                </div>
+              {!!result?.compare?.pairs?.length && (
+                <table>
+                  <thead>
+                    <tr>
+                      <th>PAIR</th>
+                      <th>JACCARD</th>
+                      <th>LEN_RATIO</th>
+                      <th>KW_COV</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {result.compare.pairs.map((pair, index) => (
+                      <tr key={`${pair.a}-${pair.b}-${index}`}>
+                        <td>
+                          {pair.a} :: {pair.b}
+                        </td>
+                        <td>
+                          <div className="bar-wrap">
+                            <div className="bar-fill" style={{ width: `${Math.max(0, Math.min(100, pair.token_overlap_jaccard * 100)).toFixed(0)}%` }} />
+                          </div>{" "}
+                          {(pair.token_overlap_jaccard * 100).toFixed(1)}%
+                        </td>
+                        <td>{pair.length_ratio != null ? pair.length_ratio.toFixed(2) : "-"}</td>
+                        <td>{pair.keyword_coverage != null ? `${(pair.keyword_coverage * 100).toFixed(1)}%` : "-"}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
               )}
             </div>
-            <div className="actions-row">
-              <button className="ghost" onClick={exportJson} disabled={!result}>
-                Download JSON
-              </button>
-              <button className="ghost" onClick={copyAll} disabled={!result}>
-                Copy all outputs
-              </button>
+
+            <div className="req-foot">
+              REQUEST_ID: <span>{result?.request_id || "-"}</span>
+              <span>|</span>
+              TS: <span>{result?.created_at ? new Date(result.created_at).toLocaleString() : "-"}</span>
+              <span>|</span>
+              MODELS: <span>{result?.params?.models?.join(",") || ""}</span>
             </div>
           </div>
+        </div>
 
-          {!result && (
-            <div className="empty-state">
-              <img src="/prism-logo.png" alt="PRISM logo" className="logo-faint" />
-              <p className="muted">PRISM compares responses across models and synthesizes the best answer.</p>
-            </div>
-          )}
+        <div className="pane-right">
+          <div className="sect-head">MODEL SELECT</div>
+          <div id="modelGrid">
+            {modelsLoading && <div className="loading-models">LOADING MODELS...</div>}
+            {!modelsLoading &&
+              models.map((model) => {
+                const isSelected = selected.has(model.id) && model.available;
+                const isMock = (model.provider || model.id || "").startsWith("mock");
+                return (
+                  <div
+                    key={model.id}
+                    className={`model-row ${isSelected ? "sel" : ""} ${model.available ? "" : "model-na"}`}
+                    onClick={() => toggleModel(model.id, model.available)}
+                    title={model.reason || ""}
+                  >
+                    <div className="chkbox">{isSelected ? "?" : ""}</div>
+                    <span className="model-id">{model.id}</span>
+                    <span className="model-prov">{model.provider || ""}</span>
+                    {isMock ? <span className="mbadge mock">mock</span> : !model.available ? <span className="mbadge">no key</span> : null}
+                  </div>
+                );
+              })}
+            {!modelsLoading && models.length === 0 && <div className="loading-models">NO MODELS FOUND</div>}
+          </div>
+          <button
+            className="ref-btn"
+            onClick={() =>
+              ping().then((ok) => {
+                if (ok) return loadModels();
+                return undefined;
+              })
+            }
+            disabled={modelsLoading}
+          >
+            REFRESH
+          </button>
+        </div>
+      </div>
 
-          {result && (
-            <>
-              <SummaryBar results={result.results} createdAt={result.created_at} requestId={result.request_id} />
-
-              <div className="responses-grid">
-                {result.results.map((r) => (
-                  <ResultCard key={r.model} result={r} showUsage={showUsage} />
-                ))}
-              </div>
-
-              <div className="grid two-col">
-                <SynthesisCard synthesis={result.synthesis} />
-                <ComparisonCard compare={result.compare} />
-              </div>
-
-              {showRaw && <pre className="raw-block">{JSON.stringify(result, null, 2)}</pre>}
-            </>
-          )}
-        </section>
-      </main>
-    </div>
-  );
-}
-
-function Setting({ label, value }: { label: string; value: number }) {
-  return (
-    <div className="setting">
-      <div className="muted small">{label}</div>
-      <div className="setting-value">{value}</div>
-    </div>
-  );
-}
-
-function SummaryBar({ results, createdAt, requestId }: { results: EvaluateResponse["results"]; createdAt?: string; requestId?: string }) {
-  const successes = results.filter((r) => r.ok).length;
-  const failures = results.length - successes;
-  const avgLatency = results.length ? results.reduce((s, r) => s + (r.latency_ms || 0), 0) / results.length : 0;
-  return (
-    <div className="summary-bar">
-      <div className="summary-chip">Run ID: {requestId ?? "n/a"}</div>
-      <div className="summary-chip">Created: {createdAt ? new Date(createdAt).toLocaleTimeString() : "n/a"}</div>
-      <div className="summary-chip">Avg latency: {avgLatency.toFixed(1)} ms</div>
-      <div className="summary-chip success">Succeeded: {successes}</div>
-      <div className="summary-chip warn">Failed: {failures}</div>
-    </div>
+      <div className={`toast ${toast ? "" : "hidden"}`}>[ERR] {toast || ""}</div>
+    </>
   );
 }
 
