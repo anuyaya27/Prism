@@ -1,0 +1,630 @@
+{
+  "api_version": "0.3.0",
+  "canonical_request": {
+    "models": [
+      "gemini:2.5-flash",
+      "mock:echo",
+      "mock:pseudo",
+      "mock:reasoner",
+      "openai:gpt-4o-mini"
+    ],
+    "params": {
+      "max_tokens": 512,
+      "synthesis_method": "best_of_n",
+      "temperature": 0.7,
+      "timeout_s": 30.0
+    },
+    "prompt": "1+2"
+  },
+  "execution_context": {
+    "providers": [
+      {
+        "model_id": "openai:gpt-4o-mini",
+        "provider_name": "openai",
+        "runtime": {
+          "base_url": "https://api.openai.com/v1/chat/completions",
+          "max_tokens": 512,
+          "retries": 2,
+          "temperature": 0.7,
+          "timeout_s": 20.0
+        }
+      },
+      {
+        "model_id": "gemini:2.5-flash",
+        "provider_name": "gemini",
+        "runtime": {
+          "base_url": "https://generativelanguage.googleapis.com/v1beta/models",
+          "max_tokens": 512,
+          "retries": 2,
+          "temperature": 0.7,
+          "timeout_s": 20.0
+        }
+      },
+      {
+        "model_id": "mock:echo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      },
+      {
+        "model_id": "mock:reasoner",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      },
+      {
+        "model_id": "mock:pseudo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      }
+    ],
+    "runtime": {
+      "git_commit": "8acf04ae1c8ebeebed48677c56275278c768e6e3",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "python_version": "3.11.9"
+    }
+  },
+  "raw_generations": [
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "openai:gpt-4o-mini",
+      "provider": "openai",
+      "raw_request": {
+        "body": {
+          "max_tokens": 512,
+          "messages": [
+            {
+              "content": "1+2",
+              "role": "user"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "temperature": 0.7
+        },
+        "headers": {
+          "Authorization": "***REDACTED***",
+          "Content-Type": "application/json"
+        },
+        "url": "https://api.openai.com/v1/chat/completions"
+      },
+      "raw_response": {
+        "body": {
+          "body_snippet": "{\n  ***REDACTED***_tok",
+          "status_code": 200
+        },
+        "headers": {
+          "access-control-expose-headers": "X-Request-ID",
+          "alt-svc": "h3=\":443\"; ma=86400",
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "9d6c1e2a28dd52a1-LAX",
+          "connection": "keep-alive",
+          "content-encoding": "gzip",
+          "content-type": "application/json",
+          "date": "Tue, 03 Mar 2026 22:36:04 GMT",
+          "openai-organization": "user-riqxe1sh4tn9y09bmfp1dnnz",
+          "openai-processing-ms": "430",
+          "openai-project": "proj_7ZhJ9OB3ZWvXUVQnILY00wKJ",
+          "openai-version": "2020-10-01",
+          "server": "cloudflare",
+          "set-cookie": "__cf_bm=HBMnX2FDfLPyV_eA2IlBwmudF4IARXA8_cTq.wiCxmc-1772577363.5497715-1.0.1.1-Cg0HlrRmR4hq29a2j9c8SRcXCLBg4G.ts.Yc4LrXrfmkQT7rdc3Zbky8Y1AxhQZukTm1CmWmEhqp3XN9_H7p0qP2Nu5LBvji3LpzzRFvog44R9dE2q3UISoTmXFzvSLL; HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Tue, 03 Mar 2026 23:06:04 GMT",
+          "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+          "transfer-encoding": "chunked",
+          "x-content-type-options": "nosniff",
+          "x-openai-proxy-wasm": "v0.1",
+          "x-ratelimit-limit-requests": "5000",
+          "x-ratelimit-limit-tokens": "***REDACTED***",
+          "x-ratelimit-remaining-requests": "4999",
+          "x-ratelimit-remaining-tokens": "***REDACTED***",
+          "x-ratelimit-reset-requests": "12ms",
+          "x-ratelimit-reset-tokens": "***REDACTED***",
+          "x-request-id": "req_654c2712879a4f1799655b1ece2fc7f8"
+        },
+        "url": "https://api.openai.com/v1/chat/completions"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "gemini:2.5-flash",
+      "provider": "gemini",
+      "raw_request": {
+        "body": {
+          "contents": [
+            {
+              "parts": [
+                {
+                  "text": "1+2"
+                }
+              ]
+            }
+          ],
+          "generationConfig": {
+            "maxOutputTokens": 512,
+            "temperature": 0.7
+          }
+        },
+        "headers": {
+          "x-goog-api-key": "***REDACTED***"
+        },
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+      },
+      "raw_response": {
+        "body": {
+          "body_snippet": "{\n  ***REDACTED***  \"r",
+          "status_code": 200
+        },
+        "headers": {
+          "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "content-encoding": "gzip",
+          "content-type": "application/json; charset=UTF-8",
+          "date": "Tue, 03 Mar 2026 22:36:04 GMT",
+          "server": "scaffolding on HTTPServer2",
+          "server-timing": "gfet4t7; dur=620",
+          "transfer-encoding": "chunked",
+          "vary": "Origin, X-Origin, Referer",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0"
+        },
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:echo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:echo",
+        "prompt": "1+2"
+      },
+      "raw_response": {
+        "response": "[echo:mock-echo] 1+2"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:reasoner",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:reasoner",
+        "prompt": "1+2"
+      },
+      "raw_response": {
+        "response": "analysis:\n- step 1: outline risk\n- step 2: estimate path\n- step 3: outline opportunity"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:pseudo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:pseudo",
+        "prompt": "1+2"
+      },
+      "raw_response": {
+        "response": "analysis:\n- step 1: outline risk\n- step 2: estimate path\n- step 3: outline opportunity"
+      }
+    }
+  ],
+  "request": {
+    "max_tokens": 512,
+    "models": [
+      "openai:gpt-4o-mini",
+      "gemini:2.5-flash",
+      "mock:echo",
+      "mock:reasoner",
+      "mock:pseudo"
+    ],
+    "prompt": "1+2",
+    "synthesis_method": "best_of_n",
+    "temperature": 0.7,
+    "timeout_s": 30.0
+  },
+  "request_id": "3b1aef8b59b24c009af53bdd24b00c38",
+  "response": {
+    "api_version": "0.3.0",
+    "compare": {
+      "pairs": [
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "gemini:2.5-flash",
+          "keyword_coverage": 0.0,
+          "length_ratio": 0.25,
+          "rouge_l": 0.25,
+          "token_overlap_jaccard": 0.25
+        },
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "mock:echo",
+          "keyword_coverage": 0.0,
+          "length_ratio": 0.8,
+          "rouge_l": 0.4,
+          "token_overlap_jaccard": 0.3333333333333333
+        },
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "mock:reasoner",
+          "keyword_coverage": 0.0,
+          "length_ratio": 0.3076923076923077,
+          "rouge_l": 0.23076923076923078,
+          "token_overlap_jaccard": 0.2727272727272727
+        },
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.0,
+          "length_ratio": 0.3076923076923077,
+          "rouge_l": 0.23076923076923078,
+          "token_overlap_jaccard": 0.2727272727272727
+        },
+        {
+          "a": "gemini:2.5-flash",
+          "b": "mock:echo",
+          "keyword_coverage": 0.0,
+          "length_ratio": 0.2,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "gemini:2.5-flash",
+          "b": "mock:reasoner",
+          "keyword_coverage": 0.0,
+          "length_ratio": 0.07692307692307693,
+          "rouge_l": 0.07692307692307693,
+          "token_overlap_jaccard": 0.1
+        },
+        {
+          "a": "gemini:2.5-flash",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.0,
+          "length_ratio": 0.07692307692307693,
+          "rouge_l": 0.07692307692307693,
+          "token_overlap_jaccard": 0.1
+        },
+        {
+          "a": "mock:echo",
+          "b": "mock:reasoner",
+          "keyword_coverage": 0.0,
+          "length_ratio": 0.38461538461538464,
+          "rouge_l": 0.15384615384615385,
+          "token_overlap_jaccard": 0.16666666666666666
+        },
+        {
+          "a": "mock:echo",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.0,
+          "length_ratio": 0.38461538461538464,
+          "rouge_l": 0.15384615384615385,
+          "token_overlap_jaccard": 0.16666666666666666
+        },
+        {
+          "a": "mock:reasoner",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.0,
+          "length_ratio": 1.0,
+          "rouge_l": 1.0,
+          "token_overlap_jaccard": 1.0
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.26621212121212123,
+        "disagreement_summary": {
+          "max_distance": 2.0,
+          "pair": {
+            "a": "gemini:2.5-flash",
+            "b": "mock:echo"
+          },
+          "reason": "Low overlap: rouge_l=0.00, jaccard=0.00"
+        },
+        "most_disagree_pair": {
+          "a": "gemini:2.5-flash",
+          "b": "mock:echo",
+          "keyword_coverage": 0.0,
+          "length_ratio": 0.2,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        "notes": "token_overlap_jaccard: 1.0 = identical; length_ratio: shorter/longer; keyword_coverage vs prompt keywords."
+      }
+    },
+    "created_at": "2026-03-03T22:36:01.186705",
+    "params": {
+      "max_tokens": 512,
+      "models": [
+        "openai:gpt-4o-mini",
+        "gemini:2.5-flash",
+        "mock:echo",
+        "mock:reasoner",
+        "mock:pseudo"
+      ],
+      "synthesis_method": "best_of_n",
+      "temperature": 0.7,
+      "timeout_s": 30.0
+    },
+    "partial_success": false,
+    "prompt": "1+2",
+    "request_id": "3b1aef8b59b24c009af53bdd24b00c38",
+    "results": [
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 2792.214100016281,
+        "meta": {
+          "finish_reason": "stop",
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "gpt-4o-mini"
+        },
+        "model": "openai:gpt-4o-mini",
+        "ok": true,
+        "provider": "openai",
+        "raw_request": {
+          "body": {
+            "max_tokens": 512,
+            "messages": [
+              {
+                "content": "1+2",
+                "role": "user"
+              }
+            ],
+            "model": "gpt-4o-mini",
+            "temperature": 0.7
+          },
+          "headers": {
+            "Authorization": "***REDACTED***",
+            "Content-Type": "application/json"
+          },
+          "url": "https://api.openai.com/v1/chat/completions"
+        },
+        "raw_response": {
+          "body": {
+            "body_snippet": "{\n  ***REDACTED***_tok",
+            "status_code": 200
+          },
+          "headers": {
+            "access-control-expose-headers": "X-Request-ID",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9d6c1e2a28dd52a1-LAX",
+            "connection": "keep-alive",
+            "content-encoding": "gzip",
+            "content-type": "application/json",
+            "date": "Tue, 03 Mar 2026 22:36:04 GMT",
+            "openai-organization": "user-riqxe1sh4tn9y09bmfp1dnnz",
+            "openai-processing-ms": "430",
+            "openai-project": "proj_7ZhJ9OB3ZWvXUVQnILY00wKJ",
+            "openai-version": "2020-10-01",
+            "server": "cloudflare",
+            "set-cookie": "__cf_bm=HBMnX2FDfLPyV_eA2IlBwmudF4IARXA8_cTq.wiCxmc-1772577363.5497715-1.0.1.1-Cg0HlrRmR4hq29a2j9c8SRcXCLBg4G.ts.Yc4LrXrfmkQT7rdc3Zbky8Y1AxhQZukTm1CmWmEhqp3XN9_H7p0qP2Nu5LBvji3LpzzRFvog44R9dE2q3UISoTmXFzvSLL; HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Tue, 03 Mar 2026 23:06:04 GMT",
+            "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+            "transfer-encoding": "chunked",
+            "x-content-type-options": "nosniff",
+            "x-openai-proxy-wasm": "v0.1",
+            "x-ratelimit-limit-requests": "5000",
+            "x-ratelimit-limit-tokens": "***REDACTED***",
+            "x-ratelimit-remaining-requests": "4999",
+            "x-ratelimit-remaining-tokens": "***REDACTED***",
+            "x-ratelimit-reset-requests": "12ms",
+            "x-ratelimit-reset-tokens": "***REDACTED***",
+            "x-request-id": "req_654c2712879a4f1799655b1ece2fc7f8"
+          },
+          "url": "https://api.openai.com/v1/chat/completions"
+        },
+        "status": "success",
+        "text": "1 + 2 equals 3.",
+        "usage": {
+          "completion_tokens": 8,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": 0
+          },
+          "prompt_tokens": 10,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0
+          },
+          "total_tokens": 18
+        }
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 1347.3102999851108,
+        "meta": {
+          "finish_reason": "STOP",
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "gemini-2.5-flash"
+        },
+        "model": "gemini:2.5-flash",
+        "ok": true,
+        "provider": "gemini",
+        "raw_request": {
+          "body": {
+            "contents": [
+              {
+                "parts": [
+                  {
+                    "text": "1+2"
+                  }
+                ]
+              }
+            ],
+            "generationConfig": {
+              "maxOutputTokens": 512,
+              "temperature": 0.7
+            }
+          },
+          "headers": {
+            "x-goog-api-key": "***REDACTED***"
+          },
+          "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+        },
+        "raw_response": {
+          "body": {
+            "body_snippet": "{\n  ***REDACTED***  \"r",
+            "status_code": 200
+          },
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Tue, 03 Mar 2026 22:36:04 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=620",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-xss-protection": "0"
+          },
+          "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+        },
+        "status": "success",
+        "text": "3",
+        "usage": {
+          "candidatesTokenCount": 1,
+          "promptTokenCount": 3,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 3
+            }
+          ],
+          "thoughtsTokenCount": 52,
+          "totalTokenCount": 56
+        }
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 39.66999996919185,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-echo",
+          "provider_model": {}
+        },
+        "model": "mock:echo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:echo",
+          "prompt": "1+2"
+        },
+        "raw_response": {
+          "response": "[echo:mock-echo] 1+2"
+        },
+        "status": "success",
+        "text": "[echo:mock-echo] 1+2",
+        "usage": null
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 87.99990004627034,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-reasoner",
+          "provider_model": {
+            "stance": "skeptical"
+          }
+        },
+        "model": "mock:reasoner",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:reasoner",
+          "prompt": "1+2"
+        },
+        "raw_response": {
+          "response": "analysis:\n- step 1: outline risk\n- step 2: estimate path\n- step 3: outline opportunity"
+        },
+        "status": "success",
+        "text": "analysis:\n- step 1: outline risk\n- step 2: estimate path\n- step 3: outline opportunity",
+        "usage": null
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 88.07440003147349,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-reasoner",
+          "provider_model": {
+            "stance": "skeptical"
+          }
+        },
+        "model": "mock:pseudo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:pseudo",
+          "prompt": "1+2"
+        },
+        "raw_response": {
+          "response": "analysis:\n- step 1: outline risk\n- step 2: estimate path\n- step 3: outline opportunity"
+        },
+        "status": "success",
+        "text": "analysis:\n- step 1: outline risk\n- step 2: estimate path\n- step 3: outline opportunity",
+        "usage": null
+      }
+    ],
+    "run_hash": "7836f8a70a84183543a48d052b11d31f1e7f82ed60a7d1c8a4d92e67c6928387",
+    "schema_version": "1.1.0",
+    "status": "success",
+    "synthesis": {
+      "attribution": [
+        {
+          "sentence_index": 0,
+          "source_model_id": "gemini:2.5-flash",
+          "span": null
+        }
+      ],
+      "confidence": 0.6650082918739636,
+      "method": "best_of_n",
+      "ok": true,
+      "rationale": "Selected gemini:2.5-flash via best_of_n scoring: coverage=0.00, redundancy=0.00, conciseness=1.00, score=2.00.",
+      "strategy_id": "best_of_n",
+      "synthesized_text": "3",
+      "text": "3"
+    }
+  },
+  "run_hash": "7836f8a70a84183543a48d052b11d31f1e7f82ed60a7d1c8a4d92e67c6928387",
+  "schema_version": "1.1.0",
+  "timestamp_utc": "2026-03-03T22:36:01.186705Z"
+}
