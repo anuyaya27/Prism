@@ -228,6 +228,7 @@ Create a `.env` file in the project root if you want to use real models.
 ```
 OPENAI_API_KEY=...
 GEMINI_API_KEY=...
+PRISM_GEMINI_THINKING_BUDGET=0
 ```
 
 Mock models will work without any keys.
