@@ -16,7 +16,11 @@ class GeminiProvider(Provider):
         self.api_key = api_key or os.getenv("GEMINI_API_KEY")
         self.timeout = timeout
         self.max_retries = max_retries
-        self._models = ["1.5-flash"]
+        self._models = ["2.5-flash"]
+        self._deprecated_aliases = {
+            "1.5-flash": "2.5-flash",
+            "gemini-1.5-flash": "gemini-2.5-flash",
+        }
         self.base_url = os.getenv("GEMINI_BASE_URL", "https://generativelanguage.googleapis.com/v1beta/models")
 
     def list_models(self) -> list[ProviderModel]:
@@ -51,7 +55,8 @@ class GeminiProvider(Provider):
             )
 
         requested_model = model_id.split(":", 1)[1] if ":" in model_id else model_id
-        model_name = requested_model if requested_model.startswith("gemini-") else f"gemini-{requested_model}"
+        remapped_model = self._deprecated_aliases.get(requested_model, requested_model)
+        model_name = remapped_model if remapped_model.startswith("gemini-") else f"gemini-{remapped_model}"
         url = f"{self.base_url}/{model_name}:generateContent?key={self.api_key}"
         payload: dict[str, Any] = {
             "contents": [{"parts": [{"text": prompt}]}],
@@ -92,6 +97,11 @@ class GeminiProvider(Provider):
                 last_error = f"http_{exc.response.status_code}"
                 if exc.response.status_code in (401, 403):
                     last_error = "auth_error"
+                elif exc.response.status_code == 404:
+                    last_error = (
+                        f"http_404_model_not_found ({model_name}). "
+                        "Try gemini:2.5-flash."
+                    )
                 await asyncio.sleep(0.5 * (attempt + 1))
             except Exception as exc:  # noqa: BLE001
                 last_error = str(exc)
