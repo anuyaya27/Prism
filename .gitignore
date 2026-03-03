@@ -135,7 +135,8 @@ celerybeat.pid
 *.sage.py
 
 # Environments
-.env
+.env*
+!.env.example
 .envrc
 .venv
 env/
@@ -212,4 +213,3 @@ backend/runs/
 # Frontend deps and builds
 node_modules/
 frontend/dist/
-frontend/.env.local
