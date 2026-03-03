@@ -1,106 +1,340 @@
-# PRISM (Parallel Reasoning & Inference Synthesis Machine)
+# PRISM  
+**Parallel Reasoning & Inference Synthesis Machine**
 
-PRISM runs a single prompt across multiple LLMs, compares their outputs, and synthesizes a transparent final response. Run everything locally�no GitHub Pages needed.
+PRISM is an evaluation and reasoning orchestration system for large language models.
 
-## Run locally
+Instead of relying on a single model output, PRISM runs the same prompt across multiple LLMs, analyzes their responses, and synthesizes a transparent final answer. The system exposes the full reasoning surface area of each model while providing a structured comparison and a synthesized result.
 
-### Prerequisites
+PRISM is designed for developers, researchers, and teams building AI systems who want reliable outputs, model transparency, and a structured evaluation pipeline.
+
+---
+
+# Why PRISM exists
+
+Modern AI systems often rely on a single model response, even though different models reason differently. This creates problems:
+
+- A single model may hallucinate or fail silently  
+- Outputs can vary significantly across providers  
+- There is limited visibility into model disagreement  
+- Developers lack systematic tools for comparing reasoning quality  
+
+PRISM addresses this by treating models as **parallel reasoning engines** and providing tools to analyze and synthesize their outputs.
+
+Instead of asking *“What did the model say?”*, PRISM helps answer:
+
+- Which models agree?  
+- Where do they disagree?  
+- Which response is most complete?  
+- What is the best synthesized answer across models?  
+
+---
+
+# Key Features
+
+## Parallel Model Execution
+PRISM sends a prompt to multiple LLMs simultaneously and collects their responses asynchronously.
+
+This allows the system to compare reasoning across models such as OpenAI, Gemini, or any custom provider.
+
+---
+
+## Transparent Model Comparison
+PRISM evaluates responses using lightweight similarity and coverage heuristics, including:
+
+- Token overlap (Jaccard similarity)  
+- Response length comparison  
+- Keyword coverage  
+- Pairwise disagreement analysis  
+
+This provides insight into **how models differ**, not just what they output.
+
+---
+
+## Response Synthesis
+After evaluating responses, PRISM produces a synthesized final answer using configurable strategies.
+
+Current synthesis strategies include:
+
+- **Majority agreement** when models converge  
+- **Coverage-based selection** when responses diverge  
+- Transparent rationale for the chosen answer  
+
+---
+
+## Local-First Architecture
+PRISM runs entirely locally and does not require external infrastructure.
+
+There is no dependency on:
+
+- hosted databases  
+- managed queues  
+- deployment platforms  
+
+This makes PRISM easy to experiment with and extend.
+
+---
+
+## Extensible Model Layer
+PRISM provides a clean abstraction for integrating new model providers.
+
+Adding support for a new LLM only requires implementing a client that subclasses `LLMClient`.
+
+---
+
+# Product Architecture
+
+PRISM consists of three main components.
+
+### 1. Evaluation Engine
+The backend receives prompts and orchestrates parallel model calls.
+
+Responsibilities:
+
+- fan-out prompt execution  
+- manage model timeouts  
+- collect responses and metadata  
+- compute similarity metrics  
+
+---
+
+### 2. Synthesis Layer
+After collecting model outputs, PRISM applies synthesis strategies to produce a final answer.
+
+This layer is modular and allows experimentation with different reasoning aggregation methods.
+
+---
+
+### 3. Interactive UI
+The frontend provides a simple interface for running evaluations.
+
+Users can:
+
+- enter prompts  
+- select models  
+- view responses side-by-side  
+- inspect synthesis decisions  
+- explore model disagreement  
+
+---
+
+# Example Workflow
+
+1. A user submits a prompt through the UI or API.
+2. The evaluation engine sends the prompt to multiple models.
+3. Each model returns a response.
+4. PRISM compares the responses using similarity heuristics.
+5. The synthesis engine selects or constructs the final answer.
+6. The system returns:
+
+- all raw model outputs  
+- comparison metrics  
+- synthesized response  
+- rationale  
+
+---
+
+# API Example
+
+```bash
+curl -X POST http://127.0.0.1:8000/evaluate \
+  -H "Content-Type: application/json" \
+  -d '{
+    "prompt": "List three benefits of testing",
+    "models": ["mock:echo","mock:pseudo"],
+    "temperature": 0,
+    "max_tokens": 256,
+    "timeout_s": 12,
+    "synthesis_method": "best_of_n"
+}'
+```
+
+The response includes:
+
+- model outputs  
+- latency metadata  
+- similarity metrics  
+- synthesized result  
+
+---
+
+# Project Structure
+
+```
+PRISM
+│
+├── backend/
+│   FastAPI evaluation service
+│   LLM provider abstractions
+│   evaluation pipeline
+│   synthesis strategies
+│
+├── frontend/
+│   React + Vite interface
+│   prompt runner and model comparison UI
+│
+└── docs/
+    architecture notes
+    evaluation methodology
+    roadmap
+```
+
+---
+
+# Running PRISM Locally
+
+## Prerequisites
+
 - Node.js 20+
 - Python 3.10+ (3.11 recommended)
 
-### Backend (FastAPI)
+---
+
+# Backend (FastAPI)
+
 ```bash
 cd backend
+
 python -m venv .venv
-# Windows PowerShell: .venv\Scripts\Activate.ps1
-# macOS/Linux: source .venv/bin/activate
+
+# Windows
+.venv\Scripts\Activate.ps1
+
+# macOS / Linux
+source .venv/bin/activate
+
 pip install -r requirements.txt
 
-set PYTHONPATH=backend         # PowerShell: $env:PYTHONPATH='backend'
+set PYTHONPATH=backend
 uvicorn app.main:app --reload --app-dir backend --host 127.0.0.1 --port 8000
 ```
-Open http://127.0.0.1:8000/docs to exercise the API.
 
-Create `../.env` (or copy `.env.example`) if you want real models:
+API docs will be available at:
+
 ```
-OPENAI_API_KEY=sk-...
+http://127.0.0.1:8000/docs
+```
+
+---
+
+## Environment Variables
+
+Create a `.env` file in the project root if you want to use real models.
+
+```
+OPENAI_API_KEY=...
 GEMINI_API_KEY=...
 ```
 
-### Frontend (Vite + React)
+Mock models will work without any keys.
+
+---
+
+# Frontend (React + Vite)
+
 ```bash
 cd frontend
+
 npm install
 
 echo VITE_API_BASE_URL=http://127.0.0.1:8000 > .env.local
 
-npm run dev   # http://localhost:5173
+npm run dev
 ```
 
-### Run both together
-- Terminal 1: start the backend (uvicorn command above).
-- Terminal 2: start the frontend (`npm run dev` in `frontend/`).
-- Visit http://localhost:5173, enter a prompt, select models, and run an evaluation.
+Open:
 
-### Troubleshooting
-- If the API is down, the UI still loads but shows an offline/health warning.
-- If builds fail due to encoding/BOM issues, re-save the affected files as UTF-8 and rerun `npm run build`.
-
-## How it works (systems view)
-1. FastAPI receives an `/evaluate` request containing a prompt and optional model list.
-2. The evaluation engine fans the prompt out to each `LLMClient` asynchronously.
-3. Raw generations and timing metadata are captured with per-model timeouts.
-4. Lightweight similarity heuristics (Jaccard token overlap) are computed for pairwise comparison.
-5. A rule-based synthesizer returns either the majority response or, if none exists, the longest response as a coverage proxy, along with its rationale.
-
-## Folder structure
-- `backend/` � FastAPI app, LLM abstractions, evaluation pipeline, synthesis strategies, tests.
-- `frontend/` � Vite + React UI for running and comparing evaluations.
-- `docs/` � Architecture, evaluation methodology, and roadmap notes.
-
-## Example request
-```bash
-curl -X POST http://127.0.0.1:8000/evaluate \
-  -H "Content-Type: application/json" \
-  -d '{"prompt":"List three benefits of testing","models":["mock:echo","mock:pseudo"],"temperature":0,"max_tokens":256,"timeout_s":12,"synthesis_method":"best_of_n"}'
+```
+http://localhost:5173
 ```
 
-PowerShell equivalent:
-```powershell
-Invoke-RestMethod -Method Post -Uri "http://127.0.0.1:8000/evaluate" `
-  -ContentType "application/json" `
-  -Body (@{
-    prompt           = "List three benefits of testing"
-    models           = @("mock:echo","mock:pseudo")
-    temperature      = 0
-    max_tokens       = 256
-    timeout_s        = 12
-    synthesis_method = "best_of_n"
-  } | ConvertTo-Json)
+---
+
+# Running the Full System
+
+Terminal 1
+
+```
+start backend server
 ```
 
-Discover available models at `GET /models` (includes availability + reason when API keys are missing).
+Terminal 2
 
-### Response contract (stable)
-- `request_id`, `created_at`, `prompt`, `params` (echoed models/temp/max_tokens/timeout_s/synthesis_method)
-- `results[]`: `{ model, provider, ok, status, text?, error_code?, error_message?, latency_ms?, usage?, meta? }`
-- `synthesis`: `{ ok, method, text, rationale? }`
-- `compare`: `{ pairs: [{ a, b, token_overlap_jaccard, length_ratio, keyword_coverage }], summary: { avg_similarity, most_disagree_pair?, notes } }`
+```
+npm run dev
+```
 
-## Tests
+Then open the UI and run prompt evaluations.
+
+---
+
+# Testing
+
 ```bash
 set PYTHONPATH=backend
 pytest backend/tests -q
 ```
 
-## Extending
-- Implement new providers by subclassing `LLMClient` in `backend/app/llms/`.
-- Add metrics in `backend/app/evaluation/pipeline.py`.
-- Experiment with synthesis strategies in `backend/app/synthesis/`.
+---
 
-### Real model support
-- OpenAI: set `OPENAI_API_KEY` and use model IDs like `openai:gpt-4o-mini`.
-- Gemini: set `GEMINI_API_KEY` and use `gemini:1.5-flash`.
-- Mock models remain available as `mock:echo` and `mock:pseudo` (alias of `mock:reasoner`).
+# Extending PRISM
 
-PRISM is intentionally minimal�no auth, databases, or external infra. Build on it as evaluation needs grow.
+### Add a new model provider
+
+Create a subclass of:
+
+```
+backend/app/llms/LLMClient
+```
+
+and implement the `generate()` interface.
+
+---
+
+### Add new evaluation metrics
+
+Extend:
+
+```
+backend/app/evaluation/pipeline.py
+```
+
+---
+
+### Add new synthesis strategies
+
+Add implementations in:
+
+```
+backend/app/synthesis/
+```
+
+---
+
+# Current Model Support
+
+| Provider | Example Model |
+|--------|--------|
+| OpenAI | `openai:gpt-4o-mini` |
+| Gemini | `gemini:1.5-flash` |
+| Mock | `mock:echo`, `mock:pseudo` |
+
+---
+
+# Roadmap
+
+Future improvements planned for PRISM include:
+
+- reasoning trace comparison  
+- structured output evaluation  
+- weighted model voting  
+- dataset-level benchmarking  
+- experiment tracking  
+- evaluation dashboards  
+
+---
+
+# Philosophy
+
+PRISM treats LLMs as **parallel reasoning systems rather than single sources of truth**.
+
+The goal is not just to generate answers, but to understand how models reason, where they disagree, and how to combine their strengths.
