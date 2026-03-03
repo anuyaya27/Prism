@@ -320,7 +320,7 @@ backend/app/synthesis/
 | Provider | Example Model |
 |--------|--------|
 | OpenAI | `openai:gpt-4o-mini` |
-| Gemini | `gemini:1.5-flash` |
+| Gemini | `gemini:2.5-flash` |
 | Mock | `mock:echo`, `mock:pseudo` |
 
 ---
