@@ -1,0 +1,630 @@
+{
+  "api_version": "0.3.0",
+  "canonical_request": {
+    "models": [
+      "gemini:2.5-flash",
+      "mock:echo",
+      "mock:pseudo",
+      "mock:reasoner",
+      "openai:gpt-4o-mini"
+    ],
+    "params": {
+      "max_tokens": 512,
+      "synthesis_method": "best_of_n",
+      "temperature": 0.7,
+      "timeout_s": 30.0
+    },
+    "prompt": "what do you think will be the temperature tomorrow in San Diego, CA?"
+  },
+  "execution_context": {
+    "providers": [
+      {
+        "model_id": "openai:gpt-4o-mini",
+        "provider_name": "openai",
+        "runtime": {
+          "base_url": "https://api.openai.com/v1/chat/completions",
+          "max_tokens": 512,
+          "retries": 2,
+          "temperature": 0.7,
+          "timeout_s": 20.0
+        }
+      },
+      {
+        "model_id": "gemini:2.5-flash",
+        "provider_name": "gemini",
+        "runtime": {
+          "base_url": "https://generativelanguage.googleapis.com/v1beta/models",
+          "max_tokens": 512,
+          "retries": 2,
+          "temperature": 0.7,
+          "timeout_s": 20.0
+        }
+      },
+      {
+        "model_id": "mock:echo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      },
+      {
+        "model_id": "mock:reasoner",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      },
+      {
+        "model_id": "mock:pseudo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      }
+    ],
+    "runtime": {
+      "git_commit": "2c00e72b8ae27febdbfd9930adddf5b580d52576",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "python_version": "3.11.9"
+    }
+  },
+  "raw_generations": [
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "openai:gpt-4o-mini",
+      "provider": "openai",
+      "raw_request": {
+        "body": {
+          "max_tokens": 512,
+          "messages": [
+            {
+              "content": "what do you think will be the temperature tomorrow in San Diego, CA?",
+              "role": "user"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "temperature": 0.7
+        },
+        "headers": {
+          "Authorization": "***REDACTED***",
+          "Content-Type": "application/json"
+        },
+        "url": "https://api.openai.com/v1/chat/completions"
+      },
+      "raw_response": {
+        "body": {
+          "body_snippet": "{\n  ***REDACTED***   \"",
+          "status_code": 200
+        },
+        "headers": {
+          "access-control-expose-headers": "X-Request-ID",
+          "alt-svc": "h3=\":443\"; ma=86400",
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "9d6c25753e1ddc36-LAX",
+          "connection": "keep-alive",
+          "content-encoding": "gzip",
+          "content-type": "application/json",
+          "date": "Tue, 03 Mar 2026 22:41:03 GMT",
+          "openai-organization": "user-riqxe1sh4tn9y09bmfp1dnnz",
+          "openai-processing-ms": "1275",
+          "openai-project": "proj_7ZhJ9OB3ZWvXUVQnILY00wKJ",
+          "openai-version": "2020-10-01",
+          "server": "cloudflare",
+          "set-cookie": "__cf_bm=olN5tbIDH9ks4a.iaXOBOWQ4J6MQOOMiQtoAYxeXyBQ-1772577662.2753844-1.0.1.1-uB2dOP6iO4qtHCRVdrO8LB.88dRUN.ePQPV7Y4Tuwn9dGFYbE7fbt2O8WPSrwxigMVT3_4wZxZe1DHadRv5cROW70R6vSJMHkK1xGFaszk_d4ToQWA13DS5kJKWeEmam; HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Tue, 03 Mar 2026 23:11:03 GMT",
+          "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+          "transfer-encoding": "chunked",
+          "x-content-type-options": "nosniff",
+          "x-openai-proxy-wasm": "v0.1",
+          "x-ratelimit-limit-requests": "5000",
+          "x-ratelimit-limit-tokens": "***REDACTED***",
+          "x-ratelimit-remaining-requests": "4999",
+          "x-ratelimit-remaining-tokens": "***REDACTED***",
+          "x-ratelimit-reset-requests": "12ms",
+          "x-ratelimit-reset-tokens": "***REDACTED***",
+          "x-request-id": "req_159e8c651f8046bf9d10ddd4bd5484c4"
+        },
+        "url": "https://api.openai.com/v1/chat/completions"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "gemini:2.5-flash",
+      "provider": "gemini",
+      "raw_request": {
+        "body": {
+          "contents": [
+            {
+              "parts": [
+                {
+                  "text": "what do you think will be the temperature tomorrow in San Diego, CA?"
+                }
+              ]
+            }
+          ],
+          "generationConfig": {
+            "maxOutputTokens": 512,
+            "temperature": 0.7
+          }
+        },
+        "headers": {
+          "x-goog-api-key": "***REDACTED***"
+        },
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+      },
+      "raw_response": {
+        "body": {
+          "body_snippet": "{\n  ***REDACTED***    ",
+          "status_code": 200
+        },
+        "headers": {
+          "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "content-encoding": "gzip",
+          "content-type": "application/json; charset=UTF-8",
+          "date": "Tue, 03 Mar 2026 22:41:04 GMT",
+          "server": "scaffolding on HTTPServer2",
+          "server-timing": "gfet4t7; dur=2741",
+          "transfer-encoding": "chunked",
+          "vary": "Origin, X-Origin, Referer",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0"
+        },
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:echo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:echo",
+        "prompt": "what do you think will be the temperature tomorrow in San Diego, CA?"
+      },
+      "raw_response": {
+        "response": "[echo:mock-echo] what do you think will be the temperature tomorrow in San Diego, CA?"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:reasoner",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:reasoner",
+        "prompt": "what do you think will be the temperature tomorrow in San Diego, CA?"
+      },
+      "raw_response": {
+        "response": "analysis:\n- step 1: contrast constraint\n- step 2: contrast path"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:pseudo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:pseudo",
+        "prompt": "what do you think will be the temperature tomorrow in San Diego, CA?"
+      },
+      "raw_response": {
+        "response": "analysis:\n- step 1: contrast constraint\n- step 2: contrast path"
+      }
+    }
+  ],
+  "request": {
+    "max_tokens": 512,
+    "models": [
+      "openai:gpt-4o-mini",
+      "gemini:2.5-flash",
+      "mock:echo",
+      "mock:reasoner",
+      "mock:pseudo"
+    ],
+    "prompt": "what do you think will be the temperature tomorrow in San Diego, CA?",
+    "synthesis_method": "best_of_n",
+    "temperature": 0.7,
+    "timeout_s": 30.0
+  },
+  "request_id": "b1811de0e402413493241bea2e97bbb7",
+  "response": {
+    "api_version": "0.3.0",
+    "compare": {
+      "pairs": [
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "gemini:2.5-flash",
+          "keyword_coverage": 0.2857142857142857,
+          "length_ratio": 0.40540540540540543,
+          "rouge_l": 0.24324324324324326,
+          "token_overlap_jaccard": 0.25
+        },
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "mock:echo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.43243243243243246,
+          "rouge_l": 0.10810810810810811,
+          "token_overlap_jaccard": 0.0975609756097561
+        },
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "mock:reasoner",
+          "keyword_coverage": 0.2857142857142857,
+          "length_ratio": 0.24324324324324326,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.2857142857142857,
+          "length_ratio": 0.24324324324324326,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "gemini:2.5-flash",
+          "b": "mock:echo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.9375,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "gemini:2.5-flash",
+          "b": "mock:reasoner",
+          "keyword_coverage": 0.0,
+          "length_ratio": 0.6,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "gemini:2.5-flash",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.0,
+          "length_ratio": 0.6,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "mock:echo",
+          "b": "mock:reasoner",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.5625,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "mock:echo",
+          "b": "mock:pseudo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.5625,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "mock:reasoner",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.0,
+          "length_ratio": 1.0,
+          "rouge_l": 1.0,
+          "token_overlap_jaccard": 1.0
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.13475609756097562,
+        "disagreement_summary": {
+          "max_distance": 2.0,
+          "pair": {
+            "a": "openai:gpt-4o-mini",
+            "b": "mock:reasoner"
+          },
+          "reason": "Low overlap: rouge_l=0.00, jaccard=0.00"
+        },
+        "most_disagree_pair": {
+          "a": "openai:gpt-4o-mini",
+          "b": "mock:reasoner",
+          "keyword_coverage": 0.2857142857142857,
+          "length_ratio": 0.24324324324324326,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        "notes": "token_overlap_jaccard: 1.0 = identical; length_ratio: shorter/longer; keyword_coverage vs prompt keywords."
+      }
+    },
+    "created_at": "2026-03-03T22:40:59.889396",
+    "params": {
+      "max_tokens": 512,
+      "models": [
+        "openai:gpt-4o-mini",
+        "gemini:2.5-flash",
+        "mock:echo",
+        "mock:reasoner",
+        "mock:pseudo"
+      ],
+      "synthesis_method": "best_of_n",
+      "temperature": 0.7,
+      "timeout_s": 30.0
+    },
+    "partial_success": false,
+    "prompt": "what do you think will be the temperature tomorrow in San Diego, CA?",
+    "request_id": "b1811de0e402413493241bea2e97bbb7",
+    "results": [
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 2801.4252000139095,
+        "meta": {
+          "finish_reason": "stop",
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "gpt-4o-mini"
+        },
+        "model": "openai:gpt-4o-mini",
+        "ok": true,
+        "provider": "openai",
+        "raw_request": {
+          "body": {
+            "max_tokens": 512,
+            "messages": [
+              {
+                "content": "what do you think will be the temperature tomorrow in San Diego, CA?",
+                "role": "user"
+              }
+            ],
+            "model": "gpt-4o-mini",
+            "temperature": 0.7
+          },
+          "headers": {
+            "Authorization": "***REDACTED***",
+            "Content-Type": "application/json"
+          },
+          "url": "https://api.openai.com/v1/chat/completions"
+        },
+        "raw_response": {
+          "body": {
+            "body_snippet": "{\n  ***REDACTED***   \"",
+            "status_code": 200
+          },
+          "headers": {
+            "access-control-expose-headers": "X-Request-ID",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9d6c25753e1ddc36-LAX",
+            "connection": "keep-alive",
+            "content-encoding": "gzip",
+            "content-type": "application/json",
+            "date": "Tue, 03 Mar 2026 22:41:03 GMT",
+            "openai-organization": "user-riqxe1sh4tn9y09bmfp1dnnz",
+            "openai-processing-ms": "1275",
+            "openai-project": "proj_7ZhJ9OB3ZWvXUVQnILY00wKJ",
+            "openai-version": "2020-10-01",
+            "server": "cloudflare",
+            "set-cookie": "__cf_bm=olN5tbIDH9ks4a.iaXOBOWQ4J6MQOOMiQtoAYxeXyBQ-1772577662.2753844-1.0.1.1-uB2dOP6iO4qtHCRVdrO8LB.88dRUN.ePQPV7Y4Tuwn9dGFYbE7fbt2O8WPSrwxigMVT3_4wZxZe1DHadRv5cROW70R6vSJMHkK1xGFaszk_d4ToQWA13DS5kJKWeEmam; HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Tue, 03 Mar 2026 23:11:03 GMT",
+            "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+            "transfer-encoding": "chunked",
+            "x-content-type-options": "nosniff",
+            "x-openai-proxy-wasm": "v0.1",
+            "x-ratelimit-limit-requests": "5000",
+            "x-ratelimit-limit-tokens": "***REDACTED***",
+            "x-ratelimit-remaining-requests": "4999",
+            "x-ratelimit-remaining-tokens": "***REDACTED***",
+            "x-ratelimit-reset-requests": "12ms",
+            "x-ratelimit-reset-tokens": "***REDACTED***",
+            "x-request-id": "req_159e8c651f8046bf9d10ddd4bd5484c4"
+          },
+          "url": "https://api.openai.com/v1/chat/completions"
+        },
+        "status": "success",
+        "text": "I don't have the ability to provide real-time weather forecasts or predictions. For the most accurate and up-to-date weather information for San Diego, CA, I recommend checking a reliable weather website or app.",
+        "usage": {
+          "completion_tokens": 40,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": 0
+          },
+          "prompt_tokens": 22,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0
+          },
+          "total_tokens": 62
+        }
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 3466.705900034867,
+        "meta": {
+          "finish_reason": "MAX_TOKENS",
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "gemini-2.5-flash"
+        },
+        "model": "gemini:2.5-flash",
+        "ok": true,
+        "provider": "gemini",
+        "raw_request": {
+          "body": {
+            "contents": [
+              {
+                "parts": [
+                  {
+                    "text": "what do you think will be the temperature tomorrow in San Diego, CA?"
+                  }
+                ]
+              }
+            ],
+            "generationConfig": {
+              "maxOutputTokens": 512,
+              "temperature": 0.7
+            }
+          },
+          "headers": {
+            "x-goog-api-key": "***REDACTED***"
+          },
+          "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+        },
+        "raw_response": {
+          "body": {
+            "body_snippet": "{\n  ***REDACTED***    ",
+            "status_code": 200
+          },
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Tue, 03 Mar 2026 22:41:04 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=2741",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-xss-protection": "0"
+          },
+          "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+        },
+        "status": "success",
+        "text": "As an AI, I don't have real-time access to live weather data or",
+        "usage": {
+          "candidatesTokenCount": 18,
+          "promptTokenCount": 15,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 15
+            }
+          ],
+          "thoughtsTokenCount": 490,
+          "totalTokenCount": 523
+        }
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 41.0903999581933,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-echo",
+          "provider_model": {}
+        },
+        "model": "mock:echo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:echo",
+          "prompt": "what do you think will be the temperature tomorrow in San Diego, CA?"
+        },
+        "raw_response": {
+          "response": "[echo:mock-echo] what do you think will be the temperature tomorrow in San Diego, CA?"
+        },
+        "status": "success",
+        "text": "[echo:mock-echo] what do you think will be the temperature tomorrow in San Diego, CA?",
+        "usage": null
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 96.44390002358705,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-reasoner",
+          "provider_model": {
+            "stance": "optimistic"
+          }
+        },
+        "model": "mock:reasoner",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:reasoner",
+          "prompt": "what do you think will be the temperature tomorrow in San Diego, CA?"
+        },
+        "raw_response": {
+          "response": "analysis:\n- step 1: contrast constraint\n- step 2: contrast path"
+        },
+        "status": "success",
+        "text": "analysis:\n- step 1: contrast constraint\n- step 2: contrast path",
+        "usage": null
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 96.68390004662797,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-reasoner",
+          "provider_model": {
+            "stance": "optimistic"
+          }
+        },
+        "model": "mock:pseudo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:pseudo",
+          "prompt": "what do you think will be the temperature tomorrow in San Diego, CA?"
+        },
+        "raw_response": {
+          "response": "analysis:\n- step 1: contrast constraint\n- step 2: contrast path"
+        },
+        "status": "success",
+        "text": "analysis:\n- step 1: contrast constraint\n- step 2: contrast path",
+        "usage": null
+      }
+    ],
+    "run_hash": "115996e451fe6db2c65c0c81c5f4e7ef2b56a4619fe44a6681fb068246ffb626",
+    "schema_version": "1.1.0",
+    "status": "success",
+    "synthesis": {
+      "attribution": [
+        {
+          "sentence_index": 0,
+          "source_model_id": "mock:echo",
+          "span": null
+        }
+      ],
+      "confidence": 0.9544753086419752,
+      "method": "best_of_n",
+      "ok": true,
+      "rationale": "Selected mock:echo via best_of_n scoring: coverage=1.00, redundancy=0.06, conciseness=0.93, score=2.86.",
+      "strategy_id": "best_of_n",
+      "synthesized_text": "[echo:mock-echo] what do you think will be the temperature tomorrow in San Diego, CA?",
+      "text": "[echo:mock-echo] what do you think will be the temperature tomorrow in San Diego, CA?"
+    }
+  },
+  "run_hash": "115996e451fe6db2c65c0c81c5f4e7ef2b56a4619fe44a6681fb068246ffb626",
+  "schema_version": "1.1.0",
+  "timestamp_utc": "2026-03-03T22:40:59.889396Z"
+}

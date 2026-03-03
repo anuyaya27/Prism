@@ -17,6 +17,8 @@ class GeminiProvider(Provider):
         self.api_key = self._normalize_api_key(raw_key)
         self.timeout = timeout
         self.max_retries = max_retries
+        budget_raw = os.getenv("PRISM_GEMINI_THINKING_BUDGET", "0").strip()
+        self.thinking_budget = int(budget_raw) if budget_raw else None
         self._models = ["2.5-flash"]
         self._deprecated_aliases = {
             "1.5-flash": "2.5-flash",
@@ -91,6 +93,8 @@ class GeminiProvider(Provider):
                 "maxOutputTokens": max_tokens,
             },
         }
+        if self.thinking_budget is not None:
+            payload["generationConfig"]["thinkingConfig"] = {"thinkingBudget": self.thinking_budget}
 
         last_error: str | None = None
         sanitized_request = sanitize_raw_io(url=url, headers=headers, body=payload)
@@ -130,6 +134,10 @@ class GeminiProvider(Provider):
                     )
                 elif exc.response.status_code == 400:
                     msg = self._extract_error_message(exc.response)
+                    if "Unknown name \"thinkingConfig\"" in msg:
+                        payload["generationConfig"].pop("thinkingConfig", None)
+                        await asyncio.sleep(0.1)
+                        continue
                     if "API key not valid" in msg or "permission denied" in msg.lower():
                         last_error = "auth_error"
                     else:

@@ -1,0 +1,630 @@
+{
+  "api_version": "0.3.0",
+  "canonical_request": {
+    "models": [
+      "gemini:2.5-flash",
+      "mock:echo",
+      "mock:pseudo",
+      "mock:reasoner",
+      "openai:gpt-4o-mini"
+    ],
+    "params": {
+      "max_tokens": 512,
+      "synthesis_method": "best_of_n",
+      "temperature": 0.7,
+      "timeout_s": 30.0
+    },
+    "prompt": "Is CS at UCSD hard?"
+  },
+  "execution_context": {
+    "providers": [
+      {
+        "model_id": "openai:gpt-4o-mini",
+        "provider_name": "openai",
+        "runtime": {
+          "base_url": "https://api.openai.com/v1/chat/completions",
+          "max_tokens": 512,
+          "retries": 2,
+          "temperature": 0.7,
+          "timeout_s": 20.0
+        }
+      },
+      {
+        "model_id": "gemini:2.5-flash",
+        "provider_name": "gemini",
+        "runtime": {
+          "base_url": "https://generativelanguage.googleapis.com/v1beta/models",
+          "max_tokens": 512,
+          "retries": 2,
+          "temperature": 0.7,
+          "timeout_s": 20.0
+        }
+      },
+      {
+        "model_id": "mock:echo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      },
+      {
+        "model_id": "mock:reasoner",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      },
+      {
+        "model_id": "mock:pseudo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      }
+    ],
+    "runtime": {
+      "git_commit": "2c00e72b8ae27febdbfd9930adddf5b580d52576",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "python_version": "3.11.9"
+    }
+  },
+  "raw_generations": [
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "openai:gpt-4o-mini",
+      "provider": "openai",
+      "raw_request": {
+        "body": {
+          "max_tokens": 512,
+          "messages": [
+            {
+              "content": "Is CS at UCSD hard?",
+              "role": "user"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "temperature": 0.7
+        },
+        "headers": {
+          "Authorization": "***REDACTED***",
+          "Content-Type": "application/json"
+        },
+        "url": "https://api.openai.com/v1/chat/completions"
+      },
+      "raw_response": {
+        "body": {
+          "body_snippet": "{\n  ***REDACTED***know",
+          "status_code": 200
+        },
+        "headers": {
+          "access-control-expose-headers": "X-Request-ID",
+          "alt-svc": "h3=\":443\"; ma=86400",
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "9d6c270ebc2129a5-LAX",
+          "connection": "keep-alive",
+          "content-encoding": "gzip",
+          "content-type": "application/json",
+          "date": "Tue, 03 Mar 2026 22:42:13 GMT",
+          "openai-organization": "user-riqxe1sh4tn9y09bmfp1dnnz",
+          "openai-processing-ms": "5380",
+          "openai-project": "proj_7ZhJ9OB3ZWvXUVQnILY00wKJ",
+          "openai-version": "2020-10-01",
+          "server": "cloudflare",
+          "set-cookie": "__cf_bm=s9arxwGut6jP6MIsZR_S_DxURw_zVOn6O0HDBzKJBUU-1772577727.7987182-1.0.1.1-3DG838koWFtjv0af4I0Ehahozq2U04tx6_GFjw62BUqZn9BWmmi6G7C0MbVbPPfCHjdjOZUdMzhuGi6FFmRrFfLQ9AmnbtKGXgGQMDW65O_e9qnkd7W3LpWaHVfMCXR.; HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Tue, 03 Mar 2026 23:12:13 GMT",
+          "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+          "transfer-encoding": "chunked",
+          "x-content-type-options": "nosniff",
+          "x-openai-proxy-wasm": "v0.1",
+          "x-ratelimit-limit-requests": "5000",
+          "x-ratelimit-limit-tokens": "***REDACTED***",
+          "x-ratelimit-remaining-requests": "4999",
+          "x-ratelimit-remaining-tokens": "***REDACTED***",
+          "x-ratelimit-reset-requests": "12ms",
+          "x-ratelimit-reset-tokens": "***REDACTED***",
+          "x-request-id": "req_8c5080e301bc48e08095343982f5d73b"
+        },
+        "url": "https://api.openai.com/v1/chat/completions"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "gemini:2.5-flash",
+      "provider": "gemini",
+      "raw_request": {
+        "body": {
+          "contents": [
+            {
+              "parts": [
+                {
+                  "text": "Is CS at UCSD hard?"
+                }
+              ]
+            }
+          ],
+          "generationConfig": {
+            "maxOutputTokens": 512,
+            "temperature": 0.7
+          }
+        },
+        "headers": {
+          "x-goog-api-key": "***REDACTED***"
+        },
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+      },
+      "raw_response": {
+        "body": {
+          "body_snippet": "{\n  ***REDACTED***    ",
+          "status_code": 200
+        },
+        "headers": {
+          "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "content-encoding": "gzip",
+          "content-type": "application/json; charset=UTF-8",
+          "date": "Tue, 03 Mar 2026 22:42:11 GMT",
+          "server": "scaffolding on HTTPServer2",
+          "server-timing": "gfet4t7; dur=3250",
+          "transfer-encoding": "chunked",
+          "vary": "Origin, X-Origin, Referer",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0"
+        },
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:echo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:echo",
+        "prompt": "Is CS at UCSD hard?"
+      },
+      "raw_response": {
+        "response": "[echo:mock-echo] Is CS at UCSD hard?"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:reasoner",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:reasoner",
+        "prompt": "Is CS at UCSD hard?"
+      },
+      "raw_response": {
+        "response": "analysis:\n- step 1: estimate constraint\n- step 2: consider tradeoff"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:pseudo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:pseudo",
+        "prompt": "Is CS at UCSD hard?"
+      },
+      "raw_response": {
+        "response": "analysis:\n- step 1: estimate constraint\n- step 2: consider tradeoff"
+      }
+    }
+  ],
+  "request": {
+    "max_tokens": 512,
+    "models": [
+      "openai:gpt-4o-mini",
+      "gemini:2.5-flash",
+      "mock:echo",
+      "mock:reasoner",
+      "mock:pseudo"
+    ],
+    "prompt": "Is CS at UCSD hard?",
+    "synthesis_method": "best_of_n",
+    "temperature": 0.7,
+    "timeout_s": 30.0
+  },
+  "request_id": "0cb43b582e6f4de3b44e7cf2b5c3ffd1",
+  "response": {
+    "api_version": "0.3.0",
+    "compare": {
+      "pairs": [
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "gemini:2.5-flash",
+          "keyword_coverage": 0.5,
+          "length_ratio": 0.05220883534136546,
+          "rouge_l": 0.0321285140562249,
+          "token_overlap_jaccard": 0.05921052631578947
+        },
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "mock:echo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.0321285140562249,
+          "rouge_l": 0.01606425702811245,
+          "token_overlap_jaccard": 0.026490066225165563
+        },
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "mock:reasoner",
+          "keyword_coverage": 0.5,
+          "length_ratio": 0.03614457831325301,
+          "rouge_l": 0.008032128514056224,
+          "token_overlap_jaccard": 0.0196078431372549
+        },
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.5,
+          "length_ratio": 0.03614457831325301,
+          "rouge_l": 0.008032128514056224,
+          "token_overlap_jaccard": 0.0196078431372549
+        },
+        {
+          "a": "gemini:2.5-flash",
+          "b": "mock:echo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.6153846153846154,
+          "rouge_l": 0.23076923076923078,
+          "token_overlap_jaccard": 0.25
+        },
+        {
+          "a": "gemini:2.5-flash",
+          "b": "mock:reasoner",
+          "keyword_coverage": 0.5,
+          "length_ratio": 0.6923076923076923,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "gemini:2.5-flash",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.5,
+          "length_ratio": 0.6923076923076923,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "mock:echo",
+          "b": "mock:reasoner",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.8888888888888888,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "mock:echo",
+          "b": "mock:pseudo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.8888888888888888,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "mock:reasoner",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.0,
+          "length_ratio": 1.0,
+          "rouge_l": 1.0,
+          "token_overlap_jaccard": 1.0
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.13749162788154648,
+        "disagreement_summary": {
+          "max_distance": 2.0,
+          "pair": {
+            "a": "gemini:2.5-flash",
+            "b": "mock:reasoner"
+          },
+          "reason": "Low overlap: rouge_l=0.00, jaccard=0.00"
+        },
+        "most_disagree_pair": {
+          "a": "gemini:2.5-flash",
+          "b": "mock:reasoner",
+          "keyword_coverage": 0.5,
+          "length_ratio": 0.6923076923076923,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        "notes": "token_overlap_jaccard: 1.0 = identical; length_ratio: shorter/longer; keyword_coverage vs prompt keywords."
+      }
+    },
+    "created_at": "2026-03-03T22:42:05.467276",
+    "params": {
+      "max_tokens": 512,
+      "models": [
+        "openai:gpt-4o-mini",
+        "gemini:2.5-flash",
+        "mock:echo",
+        "mock:reasoner",
+        "mock:pseudo"
+      ],
+      "synthesis_method": "best_of_n",
+      "temperature": 0.7,
+      "timeout_s": 30.0
+    },
+    "partial_success": false,
+    "prompt": "Is CS at UCSD hard?",
+    "request_id": "0cb43b582e6f4de3b44e7cf2b5c3ffd1",
+    "results": [
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 4,
+        "latency_ms": 7348.579699988477,
+        "meta": {
+          "finish_reason": "stop",
+          "format_compliance": 1.0,
+          "hedge_count": 4,
+          "model": "gpt-4o-mini"
+        },
+        "model": "openai:gpt-4o-mini",
+        "ok": true,
+        "provider": "openai",
+        "raw_request": {
+          "body": {
+            "max_tokens": 512,
+            "messages": [
+              {
+                "content": "Is CS at UCSD hard?",
+                "role": "user"
+              }
+            ],
+            "model": "gpt-4o-mini",
+            "temperature": 0.7
+          },
+          "headers": {
+            "Authorization": "***REDACTED***",
+            "Content-Type": "application/json"
+          },
+          "url": "https://api.openai.com/v1/chat/completions"
+        },
+        "raw_response": {
+          "body": {
+            "body_snippet": "{\n  ***REDACTED***know",
+            "status_code": 200
+          },
+          "headers": {
+            "access-control-expose-headers": "X-Request-ID",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9d6c270ebc2129a5-LAX",
+            "connection": "keep-alive",
+            "content-encoding": "gzip",
+            "content-type": "application/json",
+            "date": "Tue, 03 Mar 2026 22:42:13 GMT",
+            "openai-organization": "user-riqxe1sh4tn9y09bmfp1dnnz",
+            "openai-processing-ms": "5380",
+            "openai-project": "proj_7ZhJ9OB3ZWvXUVQnILY00wKJ",
+            "openai-version": "2020-10-01",
+            "server": "cloudflare",
+            "set-cookie": "__cf_bm=s9arxwGut6jP6MIsZR_S_DxURw_zVOn6O0HDBzKJBUU-1772577727.7987182-1.0.1.1-3DG838koWFtjv0af4I0Ehahozq2U04tx6_GFjw62BUqZn9BWmmi6G7C0MbVbPPfCHjdjOZUdMzhuGi6FFmRrFfLQ9AmnbtKGXgGQMDW65O_e9qnkd7W3LpWaHVfMCXR.; HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Tue, 03 Mar 2026 23:12:13 GMT",
+            "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+            "transfer-encoding": "chunked",
+            "x-content-type-options": "nosniff",
+            "x-openai-proxy-wasm": "v0.1",
+            "x-ratelimit-limit-requests": "5000",
+            "x-ratelimit-limit-tokens": "***REDACTED***",
+            "x-ratelimit-remaining-requests": "4999",
+            "x-ratelimit-remaining-tokens": "***REDACTED***",
+            "x-ratelimit-reset-requests": "12ms",
+            "x-ratelimit-reset-tokens": "***REDACTED***",
+            "x-request-id": "req_8c5080e301bc48e08095343982f5d73b"
+          },
+          "url": "https://api.openai.com/v1/chat/completions"
+        },
+        "status": "success",
+        "text": "The difficulty of a Computer Science (CS) program at UC San Diego (UCSD) can vary based on several factors, including your background, preparation, and study habits. Here are some aspects to consider:\n\n1. **Curriculum**: UCSD's CS program is known for its rigorous curriculum that covers a wide range of topics, from algorithms and data structures to systems programming and software engineering. The coursework can be challenging, especially as you progress to upper-division classes.\n\n2. **Pace and Workload**: Many students find the pace and workload demanding. You may have multiple assignments, projects, and exams to manage simultaneously, which can be stressful.\n\n3. **Resources**: UCSD offers resources such as tutoring centers, study groups, and office hours with professors and teaching assistants. Utilizing these resources can help you manage the difficulty of the coursework.\n\n4. **Peer Competition**: You will be surrounded by motivated and talented peers, which can create a competitive atmosphere. While this can be motivating, it may also add to the pressure.\n\n5. **Preparation**: If you have a strong background in mathematics and programming, you may find the transition to UCSD's CS program smoother. If you're coming from a less technical background, you might find some concepts more challenging.\n\nUltimately, while many students find the CS program at UCSD to be challenging, it is also an excellent opportunity for learning and growth in a highly respected program. Success in the program often depends on your dedication, time management skills, and willingness to seek help when needed.",
+        "usage": {
+          "completion_tokens": 313,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": 0
+          },
+          "prompt_tokens": 14,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0
+          },
+          "total_tokens": 327
+        }
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 3882.5932000181638,
+        "meta": {
+          "finish_reason": "MAX_TOKENS",
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "gemini-2.5-flash"
+        },
+        "model": "gemini:2.5-flash",
+        "ok": true,
+        "provider": "gemini",
+        "raw_request": {
+          "body": {
+            "contents": [
+              {
+                "parts": [
+                  {
+                    "text": "Is CS at UCSD hard?"
+                  }
+                ]
+              }
+            ],
+            "generationConfig": {
+              "maxOutputTokens": 512,
+              "temperature": 0.7
+            }
+          },
+          "headers": {
+            "x-goog-api-key": "***REDACTED***"
+          },
+          "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+        },
+        "raw_response": {
+          "body": {
+            "body_snippet": "{\n  ***REDACTED***    ",
+            "status_code": 200
+          },
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Tue, 03 Mar 2026 22:42:11 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=3250",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-xss-protection": "0"
+          },
+          "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+        },
+        "status": "success",
+        "text": "Yes, CS (Computer Science) at UCSD is widely considered to be **very challenging",
+        "usage": {
+          "candidatesTokenCount": 18,
+          "promptTokenCount": 7,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 7
+            }
+          ],
+          "thoughtsTokenCount": 490,
+          "totalTokenCount": 515
+        }
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 56.27540004206821,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-echo",
+          "provider_model": {}
+        },
+        "model": "mock:echo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:echo",
+          "prompt": "Is CS at UCSD hard?"
+        },
+        "raw_response": {
+          "response": "[echo:mock-echo] Is CS at UCSD hard?"
+        },
+        "status": "success",
+        "text": "[echo:mock-echo] Is CS at UCSD hard?",
+        "usage": null
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 117.55729996366426,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-reasoner",
+          "provider_model": {
+            "stance": "concise"
+          }
+        },
+        "model": "mock:reasoner",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:reasoner",
+          "prompt": "Is CS at UCSD hard?"
+        },
+        "raw_response": {
+          "response": "analysis:\n- step 1: estimate constraint\n- step 2: consider tradeoff"
+        },
+        "status": "success",
+        "text": "analysis:\n- step 1: estimate constraint\n- step 2: consider tradeoff",
+        "usage": null
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 117.38730000797659,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-reasoner",
+          "provider_model": {
+            "stance": "concise"
+          }
+        },
+        "model": "mock:pseudo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:pseudo",
+          "prompt": "Is CS at UCSD hard?"
+        },
+        "raw_response": {
+          "response": "analysis:\n- step 1: estimate constraint\n- step 2: consider tradeoff"
+        },
+        "status": "success",
+        "text": "analysis:\n- step 1: estimate constraint\n- step 2: consider tradeoff",
+        "usage": null
+      }
+    ],
+    "run_hash": "90c035678782edcb8bd181eba06cbdf678781b78856b0aab653e2c9762131847",
+    "schema_version": "1.1.0",
+    "status": "success",
+    "synthesis": {
+      "attribution": [
+        {
+          "sentence_index": 0,
+          "source_model_id": "mock:echo",
+          "span": null
+        }
+      ],
+      "confidence": 0.9455128205128206,
+      "method": "best_of_n",
+      "ok": true,
+      "rationale": "Selected mock:echo via best_of_n scoring: coverage=1.00, redundancy=0.12, conciseness=0.96, score=2.84.",
+      "strategy_id": "best_of_n",
+      "synthesized_text": "[echo:mock-echo] Is CS at UCSD hard?",
+      "text": "[echo:mock-echo] Is CS at UCSD hard?"
+    }
+  },
+  "run_hash": "90c035678782edcb8bd181eba06cbdf678781b78856b0aab653e2c9762131847",
+  "schema_version": "1.1.0",
+  "timestamp_utc": "2026-03-03T22:42:05.467276Z"
+}
