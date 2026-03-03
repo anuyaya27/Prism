@@ -204,8 +204,13 @@ source .venv/bin/activate
 
 pip install -r requirements.txt
 
-set PYTHONPATH=backend
-uvicorn app.main:app --reload --app-dir backend --host 127.0.0.1 --port 8000
+# PowerShell (from backend/)
+$env:PYTHONPATH="."
+uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
+
+# Alternative (from repo root)
+# $env:PYTHONPATH="backend"
+# uvicorn app.main:app --reload --app-dir backend --host 127.0.0.1 --port 8000
 ```
 
 API docs will be available at:
@@ -270,7 +275,7 @@ Then open the UI and run prompt evaluations.
 # Testing
 
 ```bash
-set PYTHONPATH=backend
+$env:PYTHONPATH="backend"
 pytest backend/tests -q
 ```
 

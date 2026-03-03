@@ -12,6 +12,7 @@ from app.models.schemas import EvaluateRequest, EvaluateResponse
 from app.providers.registry import ProviderRegistry
 from app.providers.mock import MockProvider
 from app.providers.openai import OpenAIProvider
+from app.providers.gemini import GeminiProvider
 from app.synthesis.aggregator import MultiStrategySynthesizer
 
 
@@ -43,7 +44,7 @@ def build_app() -> FastAPI:
     # Providers
     registry.register("mock", lambda: MockProvider())
     registry.register("openai", lambda: OpenAIProvider(api_key=os.getenv("OPENAI_API_KEY")))
-    # Gemini disabled per request; not registered.
+    registry.register("gemini", lambda: GeminiProvider(api_key=os.getenv("GEMINI_API_KEY")))
 
     engine = EvaluationEngine(registry=registry, synthesizer=synthesizer)
 

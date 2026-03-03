@@ -1,0 +1,466 @@
+{
+  "api_version": "0.3.0",
+  "canonical_request": {
+    "models": [
+      "mock:echo",
+      "mock:pseudo",
+      "mock:reasoner",
+      "openai:gpt-4o-mini"
+    ],
+    "params": {
+      "max_tokens": 512,
+      "synthesis_method": "best_of_n",
+      "temperature": 0.7,
+      "timeout_s": 30.0
+    },
+    "prompt": "Compare the tradeoffs between unit tests and integration tests."
+  },
+  "execution_context": {
+    "providers": [
+      {
+        "model_id": "mock:echo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      },
+      {
+        "model_id": "mock:reasoner",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      },
+      {
+        "model_id": "mock:pseudo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      },
+      {
+        "model_id": "openai:gpt-4o-mini",
+        "provider_name": "openai",
+        "runtime": {
+          "base_url": "https://api.openai.com/v1/chat/completions",
+          "max_tokens": 512,
+          "retries": 2,
+          "temperature": 0.7,
+          "timeout_s": 20.0
+        }
+      }
+    ],
+    "runtime": {
+      "git_commit": "52a8d2b48739ed967c7aaa935f6c420073948e2f",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "python_version": "3.11.9"
+    }
+  },
+  "raw_generations": [
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:echo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:echo",
+        "prompt": "Compare the tradeoffs between unit tests and integration tests."
+      },
+      "raw_response": {
+        "response": "[echo:mock-echo] Compare the tradeoffs between unit tests and integration tests."
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:reasoner",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:reasoner",
+        "prompt": "Compare the tradeoffs between unit tests and integration tests."
+      },
+      "raw_response": {
+        "response": "analysis:\n- step 1: estimate path\n- step 2: contrast path"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:pseudo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:pseudo",
+        "prompt": "Compare the tradeoffs between unit tests and integration tests."
+      },
+      "raw_response": {
+        "response": "analysis:\n- step 1: estimate path\n- step 2: contrast path"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "openai:gpt-4o-mini",
+      "provider": "openai",
+      "raw_request": {
+        "body": {
+          "max_tokens": 512,
+          "messages": [
+            {
+              "content": "Compare the tradeoffs between unit tests and integration tests.",
+              "role": "user"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "temperature": 0.7
+        },
+        "headers": {
+          "Authorization": "***REDACTED***",
+          "Content-Type": "application/json"
+        },
+        "url": "https://api.openai.com/v1/chat/completions"
+      },
+      "raw_response": {
+        "body": {
+          "body_snippet": "{\n  ***REDACTED*** tes",
+          "status_code": 200
+        },
+        "headers": {
+          "access-control-expose-headers": "X-Request-ID",
+          "alt-svc": "h3=\":443\"; ma=86400",
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "9d6b32602a8eb256-LAX",
+          "connection": "keep-alive",
+          "content-encoding": "gzip",
+          "content-type": "application/json",
+          "date": "Tue, 03 Mar 2026 19:55:17 GMT",
+          "openai-organization": "user-riqxe1sh4tn9y09bmfp1dnnz",
+          "openai-processing-ms": "10813",
+          "openai-project": "proj_7ZhJ9OB3ZWvXUVQnILY00wKJ",
+          "openai-version": "2020-10-01",
+          "server": "cloudflare",
+          "set-cookie": "__cf_bm=WW00zb05c89ROreCGxzeiHy9DWBKPra0bnLRw_GRP4Q-1772567705.6261687-1.0.1.1-SXakNo_83dMW7scAMKcc_DA9kwbRQUIPEqW7ppjuEq_7CbojJhVB_agSD_KNnR6AujGtD4di1V0LAtNk5dULuC5PPl_jnvprStZLP8w2gMvQscDNudA6LLRPGCfnoi_2; HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Tue, 03 Mar 2026 20:25:17 GMT",
+          "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+          "transfer-encoding": "chunked",
+          "x-content-type-options": "nosniff",
+          "x-openai-proxy-wasm": "v0.1",
+          "x-ratelimit-limit-requests": "5000",
+          "x-ratelimit-limit-tokens": "***REDACTED***",
+          "x-ratelimit-remaining-requests": "4999",
+          "x-ratelimit-remaining-tokens": "***REDACTED***",
+          "x-ratelimit-reset-requests": "12ms",
+          "x-ratelimit-reset-tokens": "***REDACTED***",
+          "x-request-id": "req_fc1513ce724f48a5ab2c416813d8176d"
+        },
+        "url": "https://api.openai.com/v1/chat/completions"
+      }
+    }
+  ],
+  "request": {
+    "max_tokens": 512,
+    "models": [
+      "mock:echo",
+      "mock:reasoner",
+      "mock:pseudo",
+      "openai:gpt-4o-mini"
+    ],
+    "prompt": "Compare the tradeoffs between unit tests and integration tests.",
+    "synthesis_method": "best_of_n",
+    "temperature": 0.7,
+    "timeout_s": 30.0
+  },
+  "request_id": "aa2f5e7bff624553bc6e8b8f683e728e",
+  "response": {
+    "api_version": "0.3.0",
+    "compare": {
+      "pairs": [
+        {
+          "a": "mock:echo",
+          "b": "mock:reasoner",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.75,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "mock:echo",
+          "b": "mock:pseudo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.75,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "mock:echo",
+          "b": "openai:gpt-4o-mini",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.031331592689295036,
+          "rouge_l": 0.018276762402088774,
+          "token_overlap_jaccard": 0.031746031746031744
+        },
+        {
+          "a": "mock:reasoner",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.0,
+          "length_ratio": 1.0,
+          "rouge_l": 1.0,
+          "token_overlap_jaccard": 1.0
+        },
+        {
+          "a": "mock:reasoner",
+          "b": "openai:gpt-4o-mini",
+          "keyword_coverage": 0.6666666666666666,
+          "length_ratio": 0.02349869451697128,
+          "rouge_l": 0.005221932114882507,
+          "token_overlap_jaccard": 0.010526315789473684
+        },
+        {
+          "a": "mock:pseudo",
+          "b": "openai:gpt-4o-mini",
+          "keyword_coverage": 0.6666666666666666,
+          "length_ratio": 0.02349869451697128,
+          "rouge_l": 0.005221932114882507,
+          "token_overlap_jaccard": 0.010526315789473684
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.17546644388749652,
+        "disagreement_summary": {
+          "max_distance": 2.0,
+          "pair": {
+            "a": "mock:echo",
+            "b": "mock:reasoner"
+          },
+          "reason": "Low overlap: rouge_l=0.00, jaccard=0.00"
+        },
+        "most_disagree_pair": {
+          "a": "mock:echo",
+          "b": "mock:reasoner",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.75,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        "notes": "token_overlap_jaccard: 1.0 = identical; length_ratio: shorter/longer; keyword_coverage vs prompt keywords."
+      }
+    },
+    "created_at": "2026-03-03T19:55:04.102423",
+    "params": {
+      "max_tokens": 512,
+      "models": [
+        "mock:echo",
+        "mock:reasoner",
+        "mock:pseudo",
+        "openai:gpt-4o-mini"
+      ],
+      "synthesis_method": "best_of_n",
+      "temperature": 0.7,
+      "timeout_s": 30.0
+    },
+    "partial_success": false,
+    "prompt": "Compare the tradeoffs between unit tests and integration tests.",
+    "request_id": "aa2f5e7bff624553bc6e8b8f683e728e",
+    "results": [
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 544.4624999654479,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-echo",
+          "provider_model": {}
+        },
+        "model": "mock:echo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:echo",
+          "prompt": "Compare the tradeoffs between unit tests and integration tests."
+        },
+        "raw_response": {
+          "response": "[echo:mock-echo] Compare the tradeoffs between unit tests and integration tests."
+        },
+        "status": "success",
+        "text": "[echo:mock-echo] Compare the tradeoffs between unit tests and integration tests.",
+        "usage": null
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 544.5695999660529,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-reasoner",
+          "provider_model": {
+            "stance": "optimistic"
+          }
+        },
+        "model": "mock:reasoner",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:reasoner",
+          "prompt": "Compare the tradeoffs between unit tests and integration tests."
+        },
+        "raw_response": {
+          "response": "analysis:\n- step 1: estimate path\n- step 2: contrast path"
+        },
+        "status": "success",
+        "text": "analysis:\n- step 1: estimate path\n- step 2: contrast path",
+        "usage": null
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 544.4954999838956,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-reasoner",
+          "provider_model": {
+            "stance": "optimistic"
+          }
+        },
+        "model": "mock:pseudo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:pseudo",
+          "prompt": "Compare the tradeoffs between unit tests and integration tests."
+        },
+        "raw_response": {
+          "response": "analysis:\n- step 1: estimate path\n- step 2: contrast path"
+        },
+        "status": "success",
+        "text": "analysis:\n- step 1: estimate path\n- step 2: contrast path",
+        "usage": null
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 2,
+        "latency_ms": 12534.410200023558,
+        "meta": {
+          "finish_reason": "length",
+          "format_compliance": 1.0,
+          "hedge_count": 2,
+          "model": "gpt-4o-mini"
+        },
+        "model": "openai:gpt-4o-mini",
+        "ok": true,
+        "provider": "openai",
+        "raw_request": {
+          "body": {
+            "max_tokens": 512,
+            "messages": [
+              {
+                "content": "Compare the tradeoffs between unit tests and integration tests.",
+                "role": "user"
+              }
+            ],
+            "model": "gpt-4o-mini",
+            "temperature": 0.7
+          },
+          "headers": {
+            "Authorization": "***REDACTED***",
+            "Content-Type": "application/json"
+          },
+          "url": "https://api.openai.com/v1/chat/completions"
+        },
+        "raw_response": {
+          "body": {
+            "body_snippet": "{\n  ***REDACTED*** tes",
+            "status_code": 200
+          },
+          "headers": {
+            "access-control-expose-headers": "X-Request-ID",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9d6b32602a8eb256-LAX",
+            "connection": "keep-alive",
+            "content-encoding": "gzip",
+            "content-type": "application/json",
+            "date": "Tue, 03 Mar 2026 19:55:17 GMT",
+            "openai-organization": "user-riqxe1sh4tn9y09bmfp1dnnz",
+            "openai-processing-ms": "10813",
+            "openai-project": "proj_7ZhJ9OB3ZWvXUVQnILY00wKJ",
+            "openai-version": "2020-10-01",
+            "server": "cloudflare",
+            "set-cookie": "__cf_bm=WW00zb05c89ROreCGxzeiHy9DWBKPra0bnLRw_GRP4Q-1772567705.6261687-1.0.1.1-SXakNo_83dMW7scAMKcc_DA9kwbRQUIPEqW7ppjuEq_7CbojJhVB_agSD_KNnR6AujGtD4di1V0LAtNk5dULuC5PPl_jnvprStZLP8w2gMvQscDNudA6LLRPGCfnoi_2; HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Tue, 03 Mar 2026 20:25:17 GMT",
+            "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+            "transfer-encoding": "chunked",
+            "x-content-type-options": "nosniff",
+            "x-openai-proxy-wasm": "v0.1",
+            "x-ratelimit-limit-requests": "5000",
+            "x-ratelimit-limit-tokens": "***REDACTED***",
+            "x-ratelimit-remaining-requests": "4999",
+            "x-ratelimit-remaining-tokens": "***REDACTED***",
+            "x-ratelimit-reset-requests": "12ms",
+            "x-ratelimit-reset-tokens": "***REDACTED***",
+            "x-request-id": "req_fc1513ce724f48a5ab2c416813d8176d"
+          },
+          "url": "https://api.openai.com/v1/chat/completions"
+        },
+        "status": "success",
+        "text": "Unit tests and integration tests are both essential components of software testing, each serving distinct purposes and bringing unique advantages and trade-offs. Here\u2019s a comparison of their trade-offs:\n\n### Unit Tests\n\n**Definition**: Unit tests validate individual components (units) of code in isolation, typically a single function or method, to ensure they work as expected.\n\n**Advantages**:\n1. **Speed**: Unit tests are generally faster to execute since they test small pieces of code without dependencies on external systems.\n2. **Isolation**: They focus on a single unit, making it easier to identify the source of a failure.\n3. **Ease of Debugging**: Because they are narrow in scope, debugging failures in unit tests is usually straightforward.\n4. **Frequent Execution**: They can be run frequently (e.g., during development) to catch bugs early, leading to cleaner code and fewer regressions.\n5. **Documentation**: They serve as a form of documentation by showing how different components are expected to behave.\n\n**Trade-offs**:\n1. **Limited Scope**: Unit tests do not verify the interactions between components, which can lead to false confidence if only unit tests are run.\n2. **Mocking Complexity**: Dependencies often need to be mocked or stubbed out, which can complicate the test setup and reduce the test's realism.\n3. **Maintenance Overhead**: As the codebase changes, unit tests may need to be updated frequently, leading to potential maintenance overhead.\n\n### Integration Tests\n\n**Definition**: Integration tests verify the interactions between multiple components or systems to ensure they work together as expected.\n\n**Advantages**:\n1. **Real-world Scenarios**: They test how different parts of the system interact with each other, catching issues that unit tests might miss.\n2. **Database and External Services**: Integration tests can verify interactions with databases, APIs, and other external services, ensuring that the entire system works together as intended.\n3. **End-to-End Functionality**: They help confirm that the overall functionality of the application works as expected from a user perspective.\n\n**Trade-offs**:\n1. **Slower Execution**: Integration tests are typically slower to run due to the need to set up and tear down multiple components or services.\n2. **Complex Debugging**: When integration tests fail, it can be more challenging to diagnose the problem since multiple components are involved.\n3. **Higher Setup Overhead**: Setting up the environment for integration tests can be more complex, requiring more configuration and",
+        "usage": {
+          "completion_tokens": 512,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": 0
+          },
+          "prompt_tokens": 18,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0
+          },
+          "total_tokens": 530
+        }
+      }
+    ],
+    "run_hash": "1867f0757cf8aea479bd1625c4112a32e4126e30aec8ea9faace3b37aa4ab66c",
+    "schema_version": "1.1.0",
+    "status": "success",
+    "synthesis": {
+      "attribution": [
+        {
+          "sentence_index": 0,
+          "source_model_id": "mock:echo",
+          "span": null
+        }
+      ],
+      "confidence": 0.9255765199161425,
+      "method": "best_of_n",
+      "ok": true,
+      "rationale": "Selected mock:echo via best_of_n scoring: coverage=1.00, redundancy=0.17, conciseness=0.94, score=2.78.",
+      "strategy_id": "best_of_n",
+      "synthesized_text": "[echo:mock-echo] Compare the tradeoffs between unit tests and integration tests.",
+      "text": "[echo:mock-echo] Compare the tradeoffs between unit tests and integration tests."
+    }
+  },
+  "run_hash": "1867f0757cf8aea479bd1625c4112a32e4126e30aec8ea9faace3b37aa4ab66c",
+  "schema_version": "1.1.0",
+  "timestamp_utc": "2026-03-03T19:55:04.102423Z"
+}
