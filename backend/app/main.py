@@ -42,9 +42,9 @@ def build_app() -> FastAPI:
     ]
 
     # Providers
-    registry.register("mock", lambda: MockProvider())
     registry.register("openai", lambda: OpenAIProvider(api_key=os.getenv("OPENAI_API_KEY")))
     registry.register("gemini", lambda: GeminiProvider(api_key=os.getenv("GEMINI_API_KEY")))
+    registry.register("mock", lambda: MockProvider())
 
     engine = EvaluationEngine(registry=registry, synthesizer=synthesizer)
 
