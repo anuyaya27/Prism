@@ -1,6 +1,11 @@
 
 import { useEffect, useMemo, useState } from "react";
-import { EvaluateResponse, ModelInfo, SynthesisMethod } from "./types";
+import {
+  ConsensusReviewResponse,
+  EvaluateResponse,
+  ModelInfo,
+  SynthesisMethod,
+} from "./types";
 
 const DEFAULT_API_URL = import.meta.env.VITE_API_BASE_URL || "http://127.0.0.1:8000";
 const CLIENT_TIMEOUT_MS = Number(import.meta.env.VITE_EVALUATE_TIMEOUT_MS ?? 120_000) || 120_000;
@@ -24,6 +29,9 @@ function App() {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [running, setRunning] = useState(false);
   const [result, setResult] = useState<EvaluateResponse | null>(null);
+  const [reviewRunning, setReviewRunning] = useState(false);
+  const [reviewResult, setReviewResult] = useState<ConsensusReviewResponse | null>(null);
+  const [reviewError, setReviewError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
@@ -125,6 +133,8 @@ function App() {
     const controller = new AbortController();
     const timer = window.setTimeout(() => controller.abort(), CLIENT_TIMEOUT_MS);
     setRunning(true);
+    setReviewResult(null);
+    setReviewError(null);
 
     try {
       const payload = {
@@ -174,6 +184,64 @@ function App() {
   const clearResult = () => {
     setPrompt("");
     setResult(null);
+    setReviewResult(null);
+    setReviewError(null);
+  };
+
+  const isMockEntry = (provider?: string | null, modelId?: string | null): boolean => {
+    const providerValue = (provider || "").toLowerCase();
+    const modelValue = (modelId || "").toLowerCase();
+    return providerValue === "mock" || modelValue.startsWith("mock:");
+  };
+
+  const eligibleConsensusOutputs = useMemo(() => {
+    if (!result) return [];
+    return result.results.filter((entry) => {
+      if (isMockEntry(entry.provider, entry.model)) return false;
+      if (entry.status !== "success") return false;
+      return Boolean((entry.text || "").trim());
+    });
+  }, [result]);
+
+  const canRunConsensusReview = !!result && !running && !reviewRunning && eligibleConsensusOutputs.length >= 2;
+
+  const runConsensusReview = async () => {
+    if (!result) return;
+    if (eligibleConsensusOutputs.length < 2) {
+      setReviewError("Consensus Review needs at least 2 successful non-mock model outputs.");
+      return;
+    }
+
+    const controller = new AbortController();
+    const timer = window.setTimeout(() => controller.abort(), CLIENT_TIMEOUT_MS);
+    setReviewRunning(true);
+    setReviewError(null);
+    try {
+      const payload = {
+        original_prompt: result.prompt || prompt,
+        run_id: result.request_id,
+        model_outputs: result.results.map((entry) => ({
+          model_id: entry.model,
+          provider: entry.provider,
+          text: entry.text || null,
+          latency_ms: entry.latency_ms ?? null,
+          usage: entry.usage ?? null,
+          status: entry.status,
+        })),
+      };
+      const response = await requestJson<ConsensusReviewResponse>("/consensus_review", {
+        method: "POST",
+        signal: controller.signal,
+        body: JSON.stringify(payload),
+      });
+      setReviewResult(response);
+    } catch (error: unknown) {
+      const message = error instanceof Error ? error.message : "Consensus review failed.";
+      setReviewError(message);
+    } finally {
+      window.clearTimeout(timer);
+      setReviewRunning(false);
+    }
   };
 
   const compareSummary = result?.compare?.summary;
@@ -308,6 +376,55 @@ function App() {
                   )}
                 </div>
               ))}
+            </div>
+
+            <div className="rsect-head">
+              <span className="rsh-tag">OUT</span>CONSENSUS REVIEW
+            </div>
+            <div className="consensus-box">
+              <div className="consensus-actions">
+                <button className="tb" onClick={() => void runConsensusReview()} disabled={!canRunConsensusReview}>
+                  {reviewRunning ? "Reviewing..." : "Consensus Review"}
+                </button>
+                <span className="dim">Eligible models: {eligibleConsensusOutputs.length}</span>
+              </div>
+              {reviewError && <div className="resp-error">consensus_review: {reviewError}</div>}
+              {reviewResult && (
+                <div className="consensus-content">
+                  <div className="syn-meta">
+                    <span>SUMMARY</span>
+                    <span>CONFIDENCE:{String(reviewResult.confidence ?? "-")}</span>
+                  </div>
+                  <div className="syn-rat">{reviewResult.summary}</div>
+                  <div className="consensus-final">{reviewResult.final_answer}</div>
+
+                  <div className="consensus-list-head">KEY TAKEAWAYS</div>
+                  <ul className="consensus-list">
+                    {reviewResult.key_takeaways.map((item, index) => (
+                      <li key={`takeaway-${index}`}>{item}</li>
+                    ))}
+                  </ul>
+
+                  <div className="consensus-list-head">DISAGREEMENTS</div>
+                  <ul className="consensus-list">
+                    {reviewResult.disagreements.map((item, index) => (
+                      <li key={`disagreement-${index}`}>
+                        {item.topic} | {item.models_involved.join(", ")} | {item.resolution}
+                      </li>
+                    ))}
+                  </ul>
+
+                  <div className="consensus-list-head">PER-MODEL NOTES</div>
+                  {Object.entries(reviewResult.per_model_notes).map(([modelId, note]) => (
+                    <div key={modelId} className="consensus-model-note">
+                      <div className="resp-model">{modelId}</div>
+                      <div>Strengths: {note.strengths.join(" | ") || "-"}</div>
+                      <div>Weaknesses: {note.weaknesses.join(" | ") || "-"}</div>
+                      <div>Issues: {note.issues.join(" | ") || "-"}</div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="rsect-head">

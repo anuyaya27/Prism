@@ -7,8 +7,9 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.routing import APIRoute
 from dotenv import load_dotenv
 
+from app.evaluation.consensus_review import ConsensusReviewEngine
 from app.evaluation.pipeline import EvaluationEngine
-from app.models.schemas import EvaluateRequest, EvaluateResponse
+from app.models.schemas import ConsensusReviewRequest, ConsensusReviewResponse, EvaluateRequest, EvaluateResponse
 from app.providers.registry import ProviderRegistry
 from app.providers.mock import MockProvider
 from app.providers.openai import OpenAIProvider
@@ -47,9 +48,11 @@ def build_app() -> FastAPI:
     registry.register("mock", lambda: MockProvider())
 
     engine = EvaluationEngine(registry=registry, synthesizer=synthesizer)
+    consensus_engine = ConsensusReviewEngine()
 
     api = FastAPI(title="PRISM", version="0.3.0")
     api.state.engine = engine
+    api.state.consensus_engine = consensus_engine
 
     allow_methods = ["*"]
     allow_headers = ["*"]
@@ -126,6 +129,13 @@ def build_app() -> FastAPI:
     @api.options("/evaluate")
     async def evaluate_options(request: Request) -> dict[str, str]:
         return {"status": "ok"}
+
+    @api.post("/consensus_review", response_model=ConsensusReviewResponse)
+    async def consensus_review(request: ConsensusReviewRequest) -> ConsensusReviewResponse:
+        try:
+            return await consensus_engine.review(request=request)
+        except ValueError as exc:
+            raise HTTPException(status_code=400, detail=str(exc)) from exc
 
     @api.get("/runs")
     async def list_runs(limit: int = 20, status: str | None = None) -> dict:

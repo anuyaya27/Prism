@@ -91,3 +91,42 @@ class EvaluateResponse(BaseModel):
     compare: CompareResult
     status: Literal["success", "partial", "failed"]
     partial_success: bool | None = None
+
+
+class ConsensusReviewModelOutput(BaseModel):
+    model_id: str
+    provider: str
+    text: str | None = None
+    latency_ms: float | None = None
+    usage: dict[str, Any] | None = None
+    status: Literal["success", "error", "timeout"]
+
+
+class ConsensusReviewRequest(BaseModel):
+    original_prompt: str
+    run_id: str | None = None
+    model_outputs: list[ConsensusReviewModelOutput]
+
+
+class ConsensusModelNote(BaseModel):
+    strengths: list[str] = Field(default_factory=list)
+    weaknesses: list[str] = Field(default_factory=list)
+    issues: list[str] = Field(default_factory=list)
+
+
+class ConsensusDisagreement(BaseModel):
+    topic: str
+    models_involved: list[str] = Field(default_factory=list)
+    resolution: str
+
+
+class ConsensusReviewResponse(BaseModel):
+    review_id: str
+    judged_models: list[str] = Field(default_factory=list)
+    summary: str
+    final_answer: str
+    per_model_notes: dict[str, ConsensusModelNote] = Field(default_factory=dict)
+    key_takeaways: list[str] = Field(default_factory=list)
+    disagreements: list[ConsensusDisagreement] = Field(default_factory=list)
+    confidence: float | Literal["low", "medium", "high"] | None = None
+    raw_judge_response: dict[str, Any] | None = None

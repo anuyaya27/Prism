@@ -92,3 +92,42 @@ export interface EvaluateResponse {
   status: "success" | "partial" | "failed";
   partial_success?: boolean | null;
 }
+
+export interface ConsensusReviewModelOutput {
+  model_id: string;
+  provider: string;
+  text?: string | null;
+  latency_ms?: number | null;
+  usage?: Record<string, unknown> | null;
+  status: "success" | "error" | "timeout";
+}
+
+export interface ConsensusReviewRequestPayload {
+  original_prompt: string;
+  run_id?: string | null;
+  model_outputs: ConsensusReviewModelOutput[];
+}
+
+export interface ConsensusModelNote {
+  strengths: string[];
+  weaknesses: string[];
+  issues: string[];
+}
+
+export interface ConsensusDisagreement {
+  topic: string;
+  models_involved: string[];
+  resolution: string;
+}
+
+export interface ConsensusReviewResponse {
+  review_id: string;
+  judged_models: string[];
+  summary: string;
+  final_answer: string;
+  per_model_notes: Record<string, ConsensusModelNote>;
+  key_takeaways: string[];
+  disagreements: ConsensusDisagreement[];
+  confidence?: number | "low" | "medium" | "high" | null;
+  raw_judge_response?: Record<string, unknown> | null;
+}

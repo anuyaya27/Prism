@@ -1,4 +1,4 @@
-import { EvaluateRequestPayload } from "../types";
+import { ConsensusReviewRequestPayload, EvaluateRequestPayload } from "../types";
 
 const envBase = import.meta.env.VITE_API_BASE_URL;
 export const API_BASE_URL = envBase || "http://127.0.0.1:8000";
@@ -27,6 +27,10 @@ export function getModels() {
 
 export function postEvaluate(body: EvaluateRequestPayload, signal?: AbortSignal) {
   return request("/evaluate", { method: "POST", body: JSON.stringify(body), signal });
+}
+
+export function postConsensusReview(body: ConsensusReviewRequestPayload, signal?: AbortSignal) {
+  return request("/consensus_review", { method: "POST", body: JSON.stringify(body), signal });
 }
 
 export function debugPing() {

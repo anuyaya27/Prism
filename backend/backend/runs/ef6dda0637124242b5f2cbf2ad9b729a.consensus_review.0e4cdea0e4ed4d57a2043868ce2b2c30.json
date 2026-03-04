@@ -1,0 +1,232 @@
+{
+  "execution_context": {
+    "runtime": {
+      "git_commit": "dd6a0c0d0d93e67df838a28e113aae7753f7156a",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "python_version": "3.11.9"
+    }
+  },
+  "judged_outputs": [
+    {
+      "latency_ms": 10527.889000019059,
+      "model_id": "openai:gpt-4o-mini",
+      "provider": "openai",
+      "status": "success",
+      "text": "Support Vector Machines (SVMs) are powerful supervised learning algorithms used for classification and regression tasks. The main difference between soft SVM and hard SVM lies in how they handle misclassification and the margin around the decision boundary.\n\n### Hard SVM (Hard Margin SVM)\n\n1. **Strict Separation**: Hard SVM requires that all training data points be correctly classified. It finds a hyperplane that separates the classes with the maximum margin, without allowing any misclassifications.\n\n2. **Linearly Separable Data**: Hard SVM is applicable only when the data is linearly separable, meaning that it is possible to draw a hyperplane that separates the classes without any errors.\n\n3. **No Tolerance for Noise**: Hard SVM is sensitive to outliers or noise in the data because it does not allow any points to fall on the wrong side of the margin. This can lead to poor generalization if the data contains noise or is not perfectly separable.\n\n### Soft SVM (Soft Margin SVM)\n\n1. **Flexible Separation**: Soft SVM allows for some misclassification of training data points. It introduces a penalty for misclassified points, enabling the algorithm to find a balance between maximizing the margin and minimizing classification errors.\n\n2. **Regularization Parameter**: Soft SVM uses a parameter (often denoted as \\(C\\)) that controls the trade-off between maximizing the margin and minimizing the classification error. A larger \\(C\\) places more emphasis on minimizing misclassification, while a smaller \\(C\\) allows for a wider margin at the cost of potentially more misclassifications.\n\n3. **Robust to Noise**: Soft SVM is more robust to noise and outliers in the data because it does not require perfect separation. This makes it suitable for real-world datasets, which often contain overlapping classes and noise.\n\n### Summary\n\n- **Hard SVM** is used when the data is perfectly separable and does not tolerate any misclassifications.\n- **Soft SVM** allows for misclassifications and is more flexible, making it suitable for datasets that may contain noise or are not perfectly separable.\n\nIn practice, soft SVM is more commonly used due to its ability to handle real-world complexities.",
+      "usage": {
+        "completion_tokens": 455,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 19,
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cached_tokens": 0
+        },
+        "total_tokens": 474
+      }
+    },
+    {
+      "latency_ms": 3579.2590999626555,
+      "model_id": "gemini:2.5-flash",
+      "provider": "gemini",
+      "status": "success",
+      "text": "The terms \"Soft SVM\" and \"Hard SVM\" refer to two fundamental approaches to training Support Vector Machines, primarily distinguished by how they handle misclassified data points and violations of the margin.\n\nLet's break down the differences:\n\n## Hard SVM (Hard-Margin SVM)\n\n**Concept:**\nHard SVM is the original formulation of SVM. It seeks to find a hyperplane that perfectly separates the data points of different classes with the largest possible margin, **without any misclassifications**.\n\n**Key Characteristics:**\n\n1.  **Strict Separation:** Assumes that the data is **linearly separable** without any overlap or noise.\n2.  **No Misclassifications Allowed:** Every single data point must be on the correct side of the margin. There is no tolerance for errors.\n3.  **Maximizes Geometric Margin:** The primary goal is to maximize the distance between the separating hyperplane and the nearest training data points (support vectors).\n4.  **No Slack Variables:** There are no variables to account for misclassified points or points within the margin.\n5.  **Sensitive to Outliers:** Even a single outlier that makes the data non-linearly separable will prevent Hard SVM from finding a solution. It will fail to converge if the data isn't perfectly separable.\n6.  **Unique Solution (Often):** If a separating hyperplane exists, the one with the maximum margin is often unique.\n\n**When to Use:**\n*   When you are absolutely certain that your data is perfectly linearly separable and noise-free.\n*   In theoretical contexts or toy examples.\n\n**Limitations:**\n*   **Highly Impractical for Real-World Data:** Real-world datasets are almost never perfectly linearly separable due to noise, measurement errors, and inherent data complexity.\n*   **Fails if Not Linearly Separable:** If even one point is on the \"wrong\" side, Hard SVM cannot find a solution.\n*   **Overfitting Risk:** Can be prone to overfitting if the data is *almost* perfectly separable but has a few noisy points that force the margin to be extremely narrow to accommodate them.\n\n## Soft SVM (Soft-Margin SVM)\n\n**Concept:**\nSoft SVM is a more flexible and practical extension of Hard SVM. It allows for some misclassifications and violations of the margin in exchange for finding a more robust and generalizable separating hyperplane, especially when data is not perfectly linearly separable.\n\n**Key Characteristics:**\n\n1.  **Tolerance for",
+      "usage": {
+        "candidatesTokenCount": 512,
+        "promptTokenCount": 10,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 10
+          }
+        ],
+        "totalTokenCount": 522
+      }
+    }
+  ],
+  "raw_judge_response": {
+    "raw_request": {
+      "body": {
+        "max_tokens": 1400,
+        "messages": [
+          {
+            "content": "consensus_judge",
+            "role": "system"
+          },
+          {
+            "content": "You are running Round 2 Consensus Review on model answers.\nTask requirements:\n1) Compare answers for correctness and logic.\n2) Explicitly call out hallucinations or unsupported claims.\n3) Pick best parts and produce one consolidated final answer.\n4) Return STRICT JSON only, no markdown, no prose outside JSON.\n\nRequired JSON shape:\n{\n  \"summary\": \"short text\",\n  \"final_answer\": \"consolidated best answer\",\n  \"per_model_notes\": {\n    \"<model_id>\": {\n      \"strengths\": [\"...\"],\n      \"weaknesses\": [\"...\"],\n      \"issues\": [\"hallucination/unsupported claim/etc\"]\n    }\n  },\n  \"key_takeaways\": [\"...\"],\n  \"disagreements\": [{\"topic\":\"...\", \"models_involved\":[\"...\"], \"resolution\":\"...\"}],\n  \"confidence\": \"low|medium|high\"\n}\n\nORIGINAL_PROMPT:\nTell me the difference between soft SVM and hard SVM\n\nMODEL_OUTPUTS:\nMODEL_ID: openai:gpt-4o-mini\nPROVIDER: openai\nLATENCY_MS: 10527.889000019059\nANSWER:\nSupport Vector Machines (SVMs) are powerful supervised learning algorithms used for classification and regression tasks. The main difference between soft SVM and hard SVM lies in how they handle misclassification and the margin around the decision boundary.\n\n### Hard SVM (Hard Margin SVM)\n\n1. **Strict Separation**: Hard SVM requires that all training data points be correctly classified. It finds a hyperplane that separates the classes with the maximum margin, without allowing any misclassifications.\n\n2. **Linearly Separable Data**: Hard SVM is applicable only when the data is linearly separable, meaning that it is possible to draw a hyperplane that separates the classes without any errors.\n\n3. **No Tolerance for Noise**: Hard SVM is sensitive to outliers or noise in the data because it does not allow any points to fall on the wrong side of the margin. This can lead to poor generalization if the data contains noise or is not perfectly separable.\n\n### Soft SVM (Soft Margin SVM)\n\n1. **Flexible Separation**: Soft SVM allows for some misclassification of training data points. It introduces a penalty for misclassified points, enabling the algorithm to find a balance between maximizing the margin and minimizing classification errors.\n\n2. **Regularization Parameter**: Soft SVM uses a parameter (often denoted as \\(C\\)) that controls the trade-off between maximizing the margin and minimizing the classification error. A larger \\(C\\) places more emphasis on minimizing misclassification, while a smaller \\(C\\) allows for a wider margin at the cost of potentially more misclassifications.\n\n3. **Robust to Noise**: Soft SVM is more robust to noise and outliers in the data because it does not require perfect separation. This makes it suitable for real-world datasets, which often contain overlapping classes and noise.\n\n### Summary\n\n- **Hard SVM** is used when the data is perfectly separable and does not tolerate any misclassifications.\n- **Soft SVM** allows for misclassifications and is more flexible, making it suitable for datasets that may contain noise or are not perfectly separable.\n\nIn practice, soft SVM is more commonly used due to its ability to handle real-world complexities.\n\n---\nMODEL_ID: gemini:2.5-flash\nPROVIDER: gemini\nLATENCY_MS: 3579.2590999626555\nANSWER:\nThe terms \"Soft SVM\" and \"Hard SVM\" refer to two fundamental approaches to training Support Vector Machines, primarily distinguished by how they handle misclassified data points and violations of the margin.\n\nLet's break down the differences:\n\n## Hard SVM (Hard-Margin SVM)\n\n**Concept:**\nHard SVM is the original formulation of SVM. It seeks to find a hyperplane that perfectly separates the data points of different classes with the largest possible margin, **without any misclassifications**.\n\n**Key Characteristics:**\n\n1.  **Strict Separation:** Assumes that the data is **linearly separable** without any overlap or noise.\n2.  **No Misclassifications Allowed:** Every single data point must be on the correct side of the margin. There is no tolerance for errors.\n3.  **Maximizes Geometric Margin:** The primary goal is to maximize the distance between the separating hyperplane and the nearest training data points (support vectors).\n4.  **No Slack Variables:** There are no variables to account for misclassified points or points within the margin.\n5.  **Sensitive to Outliers:** Even a single outlier that makes the data non-linearly separable will prevent Hard SVM from finding a solution. It will fail to converge if the data isn't perfectly separable.\n6.  **Unique Solution (Often):** If a separating hyperplane exists, the one with the maximum margin is often unique.\n\n**When to Use:**\n*   When you are absolutely certain that your data is perfectly linearly separable and noise-free.\n*   In theoretical contexts or toy examples.\n\n**Limitations:**\n*   **Highly Impractical for Real-World Data:** Real-world datasets are almost never perfectly linearly separable due to noise, measurement errors, and inherent data complexity.\n*   **Fails if Not Linearly Separable:** If even one point is on the \"wrong\" side, Hard SVM cannot find a solution.\n*   **Overfitting Risk:** Can be prone to overfitting if the data is *almost* perfectly separable but has a few noisy points that force the margin to be extremely narrow to accommodate them.\n\n## Soft SVM (Soft-Margin SVM)\n\n**Concept:**\nSoft SVM is a more flexible and practical extension of Hard SVM. It allows for some misclassifications and violations of the margin in exchange for finding a more robust and generalizable separating hyperplane, especially when data is not perfectly linearly separable.\n\n**Key Characteristics:**\n\n1.  **Tolerance for\n\n",
+            "role": "user"
+          }
+        ],
+        "model": "gpt-4o-mini",
+        "temperature": 0.2
+      },
+      "headers": {
+        "Authorization": "***REDACTED***",
+        "Content-Type": "application/json"
+      },
+      "url": "https://api.openai.com/v1/chat/completions"
+    },
+    "raw_response": {
+      "body": {
+        "completion": "{\n  \"summary\": \"The answers correctly differentiate between soft SVM and hard SVM, focusing on their handling of misclassifications and data separability. Both models provide a clear explanation of the concepts, but the second model is more detailed.\",\n  \"final_answer\": \"Support Vector Machines (SVMs) are supervised learning algorithms used for classification and regression tasks. The main difference between soft SVM and hard SVM lies in how they handle misclassification and the margin around the decision boundary. Hard SVM requires strict separation of classes without any misclassifications, applicable only to linearly separable data, making it sensitive to outliers. In contrast, soft SVM allows for some misclassifications, introducing a penalty for errors and using a regularization parameter (C) to balance margin maximization and error minimization, making it more robust to noise and suitable for real-world datasets.\",\n  \"per_model_notes\": {\n    \"openai:gpt-4o-mini\": {\n      \"strengths\": [\n        \"Clearly explains the concepts of hard and soft SVM.\",\n        \"Highlights the importance of the regularization parameter in soft SVM.\"\n      ],\n      \"weaknesses\": [\n        \"Less detailed than the other model.\"\n      ],\n      \"issues\": []\n    },\n    \"gemini:2.5-flash\": {\n      \"strengths\": [\n        \"Provides a comprehensive breakdown of hard and soft SVM.\",\n        \"Includes additional details on limitations and practical applications.\"\n      ],\n      \"weaknesses\": [\n        \"The answer is cut off, leaving some points incomplete.\"\n      ],\n      \"issues\": []\n    }\n  },\n  \"key_takeaways\": [\n    \"Hard SVM is strict and only applicable to perfectly separable data.\",\n    \"Soft SVM is more flexible and practical for real-world applications.\"\n  ],\n  \"disagreements\": [],\n  \"confidence\": \"medium\"\n}",
+        "model": "gpt-4o-mini-2024-07-18",
+        "usage": {
+          "completion_tokens": 391,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": 0
+          },
+          "prompt_tokens": 1269,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0
+          },
+          "total_tokens": 1660
+        }
+      },
+      "headers": {},
+      "url": null
+    }
+  },
+  "request": {
+    "model_outputs": [
+      {
+        "latency_ms": 10527.889000019059,
+        "model_id": "openai:gpt-4o-mini",
+        "provider": "openai",
+        "status": "success",
+        "text": "Support Vector Machines (SVMs) are powerful supervised learning algorithms used for classification and regression tasks. The main difference between soft SVM and hard SVM lies in how they handle misclassification and the margin around the decision boundary.\n\n### Hard SVM (Hard Margin SVM)\n\n1. **Strict Separation**: Hard SVM requires that all training data points be correctly classified. It finds a hyperplane that separates the classes with the maximum margin, without allowing any misclassifications.\n\n2. **Linearly Separable Data**: Hard SVM is applicable only when the data is linearly separable, meaning that it is possible to draw a hyperplane that separates the classes without any errors.\n\n3. **No Tolerance for Noise**: Hard SVM is sensitive to outliers or noise in the data because it does not allow any points to fall on the wrong side of the margin. This can lead to poor generalization if the data contains noise or is not perfectly separable.\n\n### Soft SVM (Soft Margin SVM)\n\n1. **Flexible Separation**: Soft SVM allows for some misclassification of training data points. It introduces a penalty for misclassified points, enabling the algorithm to find a balance between maximizing the margin and minimizing classification errors.\n\n2. **Regularization Parameter**: Soft SVM uses a parameter (often denoted as \\(C\\)) that controls the trade-off between maximizing the margin and minimizing the classification error. A larger \\(C\\) places more emphasis on minimizing misclassification, while a smaller \\(C\\) allows for a wider margin at the cost of potentially more misclassifications.\n\n3. **Robust to Noise**: Soft SVM is more robust to noise and outliers in the data because it does not require perfect separation. This makes it suitable for real-world datasets, which often contain overlapping classes and noise.\n\n### Summary\n\n- **Hard SVM** is used when the data is perfectly separable and does not tolerate any misclassifications.\n- **Soft SVM** allows for misclassifications and is more flexible, making it suitable for datasets that may contain noise or are not perfectly separable.\n\nIn practice, soft SVM is more commonly used due to its ability to handle real-world complexities.",
+        "usage": {
+          "completion_tokens": 455,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": 0
+          },
+          "prompt_tokens": 19,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0
+          },
+          "total_tokens": 474
+        }
+      },
+      {
+        "latency_ms": 3579.2590999626555,
+        "model_id": "gemini:2.5-flash",
+        "provider": "gemini",
+        "status": "success",
+        "text": "The terms \"Soft SVM\" and \"Hard SVM\" refer to two fundamental approaches to training Support Vector Machines, primarily distinguished by how they handle misclassified data points and violations of the margin.\n\nLet's break down the differences:\n\n## Hard SVM (Hard-Margin SVM)\n\n**Concept:**\nHard SVM is the original formulation of SVM. It seeks to find a hyperplane that perfectly separates the data points of different classes with the largest possible margin, **without any misclassifications**.\n\n**Key Characteristics:**\n\n1.  **Strict Separation:** Assumes that the data is **linearly separable** without any overlap or noise.\n2.  **No Misclassifications Allowed:** Every single data point must be on the correct side of the margin. There is no tolerance for errors.\n3.  **Maximizes Geometric Margin:** The primary goal is to maximize the distance between the separating hyperplane and the nearest training data points (support vectors).\n4.  **No Slack Variables:** There are no variables to account for misclassified points or points within the margin.\n5.  **Sensitive to Outliers:** Even a single outlier that makes the data non-linearly separable will prevent Hard SVM from finding a solution. It will fail to converge if the data isn't perfectly separable.\n6.  **Unique Solution (Often):** If a separating hyperplane exists, the one with the maximum margin is often unique.\n\n**When to Use:**\n*   When you are absolutely certain that your data is perfectly linearly separable and noise-free.\n*   In theoretical contexts or toy examples.\n\n**Limitations:**\n*   **Highly Impractical for Real-World Data:** Real-world datasets are almost never perfectly linearly separable due to noise, measurement errors, and inherent data complexity.\n*   **Fails if Not Linearly Separable:** If even one point is on the \"wrong\" side, Hard SVM cannot find a solution.\n*   **Overfitting Risk:** Can be prone to overfitting if the data is *almost* perfectly separable but has a few noisy points that force the margin to be extremely narrow to accommodate them.\n\n## Soft SVM (Soft-Margin SVM)\n\n**Concept:**\nSoft SVM is a more flexible and practical extension of Hard SVM. It allows for some misclassifications and violations of the margin in exchange for finding a more robust and generalizable separating hyperplane, especially when data is not perfectly linearly separable.\n\n**Key Characteristics:**\n\n1.  **Tolerance for",
+        "usage": {
+          "candidatesTokenCount": 512,
+          "promptTokenCount": 10,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 10
+            }
+          ],
+          "totalTokenCount": 522
+        }
+      },
+      {
+        "latency_ms": 26.75770001951605,
+        "model_id": "mock:echo",
+        "provider": "mock",
+        "status": "success",
+        "text": "[echo:mock-echo] Tell me the difference between soft SVM and hard SVM",
+        "usage": null
+      },
+      {
+        "latency_ms": 83.56450003338978,
+        "model_id": "mock:reasoner",
+        "provider": "mock",
+        "status": "success",
+        "text": "analysis:\n- step 1: project opportunity\n- step 2: consider impact\n- step 3: outline impact\n- step 4: outline constraint",
+        "usage": null
+      },
+      {
+        "latency_ms": 83.46620004158467,
+        "model_id": "mock:pseudo",
+        "provider": "mock",
+        "status": "success",
+        "text": "analysis:\n- step 1: project opportunity\n- step 2: consider impact\n- step 3: outline impact\n- step 4: outline constraint",
+        "usage": null
+      }
+    ],
+    "original_prompt": "Tell me the difference between soft SVM and hard SVM",
+    "run_id": "ef6dda0637124242b5f2cbf2ad9b729a"
+  },
+  "response": {
+    "confidence": "medium",
+    "disagreements": [],
+    "final_answer": "Support Vector Machines (SVMs) are supervised learning algorithms used for classification and regression tasks. The main difference between soft SVM and hard SVM lies in how they handle misclassification and the margin around the decision boundary. Hard SVM requires strict separation of classes without any misclassifications, applicable only to linearly separable data, making it sensitive to outliers. In contrast, soft SVM allows for some misclassifications, introducing a penalty for errors and using a regularization parameter (C) to balance margin maximization and error minimization, making it more robust to noise and suitable for real-world datasets.",
+    "judged_models": [
+      "openai:gpt-4o-mini",
+      "gemini:2.5-flash"
+    ],
+    "key_takeaways": [
+      "Hard SVM is strict and only applicable to perfectly separable data.",
+      "Soft SVM is more flexible and practical for real-world applications."
+    ],
+    "per_model_notes": {
+      "gemini:2.5-flash": {
+        "issues": [],
+        "strengths": [
+          "Provides a comprehensive breakdown of hard and soft SVM.",
+          "Includes additional details on limitations and practical applications."
+        ],
+        "weaknesses": [
+          "The answer is cut off, leaving some points incomplete."
+        ]
+      },
+      "openai:gpt-4o-mini": {
+        "issues": [],
+        "strengths": [
+          "Clearly explains the concepts of hard and soft SVM.",
+          "Highlights the importance of the regularization parameter in soft SVM."
+        ],
+        "weaknesses": [
+          "Less detailed than the other model."
+        ]
+      }
+    },
+    "raw_judge_response": {
+      "body": {
+        "completion": "{\n  \"summary\": \"The answers correctly differentiate between soft SVM and hard SVM, focusing on their handling of misclassifications and data separability. Both models provide a clear explanation of the concepts, but the second model is more detailed.\",\n  \"final_answer\": \"Support Vector Machines (SVMs) are supervised learning algorithms used for classification and regression tasks. The main difference between soft SVM and hard SVM lies in how they handle misclassification and the margin around the decision boundary. Hard SVM requires strict separation of classes without any misclassifications, applicable only to linearly separable data, making it sensitive to outliers. In contrast, soft SVM allows for some misclassifications, introducing a penalty for errors and using a regularization parameter (C) to balance margin maximization and error minimization, making it more robust to noise and suitable for real-world datasets.\",\n  \"per_model_notes\": {\n    \"openai:gpt-4o-mini\": {\n      \"strengths\": [\n        \"Clearly explains the concepts of hard and soft SVM.\",\n        \"Highlights the importance of the regularization parameter in soft SVM.\"\n      ],\n      \"weaknesses\": [\n        \"Less detailed than the other model.\"\n      ],\n      \"issues\": []\n    },\n    \"gemini:2.5-flash\": {\n      \"strengths\": [\n        \"Provides a comprehensive breakdown of hard and soft SVM.\",\n        \"Includes additional details on limitations and practical applications.\"\n      ],\n      \"weaknesses\": [\n        \"The answer is cut off, leaving some points incomplete.\"\n      ],\n      \"issues\": []\n    }\n  },\n  \"key_takeaways\": [\n    \"Hard SVM is strict and only applicable to perfectly separable data.\",\n    \"Soft SVM is more flexible and practical for real-world applications.\"\n  ],\n  \"disagreements\": [],\n  \"confidence\": \"medium\"\n}",
+        "model": "gpt-4o-mini-2024-07-18",
+        "usage": {
+          "completion_tokens": 391,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": 0
+          },
+          "prompt_tokens": 1269,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0
+          },
+          "total_tokens": 1660
+        }
+      },
+      "headers": {},
+      "url": null
+    },
+    "review_id": "0e4cdea0e4ed4d57a2043868ce2b2c30",
+    "summary": "The answers correctly differentiate between soft SVM and hard SVM, focusing on their handling of misclassifications and data separability. Both models provide a clear explanation of the concepts, but the second model is more detailed."
+  },
+  "review_id": "0e4cdea0e4ed4d57a2043868ce2b2c30",
+  "run_id": "ef6dda0637124242b5f2cbf2ad9b729a",
+  "schema_version": "1.0.0",
+  "timestamp_utc": "2026-03-04T00:05:52.645632Z"
+}

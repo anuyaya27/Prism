@@ -736,3 +736,63 @@ tr:last-child td {
 ::-webkit-scrollbar-thumb {
   background: var(--g3);
 }
+
+.consensus-box {
+  border: 1px solid var(--g3);
+  padding: 12px;
+  margin-bottom: 18px;
+  background: rgba(0, 255, 65, 0.02);
+}
+
+.consensus-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
+.consensus-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.consensus-final {
+  font-size: 12px;
+  line-height: 1.7;
+  color: var(--g0);
+  white-space: pre-wrap;
+  word-break: break-word;
+  border: 1px solid var(--g3);
+  padding: 8px;
+  background: rgba(0, 255, 65, 0.03);
+}
+
+.consensus-list-head {
+  color: var(--g2);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  margin-top: 4px;
+}
+
+.consensus-list {
+  margin: 0;
+  padding-left: 16px;
+}
+
+.consensus-list li {
+  color: var(--g1);
+  font-size: 11px;
+  line-height: 1.5;
+}
+
+.consensus-model-note {
+  border: 1px solid var(--g4);
+  padding: 8px;
+  font-size: 11px;
+  color: var(--g1);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
