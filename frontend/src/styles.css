@@ -796,3 +796,117 @@ tr:last-child td {
   flex-direction: column;
   gap: 4px;
 }
+
+.round2-card {
+  border: 2px solid var(--g1);
+  background: linear-gradient(180deg, rgba(0, 255, 65, 0.12), rgba(0, 255, 65, 0.04));
+  padding: 16px;
+  margin-bottom: 18px;
+  box-shadow: 0 0 0 1px rgba(0, 255, 65, 0.25), inset 0 0 22px rgba(0, 255, 65, 0.08);
+}
+
+.round2-title {
+  font-size: 16px;
+  letter-spacing: 0.08em;
+  color: var(--g0);
+  text-transform: uppercase;
+  margin-bottom: 6px;
+  text-shadow: 0 0 8px rgba(0, 255, 65, 0.35);
+}
+
+.round2-subtitle {
+  color: var(--g1);
+  font-size: 11px;
+  line-height: 1.55;
+  margin-bottom: 10px;
+}
+
+.round2-eligibility {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-bottom: 12px;
+}
+
+.round2-eligible-count {
+  color: var(--g0);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+}
+
+.round2-eligible-list {
+  color: var(--g2);
+  font-size: 10px;
+  line-height: 1.4;
+  word-break: break-word;
+}
+
+.round2-button {
+  border: 2px solid var(--g0);
+  background: rgba(0, 255, 65, 0.18);
+  color: var(--g0);
+  font-family: var(--mono);
+  font-size: 13px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  padding: 12px 14px;
+  width: min(420px, 100%);
+  transition: all 0.2s ease;
+  box-shadow: 0 0 16px rgba(0, 255, 65, 0.25);
+}
+
+.round2-button:hover {
+  background: rgba(0, 255, 65, 0.25);
+  box-shadow: 0 0 24px rgba(0, 255, 65, 0.4);
+}
+
+.round2-button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.round2-helper {
+  margin-top: 8px;
+  font-size: 10px;
+  color: var(--amber);
+  border-left: 2px solid var(--amber);
+  padding-left: 8px;
+}
+
+@keyframes round2Glow {
+  0% {
+    box-shadow: 0 0 0 1px rgba(0, 255, 65, 0.2), inset 0 0 12px rgba(0, 255, 65, 0.06);
+  }
+  35% {
+    box-shadow: 0 0 0 2px rgba(0, 255, 65, 0.65), 0 0 26px rgba(0, 255, 65, 0.35), inset 0 0 24px rgba(0, 255, 65, 0.1);
+  }
+  100% {
+    box-shadow: 0 0 0 1px rgba(0, 255, 65, 0.25), inset 0 0 22px rgba(0, 255, 65, 0.08);
+  }
+}
+
+.round2-pulse {
+  animation: round2Glow 1.5s ease;
+}
+
+@media (max-width: 680px) {
+  .round2-card {
+    padding: 14px;
+  }
+
+  .round2-title {
+    font-size: 14px;
+  }
+
+  .round2-button {
+    width: 100%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .round2-pulse {
+    animation: none;
+  }
+}

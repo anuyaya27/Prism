@@ -1,0 +1,237 @@
+{
+  "execution_context": {
+    "runtime": {
+      "git_commit": "bdd4f4a460363af8fe1caa71d943dffd8ced40a6",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "python_version": "3.11.9"
+    }
+  },
+  "judged_outputs": [
+    {
+      "latency_ms": 8966.472300002351,
+      "model_id": "openai:gpt-4o-mini",
+      "provider": "openai",
+      "status": "success",
+      "text": "Unit tests and integration tests are both crucial components of a comprehensive testing strategy, but they serve different purposes and come with their own trade-offs. Here\u2019s a comparison of the two:\n\n### Unit Tests\n\n**Definition:**\nUnit tests are designed to test individual components or functions in isolation from the rest of the application. \n\n**Benefits:**\n1. **Speed:** Unit tests are typically faster to execute because they test small pieces of code without dependencies on other components.\n2. **Isolation:** They allow developers to pinpoint issues quickly since they focus on specific functions or classes.\n3. **Ease of Debugging:** When a unit test fails, it\u2019s easier to identify the problem within a small code segment.\n4. **Frequent Feedback:** Developers can run unit tests frequently during development, providing immediate feedback on code changes.\n5. **Documentation:** They serve as documentation for how a function is expected to behave.\n\n**Trade-offs:**\n1. **Limited Scope:** Unit tests do not cover interactions between different components, which can lead to missed integration issues.\n2. **Mocking Complexity:** To isolate units, developers often use mocks or stubs, which can lead to a false sense of security if not implemented properly.\n3. **Maintenance Overhead:** As the codebase evolves, unit tests may require frequent updates, leading to potential maintenance burdens.\n\n### Integration Tests\n\n**Definition:**\nIntegration tests check how different components of the system work together. They test the interactions between various modules or external systems.\n\n**Benefits:**\n1. **System Interaction:** Integration tests help identify issues that arise from the interaction between modules or services, which unit tests cannot catch.\n2. **Realistic Scenarios:** They can simulate real-world usage more closely, providing more confidence that the application behaves correctly in a production-like environment.\n3. **End-to-End Verification:** They can validate that multiple components work together as expected and that the system as a whole fulfills its requirements.\n\n**Trade-offs:**\n1. **Slower Execution:** Integration tests generally take longer to run because they involve multiple components and possibly external systems (like databases or APIs).\n2. **Complexity:** They are often more complex to set up and maintain, as they require the correct configuration of all interacting parts.\n3. **Difficult Debugging:** When an integration test fails, it can be harder to isolate the specific component or interaction causing the issue, making debugging more challenging.\n4. **Less Frequent Feedback:** Due to their execution time, integration tests are often run less frequently than unit tests,",
+      "usage": {
+        "completion_tokens": 512,
+        "completion_tokens_details": {
+          "accepted_prediction_tokens": 0,
+          "audio_tokens": 0,
+          "reasoning_tokens": 0,
+          "rejected_prediction_tokens": 0
+        },
+        "prompt_tokens": 18,
+        "prompt_tokens_details": {
+          "audio_tokens": 0,
+          "cached_tokens": 0
+        },
+        "total_tokens": 530
+      }
+    },
+    {
+      "latency_ms": 3881.880500004627,
+      "model_id": "gemini:2.5-flash",
+      "provider": "gemini",
+      "status": "success",
+      "text": "Comparing the tradeoffs between unit tests and integration tests reveals their complementary nature, but also highlights their distinct strengths and weaknesses.\n\n## Unit Tests\n\n**Definition:** Test individual units or components of code in isolation (e.g., a function, a method, a class). All external dependencies are typically mocked or stubbed.\n\n**Strengths:**\n\n*   **Speed:** Extremely fast to run because they test small pieces of code and don't involve external systems (databases, APIs, file systems). This allows for frequent execution during development.\n*   **Isolation & Precision:** When a unit test fails, it points directly to the specific unit of code that has a problem. This makes debugging much easier and faster.\n*   **Early Bug Detection:** Catch bugs at the lowest level of abstraction, often before they can propagate into more complex interactions.\n*   **Ease of Writing (Often):** Can be relatively straightforward to write, especially for well-designed, modular code.\n*   **Supports Refactoring:** Provides a safety net when refactoring code. If the tests still pass, you have confidence that the internal logic hasn't been broken.\n*   **Documentation:** Serve as living documentation for how individual units of code are intended to behave.\n*   **Encourages Good Design:** Forces developers to think about testability, which often leads to more modular, loosely coupled, and maintainable code.\n\n**Weaknesses (Tradeoffs):**\n\n*   **Don't Guarantee System Integration:** Passing unit tests don't guarantee that different units will work correctly together. The interactions between components are not tested.\n*   **Reliance on Mocks/Stubs:** While essential for isolation, mocks can sometimes diverge from the real behavior of dependencies, leading to false positives (tests pass, but real system fails) or false negatives (tests fail, but real system works).\n*   **Limited Scope:** Only test the internal logic of a unit, not its interaction with the broader system, external services, or user interfaces.\n*   **Can Miss Architectural Issues:** Won't detect problems related to network latency, database connection issues, incorrect API endpoints, or security vulnerabilities in the interaction layer.\n*   **Over-Mocking Can Be Fragile:** If mocks are too complex or tightly coupled to implementation details, they can make tests brittle and hard to maintain when the underlying implementation changes.\n\n## Integration Tests\n\n**Definition:** Test the interactions between different units or components of a system. They",
+      "usage": {
+        "candidatesTokenCount": 512,
+        "promptTokenCount": 10,
+        "promptTokensDetails": [
+          {
+            "modality": "TEXT",
+            "tokenCount": 10
+          }
+        ],
+        "totalTokenCount": 522
+      }
+    }
+  ],
+  "raw_judge_response": {
+    "raw_request": {
+      "body": {
+        "max_tokens": 1400,
+        "messages": [
+          {
+            "content": "consensus_judge",
+            "role": "system"
+          },
+          {
+            "content": "You are running Round 2 Consensus Review on model answers.\nTask requirements:\n1) Compare answers for correctness and logic.\n2) Explicitly call out hallucinations or unsupported claims.\n3) Pick best parts and produce one consolidated final answer.\n4) Return STRICT JSON only, no markdown, no prose outside JSON.\n\nRequired JSON shape:\n{\n  \"summary\": \"short text\",\n  \"final_answer\": \"consolidated best answer\",\n  \"per_model_notes\": {\n    \"<model_id>\": {\n      \"strengths\": [\"...\"],\n      \"weaknesses\": [\"...\"],\n      \"issues\": [\"hallucination/unsupported claim/etc\"]\n    }\n  },\n  \"key_takeaways\": [\"...\"],\n  \"disagreements\": [{\"topic\":\"...\", \"models_involved\":[\"...\"], \"resolution\":\"...\"}],\n  \"confidence\": \"low|medium|high\"\n}\n\nORIGINAL_PROMPT:\nCompare the tradeoffs between unit tests and integration tests.\n\nMODEL_OUTPUTS:\nMODEL_ID: openai:gpt-4o-mini\nPROVIDER: openai\nLATENCY_MS: 8966.472300002351\nANSWER:\nUnit tests and integration tests are both crucial components of a comprehensive testing strategy, but they serve different purposes and come with their own trade-offs. Here\u2019s a comparison of the two:\n\n### Unit Tests\n\n**Definition:**\nUnit tests are designed to test individual components or functions in isolation from the rest of the application. \n\n**Benefits:**\n1. **Speed:** Unit tests are typically faster to execute because they test small pieces of code without dependencies on other components.\n2. **Isolation:** They allow developers to pinpoint issues quickly since they focus on specific functions or classes.\n3. **Ease of Debugging:** When a unit test fails, it\u2019s easier to identify the problem within a small code segment.\n4. **Frequent Feedback:** Developers can run unit tests frequently during development, providing immediate feedback on code changes.\n5. **Documentation:** They serve as documentation for how a function is expected to behave.\n\n**Trade-offs:**\n1. **Limited Scope:** Unit tests do not cover interactions between different components, which can lead to missed integration issues.\n2. **Mocking Complexity:** To isolate units, developers often use mocks or stubs, which can lead to a false sense of security if not implemented properly.\n3. **Maintenance Overhead:** As the codebase evolves, unit tests may require frequent updates, leading to potential maintenance burdens.\n\n### Integration Tests\n\n**Definition:**\nIntegration tests check how different components of the system work together. They test the interactions between various modules or external systems.\n\n**Benefits:**\n1. **System Interaction:** Integration tests help identify issues that arise from the interaction between modules or services, which unit tests cannot catch.\n2. **Realistic Scenarios:** They can simulate real-world usage more closely, providing more confidence that the application behaves correctly in a production-like environment.\n3. **End-to-End Verification:** They can validate that multiple components work together as expected and that the system as a whole fulfills its requirements.\n\n**Trade-offs:**\n1. **Slower Execution:** Integration tests generally take longer to run because they involve multiple components and possibly external systems (like databases or APIs).\n2. **Complexity:** They are often more complex to set up and maintain, as they require the correct configuration of all interacting parts.\n3. **Difficult Debugging:** When an integration test fails, it can be harder to isolate the specific component or interaction causing the issue, making debugging more challenging.\n4. **Less Frequent Feedback:** Due to their execution time, integration tests are often run less frequently than unit tests,\n\n---\nMODEL_ID: gemini:2.5-flash\nPROVIDER: gemini\nLATENCY_MS: 3881.880500004627\nANSWER:\nComparing the tradeoffs between unit tests and integration tests reveals their complementary nature, but also highlights their distinct strengths and weaknesses.\n\n## Unit Tests\n\n**Definition:** Test individual units or components of code in isolation (e.g., a function, a method, a class). All external dependencies are typically mocked or stubbed.\n\n**Strengths:**\n\n*   **Speed:** Extremely fast to run because they test small pieces of code and don't involve external systems (databases, APIs, file systems). This allows for frequent execution during development.\n*   **Isolation & Precision:** When a unit test fails, it points directly to the specific unit of code that has a problem. This makes debugging much easier and faster.\n*   **Early Bug Detection:** Catch bugs at the lowest level of abstraction, often before they can propagate into more complex interactions.\n*   **Ease of Writing (Often):** Can be relatively straightforward to write, especially for well-designed, modular code.\n*   **Supports Refactoring:** Provides a safety net when refactoring code. If the tests still pass, you have confidence that the internal logic hasn't been broken.\n*   **Documentation:** Serve as living documentation for how individual units of code are intended to behave.\n*   **Encourages Good Design:** Forces developers to think about testability, which often leads to more modular, loosely coupled, and maintainable code.\n\n**Weaknesses (Tradeoffs):**\n\n*   **Don't Guarantee System Integration:** Passing unit tests don't guarantee that different units will work correctly together. The interactions between components are not tested.\n*   **Reliance on Mocks/Stubs:** While essential for isolation, mocks can sometimes diverge from the real behavior of dependencies, leading to false positives (tests pass, but real system fails) or false negatives (tests fail, but real system works).\n*   **Limited Scope:** Only test the internal logic of a unit, not its interaction with the broader system, external services, or user interfaces.\n*   **Can Miss Architectural Issues:** Won't detect problems related to network latency, database connection issues, incorrect API endpoints, or security vulnerabilities in the interaction layer.\n*   **Over-Mocking Can Be Fragile:** If mocks are too complex or tightly coupled to implementation details, they can make tests brittle and hard to maintain when the underlying implementation changes.\n\n## Integration Tests\n\n**Definition:** Test the interactions between different units or components of a system. They\n\n",
+            "role": "user"
+          }
+        ],
+        "model": "gpt-4o-mini",
+        "temperature": 0.2
+      },
+      "headers": {
+        "Authorization": "***REDACTED***",
+        "Content-Type": "application/json"
+      },
+      "url": "https://api.openai.com/v1/chat/completions"
+    },
+    "raw_response": {
+      "body": {
+        "completion": "{\n  \"summary\": \"Both models provide a thorough comparison of unit tests and integration tests, highlighting their respective benefits and trade-offs. However, the second model offers a more detailed analysis of weaknesses and trade-offs.\",\n  \"final_answer\": \"Unit tests and integration tests are both crucial components of a comprehensive testing strategy, but they serve different purposes and come with their own trade-offs. Unit tests are designed to test individual components or functions in isolation, providing benefits such as speed, ease of debugging, and frequent feedback. However, they have limitations, including a limited scope that doesn't cover interactions between components and potential issues with mocking. Integration tests, on the other hand, check how different components of the system work together, offering benefits like identifying interaction issues and simulating real-world scenarios. Their trade-offs include slower execution and increased complexity in setup and debugging. Together, these testing strategies complement each other, ensuring both individual components and their interactions are validated.\",\n  \"per_model_notes\": {\n    \"openai:gpt-4o-mini\": {\n      \"strengths\": [\"Clear definition of unit and integration tests\", \"Well-structured benefits and trade-offs for both testing types\"],\n      \"weaknesses\": [\"Less emphasis on the weaknesses of integration tests\", \"Some points could be more detailed\"],\n      \"issues\": []\n    },\n    \"gemini:2.5-flash\": {\n      \"strengths\": [\"Detailed analysis of strengths and weaknesses\", \"Emphasizes the importance of early bug detection and design encouragement\"],\n      \"weaknesses\": [\"Incomplete answer as it cuts off mid-sentence\", \"Could provide more examples or scenarios\"],\n      \"issues\": [\"Incomplete response leading to a lack of clarity on integration tests\"]\n    }\n  },\n  \"key_takeaways\": [\n    \"Unit tests are fast and focused on individual components but do not guarantee integration success.\",\n    \"Integration tests validate interactions between components but are slower and more complex.\",\n    \"Both testing types are essential for a robust testing strategy.\"\n  ],\n  \"disagreements\": [],\n  \"confidence\": \"medium\"\n}",
+        "model": "gpt-4o-mini-2024-07-18",
+        "usage": {
+          "completion_tokens": 422,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": 0
+          },
+          "prompt_tokens": 1291,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0
+          },
+          "total_tokens": 1713
+        }
+      },
+      "headers": {},
+      "url": null
+    }
+  },
+  "request": {
+    "model_outputs": [
+      {
+        "latency_ms": 8966.472300002351,
+        "model_id": "openai:gpt-4o-mini",
+        "provider": "openai",
+        "status": "success",
+        "text": "Unit tests and integration tests are both crucial components of a comprehensive testing strategy, but they serve different purposes and come with their own trade-offs. Here\u2019s a comparison of the two:\n\n### Unit Tests\n\n**Definition:**\nUnit tests are designed to test individual components or functions in isolation from the rest of the application. \n\n**Benefits:**\n1. **Speed:** Unit tests are typically faster to execute because they test small pieces of code without dependencies on other components.\n2. **Isolation:** They allow developers to pinpoint issues quickly since they focus on specific functions or classes.\n3. **Ease of Debugging:** When a unit test fails, it\u2019s easier to identify the problem within a small code segment.\n4. **Frequent Feedback:** Developers can run unit tests frequently during development, providing immediate feedback on code changes.\n5. **Documentation:** They serve as documentation for how a function is expected to behave.\n\n**Trade-offs:**\n1. **Limited Scope:** Unit tests do not cover interactions between different components, which can lead to missed integration issues.\n2. **Mocking Complexity:** To isolate units, developers often use mocks or stubs, which can lead to a false sense of security if not implemented properly.\n3. **Maintenance Overhead:** As the codebase evolves, unit tests may require frequent updates, leading to potential maintenance burdens.\n\n### Integration Tests\n\n**Definition:**\nIntegration tests check how different components of the system work together. They test the interactions between various modules or external systems.\n\n**Benefits:**\n1. **System Interaction:** Integration tests help identify issues that arise from the interaction between modules or services, which unit tests cannot catch.\n2. **Realistic Scenarios:** They can simulate real-world usage more closely, providing more confidence that the application behaves correctly in a production-like environment.\n3. **End-to-End Verification:** They can validate that multiple components work together as expected and that the system as a whole fulfills its requirements.\n\n**Trade-offs:**\n1. **Slower Execution:** Integration tests generally take longer to run because they involve multiple components and possibly external systems (like databases or APIs).\n2. **Complexity:** They are often more complex to set up and maintain, as they require the correct configuration of all interacting parts.\n3. **Difficult Debugging:** When an integration test fails, it can be harder to isolate the specific component or interaction causing the issue, making debugging more challenging.\n4. **Less Frequent Feedback:** Due to their execution time, integration tests are often run less frequently than unit tests,",
+        "usage": {
+          "completion_tokens": 512,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": 0
+          },
+          "prompt_tokens": 18,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0
+          },
+          "total_tokens": 530
+        }
+      },
+      {
+        "latency_ms": 3881.880500004627,
+        "model_id": "gemini:2.5-flash",
+        "provider": "gemini",
+        "status": "success",
+        "text": "Comparing the tradeoffs between unit tests and integration tests reveals their complementary nature, but also highlights their distinct strengths and weaknesses.\n\n## Unit Tests\n\n**Definition:** Test individual units or components of code in isolation (e.g., a function, a method, a class). All external dependencies are typically mocked or stubbed.\n\n**Strengths:**\n\n*   **Speed:** Extremely fast to run because they test small pieces of code and don't involve external systems (databases, APIs, file systems). This allows for frequent execution during development.\n*   **Isolation & Precision:** When a unit test fails, it points directly to the specific unit of code that has a problem. This makes debugging much easier and faster.\n*   **Early Bug Detection:** Catch bugs at the lowest level of abstraction, often before they can propagate into more complex interactions.\n*   **Ease of Writing (Often):** Can be relatively straightforward to write, especially for well-designed, modular code.\n*   **Supports Refactoring:** Provides a safety net when refactoring code. If the tests still pass, you have confidence that the internal logic hasn't been broken.\n*   **Documentation:** Serve as living documentation for how individual units of code are intended to behave.\n*   **Encourages Good Design:** Forces developers to think about testability, which often leads to more modular, loosely coupled, and maintainable code.\n\n**Weaknesses (Tradeoffs):**\n\n*   **Don't Guarantee System Integration:** Passing unit tests don't guarantee that different units will work correctly together. The interactions between components are not tested.\n*   **Reliance on Mocks/Stubs:** While essential for isolation, mocks can sometimes diverge from the real behavior of dependencies, leading to false positives (tests pass, but real system fails) or false negatives (tests fail, but real system works).\n*   **Limited Scope:** Only test the internal logic of a unit, not its interaction with the broader system, external services, or user interfaces.\n*   **Can Miss Architectural Issues:** Won't detect problems related to network latency, database connection issues, incorrect API endpoints, or security vulnerabilities in the interaction layer.\n*   **Over-Mocking Can Be Fragile:** If mocks are too complex or tightly coupled to implementation details, they can make tests brittle and hard to maintain when the underlying implementation changes.\n\n## Integration Tests\n\n**Definition:** Test the interactions between different units or components of a system. They",
+        "usage": {
+          "candidatesTokenCount": 512,
+          "promptTokenCount": 10,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 10
+            }
+          ],
+          "totalTokenCount": 522
+        }
+      },
+      {
+        "latency_ms": 41.737499996088445,
+        "model_id": "mock:echo",
+        "provider": "mock",
+        "status": "success",
+        "text": "[echo:mock-echo] Compare the tradeoffs between unit tests and integration tests.",
+        "usage": null
+      },
+      {
+        "latency_ms": 96.7411000165157,
+        "model_id": "mock:reasoner",
+        "provider": "mock",
+        "status": "success",
+        "text": "analysis:\n- step 1: outline tradeoff\n- step 2: estimate path\n- step 3: project opportunity\n- step 4: contrast opportunity",
+        "usage": null
+      },
+      {
+        "latency_ms": 96.86859999783337,
+        "model_id": "mock:pseudo",
+        "provider": "mock",
+        "status": "success",
+        "text": "analysis:\n- step 1: outline tradeoff\n- step 2: estimate path\n- step 3: project opportunity\n- step 4: contrast opportunity",
+        "usage": null
+      }
+    ],
+    "original_prompt": "Compare the tradeoffs between unit tests and integration tests.",
+    "run_id": "640be68a71944ffdac4e274f43bcd13e"
+  },
+  "response": {
+    "confidence": "medium",
+    "disagreements": [],
+    "final_answer": "Unit tests and integration tests are both crucial components of a comprehensive testing strategy, but they serve different purposes and come with their own trade-offs. Unit tests are designed to test individual components or functions in isolation, providing benefits such as speed, ease of debugging, and frequent feedback. However, they have limitations, including a limited scope that doesn't cover interactions between components and potential issues with mocking. Integration tests, on the other hand, check how different components of the system work together, offering benefits like identifying interaction issues and simulating real-world scenarios. Their trade-offs include slower execution and increased complexity in setup and debugging. Together, these testing strategies complement each other, ensuring both individual components and their interactions are validated.",
+    "judged_models": [
+      "openai:gpt-4o-mini",
+      "gemini:2.5-flash"
+    ],
+    "key_takeaways": [
+      "Unit tests are fast and focused on individual components but do not guarantee integration success.",
+      "Integration tests validate interactions between components but are slower and more complex.",
+      "Both testing types are essential for a robust testing strategy."
+    ],
+    "per_model_notes": {
+      "gemini:2.5-flash": {
+        "issues": [
+          "Incomplete response leading to a lack of clarity on integration tests"
+        ],
+        "strengths": [
+          "Detailed analysis of strengths and weaknesses",
+          "Emphasizes the importance of early bug detection and design encouragement"
+        ],
+        "weaknesses": [
+          "Incomplete answer as it cuts off mid-sentence",
+          "Could provide more examples or scenarios"
+        ]
+      },
+      "openai:gpt-4o-mini": {
+        "issues": [],
+        "strengths": [
+          "Clear definition of unit and integration tests",
+          "Well-structured benefits and trade-offs for both testing types"
+        ],
+        "weaknesses": [
+          "Less emphasis on the weaknesses of integration tests",
+          "Some points could be more detailed"
+        ]
+      }
+    },
+    "raw_judge_response": {
+      "body": {
+        "completion": "{\n  \"summary\": \"Both models provide a thorough comparison of unit tests and integration tests, highlighting their respective benefits and trade-offs. However, the second model offers a more detailed analysis of weaknesses and trade-offs.\",\n  \"final_answer\": \"Unit tests and integration tests are both crucial components of a comprehensive testing strategy, but they serve different purposes and come with their own trade-offs. Unit tests are designed to test individual components or functions in isolation, providing benefits such as speed, ease of debugging, and frequent feedback. However, they have limitations, including a limited scope that doesn't cover interactions between components and potential issues with mocking. Integration tests, on the other hand, check how different components of the system work together, offering benefits like identifying interaction issues and simulating real-world scenarios. Their trade-offs include slower execution and increased complexity in setup and debugging. Together, these testing strategies complement each other, ensuring both individual components and their interactions are validated.\",\n  \"per_model_notes\": {\n    \"openai:gpt-4o-mini\": {\n      \"strengths\": [\"Clear definition of unit and integration tests\", \"Well-structured benefits and trade-offs for both testing types\"],\n      \"weaknesses\": [\"Less emphasis on the weaknesses of integration tests\", \"Some points could be more detailed\"],\n      \"issues\": []\n    },\n    \"gemini:2.5-flash\": {\n      \"strengths\": [\"Detailed analysis of strengths and weaknesses\", \"Emphasizes the importance of early bug detection and design encouragement\"],\n      \"weaknesses\": [\"Incomplete answer as it cuts off mid-sentence\", \"Could provide more examples or scenarios\"],\n      \"issues\": [\"Incomplete response leading to a lack of clarity on integration tests\"]\n    }\n  },\n  \"key_takeaways\": [\n    \"Unit tests are fast and focused on individual components but do not guarantee integration success.\",\n    \"Integration tests validate interactions between components but are slower and more complex.\",\n    \"Both testing types are essential for a robust testing strategy.\"\n  ],\n  \"disagreements\": [],\n  \"confidence\": \"medium\"\n}",
+        "model": "gpt-4o-mini-2024-07-18",
+        "usage": {
+          "completion_tokens": 422,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": 0
+          },
+          "prompt_tokens": 1291,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0
+          },
+          "total_tokens": 1713
+        }
+      },
+      "headers": {},
+      "url": null
+    },
+    "review_id": "7247cb5f62c94b6a90634eb109fac679",
+    "summary": "Both models provide a thorough comparison of unit tests and integration tests, highlighting their respective benefits and trade-offs. However, the second model offers a more detailed analysis of weaknesses and trade-offs."
+  },
+  "review_id": "7247cb5f62c94b6a90634eb109fac679",
+  "run_id": "640be68a71944ffdac4e274f43bcd13e",
+  "schema_version": "1.0.0",
+  "timestamp_utc": "2026-03-04T03:47:26.950626Z"
+}

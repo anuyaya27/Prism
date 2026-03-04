@@ -1,0 +1,635 @@
+{
+  "api_version": "0.3.0",
+  "canonical_request": {
+    "models": [
+      "gemini:2.5-flash",
+      "mock:echo",
+      "mock:pseudo",
+      "mock:reasoner",
+      "openai:gpt-4o-mini"
+    ],
+    "params": {
+      "max_tokens": 512,
+      "synthesis_method": "best_of_n",
+      "temperature": 0.7,
+      "timeout_s": 30.0
+    },
+    "prompt": "What are the economic effects of introducing a universal basic income?"
+  },
+  "execution_context": {
+    "providers": [
+      {
+        "model_id": "openai:gpt-4o-mini",
+        "provider_name": "openai",
+        "runtime": {
+          "base_url": "https://api.openai.com/v1/chat/completions",
+          "max_tokens": 512,
+          "retries": 2,
+          "temperature": 0.7,
+          "timeout_s": 20.0
+        }
+      },
+      {
+        "model_id": "gemini:2.5-flash",
+        "provider_name": "gemini",
+        "runtime": {
+          "base_url": "https://generativelanguage.googleapis.com/v1beta/models",
+          "max_tokens": 512,
+          "retries": 2,
+          "temperature": 0.7,
+          "timeout_s": 20.0
+        }
+      },
+      {
+        "model_id": "mock:echo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      },
+      {
+        "model_id": "mock:reasoner",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      },
+      {
+        "model_id": "mock:pseudo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      }
+    ],
+    "runtime": {
+      "git_commit": "bdd4f4a460363af8fe1caa71d943dffd8ced40a6",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "python_version": "3.11.9"
+    }
+  },
+  "raw_generations": [
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "openai:gpt-4o-mini",
+      "provider": "openai",
+      "raw_request": {
+        "body": {
+          "max_tokens": 512,
+          "messages": [
+            {
+              "content": "What are the economic effects of introducing a universal basic income?",
+              "role": "user"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "temperature": 0.7
+        },
+        "headers": {
+          "Authorization": "***REDACTED***",
+          "Content-Type": "application/json"
+        },
+        "url": "https://api.openai.com/v1/chat/completions"
+      },
+      "raw_response": {
+        "body": {
+          "body_snippet": "{\n  ***REDACTED***e po",
+          "status_code": 200
+        },
+        "headers": {
+          "access-control-expose-headers": "X-Request-ID",
+          "alt-svc": "h3=\":443\"; ma=86400",
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "9d6debd06f2bf7b7-LAX",
+          "connection": "keep-alive",
+          "content-encoding": "gzip",
+          "content-type": "application/json",
+          "date": "Wed, 04 Mar 2026 03:51:21 GMT",
+          "openai-organization": "user-riqxe1sh4tn9y09bmfp1dnnz",
+          "openai-processing-ms": "7857",
+          "openai-project": "proj_7ZhJ9OB3ZWvXUVQnILY00wKJ",
+          "openai-version": "2020-10-01",
+          "server": "cloudflare",
+          "set-cookie": "__cf_bm=qwcP4_Nvrije5gzatyNJ3soRadfJcAjWFnYPNUi7CEA-1772596272.7068245-1.0.1.1-0NzQFjRufVLFH2.vF5LHVmQl3vOoi2YB.O4IPo3nQ3dizn9Sv.TjyxzzjW587m7.d7ykNDoP36upk5bUETf7yk.UJ6j3NsRF2M24Y9TalT4Latoagsmiv2l38bR_czsI; HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Wed, 04 Mar 2026 04:21:21 GMT",
+          "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+          "transfer-encoding": "chunked",
+          "x-content-type-options": "nosniff",
+          "x-openai-proxy-wasm": "v0.1",
+          "x-ratelimit-limit-requests": "5000",
+          "x-ratelimit-limit-tokens": "***REDACTED***",
+          "x-ratelimit-remaining-requests": "4999",
+          "x-ratelimit-remaining-tokens": "***REDACTED***",
+          "x-ratelimit-reset-requests": "12ms",
+          "x-ratelimit-reset-tokens": "***REDACTED***",
+          "x-request-id": "req_c7b657f6994c454c8611b91eee601166"
+        },
+        "url": "https://api.openai.com/v1/chat/completions"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "gemini:2.5-flash",
+      "provider": "gemini",
+      "raw_request": {
+        "body": {
+          "contents": [
+            {
+              "parts": [
+                {
+                  "text": "What are the economic effects of introducing a universal basic income?"
+                }
+              ]
+            }
+          ],
+          "generationConfig": {
+            "maxOutputTokens": 512,
+            "temperature": 0.7,
+            "thinkingConfig": {
+              "thinkingBudget": 0
+            }
+          }
+        },
+        "headers": {
+          "x-goog-api-key": "***REDACTED***"
+        },
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+      },
+      "raw_response": {
+        "body": {
+          "body_snippet": "{\n  \"candidates\": [\n    {\n      \"content\": {\n        \"parts\": [\n          {\n            \"text\": \"Introducing a Universal Basic Income (UBI) would have a wide range of significant economic effects, both positive and negative, and the exact outcomes would depend heavily on the specific design of the UBI (e.g., amount, funding mechanism, eligibility) and the existing economic context.\\n\\nHere's a breakdown of the key economic effects:\\n\\n## Positive Economic Effects:\\n\\n1.  **Poverty Reduction and ",
+          "status_code": 200
+        },
+        "headers": {
+          "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "content-encoding": "gzip",
+          "content-type": "application/json; charset=UTF-8",
+          "date": "Wed, 04 Mar 2026 03:51:15 GMT",
+          "server": "scaffolding on HTTPServer2",
+          "server-timing": "gfet4t7; dur=3101",
+          "transfer-encoding": "chunked",
+          "vary": "Origin, X-Origin, Referer",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0"
+        },
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:echo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:echo",
+        "prompt": "What are the economic effects of introducing a universal basic income?"
+      },
+      "raw_response": {
+        "response": "[echo:mock-echo] What are the economic effects of introducing a universal basic income?"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:reasoner",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:reasoner",
+        "prompt": "What are the economic effects of introducing a universal basic income?"
+      },
+      "raw_response": {
+        "response": "analysis:\n- step 1: outline opportunity\n- step 2: compare path\n- step 3: consider path"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:pseudo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:pseudo",
+        "prompt": "What are the economic effects of introducing a universal basic income?"
+      },
+      "raw_response": {
+        "response": "analysis:\n- step 1: outline opportunity\n- step 2: compare path\n- step 3: consider path"
+      }
+    }
+  ],
+  "request": {
+    "max_tokens": 512,
+    "models": [
+      "openai:gpt-4o-mini",
+      "gemini:2.5-flash",
+      "mock:echo",
+      "mock:reasoner",
+      "mock:pseudo"
+    ],
+    "prompt": "What are the economic effects of introducing a universal basic income?",
+    "synthesis_method": "best_of_n",
+    "temperature": 0.7,
+    "timeout_s": 30.0
+  },
+  "request_id": "ccbc82da7827453eb0895eb952f63351",
+  "response": {
+    "api_version": "0.3.0",
+    "compare": {
+      "pairs": [
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "gemini:2.5-flash",
+          "keyword_coverage": 0.8571428571428571,
+          "length_ratio": 0.8666666666666667,
+          "rouge_l": 0.2,
+          "token_overlap_jaccard": 0.30340557275541796
+        },
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "mock:echo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.035897435897435895,
+          "rouge_l": 0.02564102564102564,
+          "token_overlap_jaccard": 0.04524886877828054
+        },
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "mock:reasoner",
+          "keyword_coverage": 0.8571428571428571,
+          "length_ratio": 0.03333333333333333,
+          "rouge_l": 0.007692307692307693,
+          "token_overlap_jaccard": 0.013333333333333334
+        },
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.8571428571428571,
+          "length_ratio": 0.03333333333333333,
+          "rouge_l": 0.007692307692307693,
+          "token_overlap_jaccard": 0.013333333333333334
+        },
+        {
+          "a": "gemini:2.5-flash",
+          "b": "mock:echo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.04142011834319527,
+          "rouge_l": 0.020710059171597635,
+          "token_overlap_jaccard": 0.04854368932038835
+        },
+        {
+          "a": "gemini:2.5-flash",
+          "b": "mock:reasoner",
+          "keyword_coverage": 0.8571428571428571,
+          "length_ratio": 0.038461538461538464,
+          "rouge_l": 0.008875739644970414,
+          "token_overlap_jaccard": 0.014285714285714285
+        },
+        {
+          "a": "gemini:2.5-flash",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.8571428571428571,
+          "length_ratio": 0.038461538461538464,
+          "rouge_l": 0.008875739644970414,
+          "token_overlap_jaccard": 0.014285714285714285
+        },
+        {
+          "a": "mock:echo",
+          "b": "mock:reasoner",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.9285714285714286,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "mock:echo",
+          "b": "mock:pseudo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.9285714285714286,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "mock:reasoner",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.0,
+          "length_ratio": 1.0,
+          "rouge_l": 1.0,
+          "token_overlap_jaccard": 1.0
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.14524362260921822,
+        "disagreement_summary": {
+          "max_distance": 2.0,
+          "pair": {
+            "a": "mock:echo",
+            "b": "mock:reasoner"
+          },
+          "reason": "Low overlap: rouge_l=0.00, jaccard=0.00"
+        },
+        "most_disagree_pair": {
+          "a": "mock:echo",
+          "b": "mock:reasoner",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.9285714285714286,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        "notes": "token_overlap_jaccard: 1.0 = identical; length_ratio: shorter/longer; keyword_coverage vs prompt keywords."
+      }
+    },
+    "created_at": "2026-03-04T03:51:10.220474",
+    "params": {
+      "max_tokens": 512,
+      "models": [
+        "openai:gpt-4o-mini",
+        "gemini:2.5-flash",
+        "mock:echo",
+        "mock:reasoner",
+        "mock:pseudo"
+      ],
+      "synthesis_method": "best_of_n",
+      "temperature": 0.7,
+      "timeout_s": 30.0
+    },
+    "partial_success": false,
+    "prompt": "What are the economic effects of introducing a universal basic income?",
+    "request_id": "ccbc82da7827453eb0895eb952f63351",
+    "results": [
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 10,
+        "latency_ms": 9896.211899991613,
+        "meta": {
+          "finish_reason": "length",
+          "format_compliance": 1.0,
+          "hedge_count": 10,
+          "model": "gpt-4o-mini"
+        },
+        "model": "openai:gpt-4o-mini",
+        "ok": true,
+        "provider": "openai",
+        "raw_request": {
+          "body": {
+            "max_tokens": 512,
+            "messages": [
+              {
+                "content": "What are the economic effects of introducing a universal basic income?",
+                "role": "user"
+              }
+            ],
+            "model": "gpt-4o-mini",
+            "temperature": 0.7
+          },
+          "headers": {
+            "Authorization": "***REDACTED***",
+            "Content-Type": "application/json"
+          },
+          "url": "https://api.openai.com/v1/chat/completions"
+        },
+        "raw_response": {
+          "body": {
+            "body_snippet": "{\n  ***REDACTED***e po",
+            "status_code": 200
+          },
+          "headers": {
+            "access-control-expose-headers": "X-Request-ID",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9d6debd06f2bf7b7-LAX",
+            "connection": "keep-alive",
+            "content-encoding": "gzip",
+            "content-type": "application/json",
+            "date": "Wed, 04 Mar 2026 03:51:21 GMT",
+            "openai-organization": "user-riqxe1sh4tn9y09bmfp1dnnz",
+            "openai-processing-ms": "7857",
+            "openai-project": "proj_7ZhJ9OB3ZWvXUVQnILY00wKJ",
+            "openai-version": "2020-10-01",
+            "server": "cloudflare",
+            "set-cookie": "__cf_bm=qwcP4_Nvrije5gzatyNJ3soRadfJcAjWFnYPNUi7CEA-1772596272.7068245-1.0.1.1-0NzQFjRufVLFH2.vF5LHVmQl3vOoi2YB.O4IPo3nQ3dizn9Sv.TjyxzzjW587m7.d7ykNDoP36upk5bUETf7yk.UJ6j3NsRF2M24Y9TalT4Latoagsmiv2l38bR_czsI; HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Wed, 04 Mar 2026 04:21:21 GMT",
+            "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+            "transfer-encoding": "chunked",
+            "x-content-type-options": "nosniff",
+            "x-openai-proxy-wasm": "v0.1",
+            "x-ratelimit-limit-requests": "5000",
+            "x-ratelimit-limit-tokens": "***REDACTED***",
+            "x-ratelimit-remaining-requests": "4999",
+            "x-ratelimit-remaining-tokens": "***REDACTED***",
+            "x-ratelimit-reset-requests": "12ms",
+            "x-ratelimit-reset-tokens": "***REDACTED***",
+            "x-request-id": "req_c7b657f6994c454c8611b91eee601166"
+          },
+          "url": "https://api.openai.com/v1/chat/completions"
+        },
+        "status": "success",
+        "text": "Introducing a Universal Basic Income (UBI) can have various economic effects, which can be both positive and negative. Here are some key considerations:\n\n### Positive Effects:\n\n1. **Poverty Reduction**: UBI can directly lift people above the poverty line, providing a safety net for those who are unemployed or underemployed.\n\n2. **Increased Consumer Spending**: With guaranteed income, individuals may have more disposable income, which can stimulate demand for goods and services, benefiting businesses and potentially leading to economic growth.\n\n3. **Job Flexibility**: UBI can provide individuals with the financial security to pursue education, training, or entrepreneurial ventures without the immediate pressure of earning a living wage.\n\n4. **Improved Health and Well-being**: Financial security can lead to better mental and physical health outcomes, potentially reducing healthcare costs and improving productivity.\n\n5. **Administrative Efficiency**: UBI can simplify welfare systems by replacing or reducing the need for multiple means-tested programs, potentially lowering administrative costs.\n\n6. **Encouragement of Labor Market Participation**: Some studies suggest that UBI could encourage people to take jobs that are more suitable or fulfilling rather than being forced to take any job just to survive.\n\n### Negative Effects:\n\n1. **Cost of Implementation**: UBI requires significant funding, which may necessitate higher taxes or reallocation of public funds from other services. This can lead to public resistance and political challenges.\n\n2. **Inflation Risks**: If a large number of people suddenly have more money to spend, it could lead to inflation, which might negate some of the benefits of the UBI.\n\n3. **Reduced Incentives to Work**: Critics argue that if people receive a guaranteed income, they may choose to work less, which could lead to a decrease in labor force participation, particularly in lower-paying jobs.\n\n4. **Potential Dependency**: There is concern that a UBI could create a dependency on government support, discouraging personal initiative and self-sufficiency.\n\n5. **Economic Disparities**: If not carefully designed, UBI may disproportionately benefit higher-income individuals, as it is typically offered universally regardless of income, potentially widening economic disparities.\n\n6. **Impact on Existing Welfare Programs**: The introduction of UBI could disrupt existing welfare systems, leading to complications in the transition and potentially leaving vulnerable populations without sufficient support.\n\n### Conclusion\n\nThe overall economic effects of introducing a Universal Basic Income depend on various factors, including the design of the program, the economic context, and how it is funded. While",
+        "usage": {
+          "completion_tokens": 512,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": 0
+          },
+          "prompt_tokens": 19,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0
+          },
+          "total_tokens": 531
+        }
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 3,
+        "latency_ms": 3866.2191000184976,
+        "meta": {
+          "finish_reason": "MAX_TOKENS",
+          "format_compliance": 1.0,
+          "hedge_count": 3,
+          "model": "gemini-2.5-flash"
+        },
+        "model": "gemini:2.5-flash",
+        "ok": true,
+        "provider": "gemini",
+        "raw_request": {
+          "body": {
+            "contents": [
+              {
+                "parts": [
+                  {
+                    "text": "What are the economic effects of introducing a universal basic income?"
+                  }
+                ]
+              }
+            ],
+            "generationConfig": {
+              "maxOutputTokens": 512,
+              "temperature": 0.7,
+              "thinkingConfig": {
+                "thinkingBudget": 0
+              }
+            }
+          },
+          "headers": {
+            "x-goog-api-key": "***REDACTED***"
+          },
+          "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+        },
+        "raw_response": {
+          "body": {
+            "body_snippet": "{\n  \"candidates\": [\n    {\n      \"content\": {\n        \"parts\": [\n          {\n            \"text\": \"Introducing a Universal Basic Income (UBI) would have a wide range of significant economic effects, both positive and negative, and the exact outcomes would depend heavily on the specific design of the UBI (e.g., amount, funding mechanism, eligibility) and the existing economic context.\\n\\nHere's a breakdown of the key economic effects:\\n\\n## Positive Economic Effects:\\n\\n1.  **Poverty Reduction and ",
+            "status_code": 200
+          },
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Wed, 04 Mar 2026 03:51:15 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=3101",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-xss-protection": "0"
+          },
+          "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+        },
+        "status": "success",
+        "text": "Introducing a Universal Basic Income (UBI) would have a wide range of significant economic effects, both positive and negative, and the exact outcomes would depend heavily on the specific design of the UBI (e.g., amount, funding mechanism, eligibility) and the existing economic context.\n\nHere's a breakdown of the key economic effects:\n\n## Positive Economic Effects:\n\n1.  **Poverty Reduction and Income Security:**\n    *   **Direct Impact:** UBI directly addresses poverty by providing a safety net that ensures everyone has a basic income to meet essential needs.\n    *   **Reduced Inequality:** It can significantly reduce income inequality by boosting the income of the lowest earners.\n    *   **Improved Health and Well-being:** Financial security can lead to better health outcomes, reduced stress, and improved mental health, potentially lowering healthcare costs in the long run.\n\n2.  **Stimulation of Local Economies:**\n    *   **Increased Consumer Spending:** Low-income individuals tend to have a higher marginal propensity to consume, meaning they spend a larger portion of any additional income. This increased spending can stimulate demand for goods and services, particularly at local businesses.\n    *   **Reduced Debt:** UBI can help individuals pay down debt, freeing up more disposable income for consumption.\n\n3.  **Simplified Welfare System and Reduced Administrative Costs:**\n    *   **Streamlining:** UBI could replace a multitude of existing welfare programs (e.g., food stamps, unemployment benefits, housing assistance), leading to a simpler, more efficient system.\n    *   **Lower Bureaucracy:** Reduced administrative overhead, fewer caseworkers, and less paperwork could lead to significant cost savings.\n\n4.  **Entrepreneurship and Risk-Taking:**\n    *   **Safety Net for Innovation:** UBI provides a financial cushion that allows individuals to take risks, start businesses, pursue education, or retrain for new careers without the fear of destitution.\n    *   **Reduced \"Poverty Trap\":** It can mitigate the \"poverty trap\" where individuals lose benefits as their income rises, disincentivizing work.\n\n5.  **Improved Labor Market Dynamics:**\n    *   **Increased Worker Bargaining Power:** With a basic income, workers are less desperate to accept exploitative wages or poor working conditions, potentially leading to better pay and working environments.\n    *   **Flexibility:** UBI could enable people to work fewer hours, pursue part-time work, or take time",
+        "usage": {
+          "candidatesTokenCount": 512,
+          "promptTokenCount": 12,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 12
+            }
+          ],
+          "totalTokenCount": 524
+        }
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 49.93909999029711,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-echo",
+          "provider_model": {}
+        },
+        "model": "mock:echo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:echo",
+          "prompt": "What are the economic effects of introducing a universal basic income?"
+        },
+        "raw_response": {
+          "response": "[echo:mock-echo] What are the economic effects of introducing a universal basic income?"
+        },
+        "status": "success",
+        "text": "[echo:mock-echo] What are the economic effects of introducing a universal basic income?",
+        "usage": null
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 90.430699987337,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-reasoner",
+          "provider_model": {
+            "stance": "cautious"
+          }
+        },
+        "model": "mock:reasoner",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:reasoner",
+          "prompt": "What are the economic effects of introducing a universal basic income?"
+        },
+        "raw_response": {
+          "response": "analysis:\n- step 1: outline opportunity\n- step 2: compare path\n- step 3: consider path"
+        },
+        "status": "success",
+        "text": "analysis:\n- step 1: outline opportunity\n- step 2: compare path\n- step 3: consider path",
+        "usage": null
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 90.30560002429411,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-reasoner",
+          "provider_model": {
+            "stance": "cautious"
+          }
+        },
+        "model": "mock:pseudo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:pseudo",
+          "prompt": "What are the economic effects of introducing a universal basic income?"
+        },
+        "raw_response": {
+          "response": "analysis:\n- step 1: outline opportunity\n- step 2: compare path\n- step 3: consider path"
+        },
+        "status": "success",
+        "text": "analysis:\n- step 1: outline opportunity\n- step 2: compare path\n- step 3: consider path",
+        "usage": null
+      }
+    ],
+    "run_hash": "df72e3f4cf627ebd5fce04322b562054a46987de025a8f94f08f8f27de1b7656",
+    "schema_version": "1.1.0",
+    "status": "success",
+    "synthesis": {
+      "attribution": [
+        {
+          "sentence_index": 0,
+          "source_model_id": "mock:echo",
+          "span": null
+        }
+      ],
+      "confidence": 0.9543836226079216,
+      "method": "best_of_n",
+      "ok": true,
+      "rationale": "Selected mock:echo via best_of_n scoring: coverage=1.00, redundancy=0.07, conciseness=0.93, score=2.86.",
+      "strategy_id": "best_of_n",
+      "synthesized_text": "[echo:mock-echo] What are the economic effects of introducing a universal basic income?",
+      "text": "[echo:mock-echo] What are the economic effects of introducing a universal basic income?"
+    }
+  },
+  "run_hash": "df72e3f4cf627ebd5fce04322b562054a46987de025a8f94f08f8f27de1b7656",
+  "schema_version": "1.1.0",
+  "timestamp_utc": "2026-03-04T03:51:10.220474Z"
+}

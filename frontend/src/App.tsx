@@ -1,5 +1,5 @@
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
   ConsensusReviewResponse,
   EvaluateResponse,
@@ -32,7 +32,10 @@ function App() {
   const [reviewRunning, setReviewRunning] = useState(false);
   const [reviewResult, setReviewResult] = useState<ConsensusReviewResponse | null>(null);
   const [reviewError, setReviewError] = useState<string | null>(null);
+  const [round2Pulse, setRound2Pulse] = useState(false);
   const [toast, setToast] = useState<string | null>(null);
+  const round2Ref = useRef<HTMLDivElement | null>(null);
+  const previousRunningRef = useRef(false);
 
   useEffect(() => {
     if (!toast) return;
@@ -204,6 +207,27 @@ function App() {
   }, [result]);
 
   const canRunConsensusReview = !!result && !running && !reviewRunning && eligibleConsensusOutputs.length >= 2;
+
+  const consensusDisabledReason = useMemo(() => {
+    if (running) return "Waiting for models to finish...";
+    if (!result) return "Run an evaluation first";
+    if (eligibleConsensusOutputs.length < 2) return "Need at least 2 successful non-mock model outputs";
+    return null;
+  }, [running, result, eligibleConsensusOutputs.length]);
+
+  useEffect(() => {
+    const wasRunning = previousRunningRef.current;
+    if (wasRunning && !running && result && round2Ref.current) {
+      const prefersReducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      round2Ref.current.scrollIntoView({ behavior: prefersReducedMotion ? "auto" : "smooth", block: "start" });
+      setRound2Pulse(true);
+      const timer = window.setTimeout(() => setRound2Pulse(false), 1500);
+      previousRunningRef.current = running;
+      return () => window.clearTimeout(timer);
+    }
+    previousRunningRef.current = running;
+    return undefined;
+  }, [running, result]);
 
   const runConsensusReview = async () => {
     if (!result) return;
@@ -378,16 +402,27 @@ function App() {
               ))}
             </div>
 
-            <div className="rsect-head">
-              <span className="rsh-tag">OUT</span>CONSENSUS REVIEW
-            </div>
-            <div className="consensus-box">
-              <div className="consensus-actions">
-                <button className="tb" onClick={() => void runConsensusReview()} disabled={!canRunConsensusReview}>
-                  {reviewRunning ? "Reviewing..." : "Consensus Review"}
-                </button>
-                <span className="dim">Eligible models: {eligibleConsensusOutputs.length}</span>
+            <div ref={round2Ref} className={`round2-card ${round2Pulse ? "round2-pulse" : ""}`}>
+              <div className="round2-title">Round 2: Consensus Review</div>
+              <div className="round2-subtitle">
+                A comprehensive analysis of all the models lead to the final answer
               </div>
+              <div className="round2-eligibility">
+                <span className="round2-eligible-count">Eligible models: {eligibleConsensusOutputs.length}</span>
+                {eligibleConsensusOutputs.length >= 2 ? (
+                  <span className="round2-eligible-list">
+                    {eligibleConsensusOutputs.map((entry) => entry.model).join(", ")}
+                  </span>
+                ) : (
+                  <span className="round2-eligible-list">Need at least 2 successful non-mock outputs</span>
+                )}
+              </div>
+              <div className="consensus-actions">
+                <button className="round2-button" onClick={() => void runConsensusReview()} disabled={!canRunConsensusReview}>
+                  {reviewRunning ? "Reviewing..." : "Run Consensus Review ->"}
+                </button>
+              </div>
+              {!canRunConsensusReview && consensusDisabledReason && <div className="round2-helper">{consensusDisabledReason}</div>}
               {reviewError && <div className="resp-error">consensus_review: {reviewError}</div>}
               {reviewResult && (
                 <div className="consensus-content">

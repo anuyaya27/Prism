@@ -1,0 +1,635 @@
+{
+  "api_version": "0.3.0",
+  "canonical_request": {
+    "models": [
+      "gemini:2.5-flash",
+      "mock:echo",
+      "mock:pseudo",
+      "mock:reasoner",
+      "openai:gpt-4o-mini"
+    ],
+    "params": {
+      "max_tokens": 512,
+      "synthesis_method": "best_of_n",
+      "temperature": 0.7,
+      "timeout_s": 30.0
+    },
+    "prompt": "Compare the tradeoffs between unit tests and integration tests."
+  },
+  "execution_context": {
+    "providers": [
+      {
+        "model_id": "openai:gpt-4o-mini",
+        "provider_name": "openai",
+        "runtime": {
+          "base_url": "https://api.openai.com/v1/chat/completions",
+          "max_tokens": 512,
+          "retries": 2,
+          "temperature": 0.7,
+          "timeout_s": 20.0
+        }
+      },
+      {
+        "model_id": "gemini:2.5-flash",
+        "provider_name": "gemini",
+        "runtime": {
+          "base_url": "https://generativelanguage.googleapis.com/v1beta/models",
+          "max_tokens": 512,
+          "retries": 2,
+          "temperature": 0.7,
+          "timeout_s": 20.0
+        }
+      },
+      {
+        "model_id": "mock:echo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      },
+      {
+        "model_id": "mock:reasoner",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      },
+      {
+        "model_id": "mock:pseudo",
+        "provider_name": "mock",
+        "runtime": {
+          "base_url": null,
+          "max_tokens": 512,
+          "retries": 0,
+          "temperature": 0.7,
+          "timeout_s": 30.0
+        }
+      }
+    ],
+    "runtime": {
+      "git_commit": "bdd4f4a460363af8fe1caa71d943dffd8ced40a6",
+      "platform": "Windows-10-10.0.26200-SP0",
+      "python_version": "3.11.9"
+    }
+  },
+  "raw_generations": [
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "openai:gpt-4o-mini",
+      "provider": "openai",
+      "raw_request": {
+        "body": {
+          "max_tokens": 512,
+          "messages": [
+            {
+              "content": "Compare the tradeoffs between unit tests and integration tests.",
+              "role": "user"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "temperature": 0.7
+        },
+        "headers": {
+          "Authorization": "***REDACTED***",
+          "Content-Type": "application/json"
+        },
+        "url": "https://api.openai.com/v1/chat/completions"
+      },
+      "raw_response": {
+        "body": {
+          "body_snippet": "{\n  ***REDACTED***ests",
+          "status_code": 200
+        },
+        "headers": {
+          "access-control-expose-headers": "X-Request-ID",
+          "alt-svc": "h3=\":443\"; ma=86400",
+          "cf-cache-status": "DYNAMIC",
+          "cf-ray": "9d6de560ff79885c-LAX",
+          "connection": "keep-alive",
+          "content-encoding": "gzip",
+          "content-type": "application/json",
+          "date": "Wed, 04 Mar 2026 03:46:56 GMT",
+          "openai-organization": "user-riqxe1sh4tn9y09bmfp1dnnz",
+          "openai-processing-ms": "7045",
+          "openai-project": "proj_7ZhJ9OB3ZWvXUVQnILY00wKJ",
+          "openai-version": "2020-10-01",
+          "server": "cloudflare",
+          "set-cookie": "__cf_bm=.5tdhg.Y3Q46J2wZ.nAd4uFtYfYiUFn_6cO1sEhK7nk-1772596009.1205099-1.0.1.1-zHV1BD7FOJOV0rPQ5gtA9rLceWwMoFKGgIi9x9H7Nl6Erf309_iKxsoMKykSv91xHygLFQddg.mk0gT3bSTuib4LEaJX3xP.5DtPj5G1.g5D9Aqn0q1JOsaCuvtXJKKC; HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Wed, 04 Mar 2026 04:16:56 GMT",
+          "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+          "transfer-encoding": "chunked",
+          "x-content-type-options": "nosniff",
+          "x-openai-proxy-wasm": "v0.1",
+          "x-ratelimit-limit-requests": "5000",
+          "x-ratelimit-limit-tokens": "***REDACTED***",
+          "x-ratelimit-remaining-requests": "4999",
+          "x-ratelimit-remaining-tokens": "***REDACTED***",
+          "x-ratelimit-reset-requests": "12ms",
+          "x-ratelimit-reset-tokens": "***REDACTED***",
+          "x-request-id": "req_824989b046ee4c2ca25a7928e0a1c112"
+        },
+        "url": "https://api.openai.com/v1/chat/completions"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "gemini:2.5-flash",
+      "provider": "gemini",
+      "raw_request": {
+        "body": {
+          "contents": [
+            {
+              "parts": [
+                {
+                  "text": "Compare the tradeoffs between unit tests and integration tests."
+                }
+              ]
+            }
+          ],
+          "generationConfig": {
+            "maxOutputTokens": 512,
+            "temperature": 0.7,
+            "thinkingConfig": {
+              "thinkingBudget": 0
+            }
+          }
+        },
+        "headers": {
+          "x-goog-api-key": "***REDACTED***"
+        },
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+      },
+      "raw_response": {
+        "body": {
+          "body_snippet": "{\n  \"candidates\": [\n    {\n      \"content\": {\n        \"parts\": [\n          {\n            \"text\": \"Comparing the tradeoffs between unit tests and integration tests reveals their complementary nature, but also highlights their distinct strengths and weaknesses.\\n\\n## Unit Tests\\n\\n**Definition:** Test individual units or components of code in isolation (e.g., a function, a method, a class). All external dependencies are typically mocked or stubbed.\\n\\n**Strengths:**\\n\\n*   **Speed:** Extremely fast",
+          "status_code": 200
+        },
+        "headers": {
+          "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+          "content-encoding": "gzip",
+          "content-type": "application/json; charset=UTF-8",
+          "date": "Wed, 04 Mar 2026 03:46:52 GMT",
+          "server": "scaffolding on HTTPServer2",
+          "server-timing": "gfet4t7; dur=3131",
+          "transfer-encoding": "chunked",
+          "vary": "Origin, X-Origin, Referer",
+          "x-content-type-options": "nosniff",
+          "x-frame-options": "SAMEORIGIN",
+          "x-xss-protection": "0"
+        },
+        "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:echo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:echo",
+        "prompt": "Compare the tradeoffs between unit tests and integration tests."
+      },
+      "raw_response": {
+        "response": "[echo:mock-echo] Compare the tradeoffs between unit tests and integration tests."
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:reasoner",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:reasoner",
+        "prompt": "Compare the tradeoffs between unit tests and integration tests."
+      },
+      "raw_response": {
+        "response": "analysis:\n- step 1: outline tradeoff\n- step 2: estimate path\n- step 3: project opportunity\n- step 4: contrast opportunity"
+      }
+    },
+    {
+      "error_code": null,
+      "error_message": null,
+      "model_id": "mock:pseudo",
+      "provider": "mock",
+      "raw_request": {
+        "model_id": "mock:pseudo",
+        "prompt": "Compare the tradeoffs between unit tests and integration tests."
+      },
+      "raw_response": {
+        "response": "analysis:\n- step 1: outline tradeoff\n- step 2: estimate path\n- step 3: project opportunity\n- step 4: contrast opportunity"
+      }
+    }
+  ],
+  "request": {
+    "max_tokens": 512,
+    "models": [
+      "openai:gpt-4o-mini",
+      "gemini:2.5-flash",
+      "mock:echo",
+      "mock:reasoner",
+      "mock:pseudo"
+    ],
+    "prompt": "Compare the tradeoffs between unit tests and integration tests.",
+    "synthesis_method": "best_of_n",
+    "temperature": 0.7,
+    "timeout_s": 30.0
+  },
+  "request_id": "640be68a71944ffdac4e274f43bcd13e",
+  "response": {
+    "api_version": "0.3.0",
+    "compare": {
+      "pairs": [
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "gemini:2.5-flash",
+          "keyword_coverage": 0.8333333333333334,
+          "length_ratio": 0.9017632241813602,
+          "rouge_l": 0.19899244332493704,
+          "token_overlap_jaccard": 0.2920634920634921
+        },
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "mock:echo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.030226700251889168,
+          "rouge_l": 0.017632241813602016,
+          "token_overlap_jaccard": 0.0297029702970297
+        },
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "mock:reasoner",
+          "keyword_coverage": 0.6666666666666666,
+          "length_ratio": 0.042821158690176324,
+          "rouge_l": 0.010075566750629723,
+          "token_overlap_jaccard": 0.01932367149758454
+        },
+        {
+          "a": "openai:gpt-4o-mini",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.6666666666666666,
+          "length_ratio": 0.042821158690176324,
+          "rouge_l": 0.010075566750629723,
+          "token_overlap_jaccard": 0.01932367149758454
+        },
+        {
+          "a": "gemini:2.5-flash",
+          "b": "mock:echo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.0335195530726257,
+          "rouge_l": 0.0223463687150838,
+          "token_overlap_jaccard": 0.0330188679245283
+        },
+        {
+          "a": "gemini:2.5-flash",
+          "b": "mock:reasoner",
+          "keyword_coverage": 0.8333333333333334,
+          "length_ratio": 0.04748603351955307,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "gemini:2.5-flash",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.8333333333333334,
+          "length_ratio": 0.04748603351955307,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "mock:echo",
+          "b": "mock:reasoner",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.7058823529411765,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "mock:echo",
+          "b": "mock:pseudo",
+          "keyword_coverage": 1.0,
+          "length_ratio": 0.7058823529411765,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        {
+          "a": "mock:reasoner",
+          "b": "mock:pseudo",
+          "keyword_coverage": 0.0,
+          "length_ratio": 1.0,
+          "rouge_l": 1.0,
+          "token_overlap_jaccard": 1.0
+        }
+      ],
+      "summary": {
+        "avg_similarity": 0.1393432673280219,
+        "disagreement_summary": {
+          "max_distance": 2.0,
+          "pair": {
+            "a": "gemini:2.5-flash",
+            "b": "mock:reasoner"
+          },
+          "reason": "Low overlap: rouge_l=0.00, jaccard=0.00"
+        },
+        "most_disagree_pair": {
+          "a": "gemini:2.5-flash",
+          "b": "mock:reasoner",
+          "keyword_coverage": 0.8333333333333334,
+          "length_ratio": 0.04748603351955307,
+          "rouge_l": 0.0,
+          "token_overlap_jaccard": 0.0
+        },
+        "notes": "token_overlap_jaccard: 1.0 = identical; length_ratio: shorter/longer; keyword_coverage vs prompt keywords."
+      }
+    },
+    "created_at": "2026-03-04T03:46:46.729858",
+    "params": {
+      "max_tokens": 512,
+      "models": [
+        "openai:gpt-4o-mini",
+        "gemini:2.5-flash",
+        "mock:echo",
+        "mock:reasoner",
+        "mock:pseudo"
+      ],
+      "synthesis_method": "best_of_n",
+      "temperature": 0.7,
+      "timeout_s": 30.0
+    },
+    "partial_success": false,
+    "prompt": "Compare the tradeoffs between unit tests and integration tests.",
+    "request_id": "640be68a71944ffdac4e274f43bcd13e",
+    "results": [
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 2,
+        "latency_ms": 8966.472300002351,
+        "meta": {
+          "finish_reason": "length",
+          "format_compliance": 1.0,
+          "hedge_count": 2,
+          "model": "gpt-4o-mini"
+        },
+        "model": "openai:gpt-4o-mini",
+        "ok": true,
+        "provider": "openai",
+        "raw_request": {
+          "body": {
+            "max_tokens": 512,
+            "messages": [
+              {
+                "content": "Compare the tradeoffs between unit tests and integration tests.",
+                "role": "user"
+              }
+            ],
+            "model": "gpt-4o-mini",
+            "temperature": 0.7
+          },
+          "headers": {
+            "Authorization": "***REDACTED***",
+            "Content-Type": "application/json"
+          },
+          "url": "https://api.openai.com/v1/chat/completions"
+        },
+        "raw_response": {
+          "body": {
+            "body_snippet": "{\n  ***REDACTED***ests",
+            "status_code": 200
+          },
+          "headers": {
+            "access-control-expose-headers": "X-Request-ID",
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cf-cache-status": "DYNAMIC",
+            "cf-ray": "9d6de560ff79885c-LAX",
+            "connection": "keep-alive",
+            "content-encoding": "gzip",
+            "content-type": "application/json",
+            "date": "Wed, 04 Mar 2026 03:46:56 GMT",
+            "openai-organization": "user-riqxe1sh4tn9y09bmfp1dnnz",
+            "openai-processing-ms": "7045",
+            "openai-project": "proj_7ZhJ9OB3ZWvXUVQnILY00wKJ",
+            "openai-version": "2020-10-01",
+            "server": "cloudflare",
+            "set-cookie": "__cf_bm=.5tdhg.Y3Q46J2wZ.nAd4uFtYfYiUFn_6cO1sEhK7nk-1772596009.1205099-1.0.1.1-zHV1BD7FOJOV0rPQ5gtA9rLceWwMoFKGgIi9x9H7Nl6Erf309_iKxsoMKykSv91xHygLFQddg.mk0gT3bSTuib4LEaJX3xP.5DtPj5G1.g5D9Aqn0q1JOsaCuvtXJKKC; HttpOnly; Secure; Path=/; Domain=api.openai.com; Expires=Wed, 04 Mar 2026 04:16:56 GMT",
+            "strict-transport-security": "max-age=31536000; includeSubDomains; preload",
+            "transfer-encoding": "chunked",
+            "x-content-type-options": "nosniff",
+            "x-openai-proxy-wasm": "v0.1",
+            "x-ratelimit-limit-requests": "5000",
+            "x-ratelimit-limit-tokens": "***REDACTED***",
+            "x-ratelimit-remaining-requests": "4999",
+            "x-ratelimit-remaining-tokens": "***REDACTED***",
+            "x-ratelimit-reset-requests": "12ms",
+            "x-ratelimit-reset-tokens": "***REDACTED***",
+            "x-request-id": "req_824989b046ee4c2ca25a7928e0a1c112"
+          },
+          "url": "https://api.openai.com/v1/chat/completions"
+        },
+        "status": "success",
+        "text": "Unit tests and integration tests are both crucial components of a comprehensive testing strategy, but they serve different purposes and come with their own trade-offs. Here\u2019s a comparison of the two:\n\n### Unit Tests\n\n**Definition:**\nUnit tests are designed to test individual components or functions in isolation from the rest of the application. \n\n**Benefits:**\n1. **Speed:** Unit tests are typically faster to execute because they test small pieces of code without dependencies on other components.\n2. **Isolation:** They allow developers to pinpoint issues quickly since they focus on specific functions or classes.\n3. **Ease of Debugging:** When a unit test fails, it\u2019s easier to identify the problem within a small code segment.\n4. **Frequent Feedback:** Developers can run unit tests frequently during development, providing immediate feedback on code changes.\n5. **Documentation:** They serve as documentation for how a function is expected to behave.\n\n**Trade-offs:**\n1. **Limited Scope:** Unit tests do not cover interactions between different components, which can lead to missed integration issues.\n2. **Mocking Complexity:** To isolate units, developers often use mocks or stubs, which can lead to a false sense of security if not implemented properly.\n3. **Maintenance Overhead:** As the codebase evolves, unit tests may require frequent updates, leading to potential maintenance burdens.\n\n### Integration Tests\n\n**Definition:**\nIntegration tests check how different components of the system work together. They test the interactions between various modules or external systems.\n\n**Benefits:**\n1. **System Interaction:** Integration tests help identify issues that arise from the interaction between modules or services, which unit tests cannot catch.\n2. **Realistic Scenarios:** They can simulate real-world usage more closely, providing more confidence that the application behaves correctly in a production-like environment.\n3. **End-to-End Verification:** They can validate that multiple components work together as expected and that the system as a whole fulfills its requirements.\n\n**Trade-offs:**\n1. **Slower Execution:** Integration tests generally take longer to run because they involve multiple components and possibly external systems (like databases or APIs).\n2. **Complexity:** They are often more complex to set up and maintain, as they require the correct configuration of all interacting parts.\n3. **Difficult Debugging:** When an integration test fails, it can be harder to isolate the specific component or interaction causing the issue, making debugging more challenging.\n4. **Less Frequent Feedback:** Due to their execution time, integration tests are often run less frequently than unit tests,",
+        "usage": {
+          "completion_tokens": 512,
+          "completion_tokens_details": {
+            "accepted_prediction_tokens": 0,
+            "audio_tokens": 0,
+            "reasoning_tokens": 0,
+            "rejected_prediction_tokens": 0
+          },
+          "prompt_tokens": 18,
+          "prompt_tokens_details": {
+            "audio_tokens": 0,
+            "cached_tokens": 0
+          },
+          "total_tokens": 530
+        }
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 3881.880500004627,
+        "meta": {
+          "finish_reason": "MAX_TOKENS",
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "gemini-2.5-flash"
+        },
+        "model": "gemini:2.5-flash",
+        "ok": true,
+        "provider": "gemini",
+        "raw_request": {
+          "body": {
+            "contents": [
+              {
+                "parts": [
+                  {
+                    "text": "Compare the tradeoffs between unit tests and integration tests."
+                  }
+                ]
+              }
+            ],
+            "generationConfig": {
+              "maxOutputTokens": 512,
+              "temperature": 0.7,
+              "thinkingConfig": {
+                "thinkingBudget": 0
+              }
+            }
+          },
+          "headers": {
+            "x-goog-api-key": "***REDACTED***"
+          },
+          "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+        },
+        "raw_response": {
+          "body": {
+            "body_snippet": "{\n  \"candidates\": [\n    {\n      \"content\": {\n        \"parts\": [\n          {\n            \"text\": \"Comparing the tradeoffs between unit tests and integration tests reveals their complementary nature, but also highlights their distinct strengths and weaknesses.\\n\\n## Unit Tests\\n\\n**Definition:** Test individual units or components of code in isolation (e.g., a function, a method, a class). All external dependencies are typically mocked or stubbed.\\n\\n**Strengths:**\\n\\n*   **Speed:** Extremely fast",
+            "status_code": 200
+          },
+          "headers": {
+            "alt-svc": "h3=\":443\"; ma=2592000,h3-29=\":443\"; ma=2592000",
+            "content-encoding": "gzip",
+            "content-type": "application/json; charset=UTF-8",
+            "date": "Wed, 04 Mar 2026 03:46:52 GMT",
+            "server": "scaffolding on HTTPServer2",
+            "server-timing": "gfet4t7; dur=3131",
+            "transfer-encoding": "chunked",
+            "vary": "Origin, X-Origin, Referer",
+            "x-content-type-options": "nosniff",
+            "x-frame-options": "SAMEORIGIN",
+            "x-xss-protection": "0"
+          },
+          "url": "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent"
+        },
+        "status": "success",
+        "text": "Comparing the tradeoffs between unit tests and integration tests reveals their complementary nature, but also highlights their distinct strengths and weaknesses.\n\n## Unit Tests\n\n**Definition:** Test individual units or components of code in isolation (e.g., a function, a method, a class). All external dependencies are typically mocked or stubbed.\n\n**Strengths:**\n\n*   **Speed:** Extremely fast to run because they test small pieces of code and don't involve external systems (databases, APIs, file systems). This allows for frequent execution during development.\n*   **Isolation & Precision:** When a unit test fails, it points directly to the specific unit of code that has a problem. This makes debugging much easier and faster.\n*   **Early Bug Detection:** Catch bugs at the lowest level of abstraction, often before they can propagate into more complex interactions.\n*   **Ease of Writing (Often):** Can be relatively straightforward to write, especially for well-designed, modular code.\n*   **Supports Refactoring:** Provides a safety net when refactoring code. If the tests still pass, you have confidence that the internal logic hasn't been broken.\n*   **Documentation:** Serve as living documentation for how individual units of code are intended to behave.\n*   **Encourages Good Design:** Forces developers to think about testability, which often leads to more modular, loosely coupled, and maintainable code.\n\n**Weaknesses (Tradeoffs):**\n\n*   **Don't Guarantee System Integration:** Passing unit tests don't guarantee that different units will work correctly together. The interactions between components are not tested.\n*   **Reliance on Mocks/Stubs:** While essential for isolation, mocks can sometimes diverge from the real behavior of dependencies, leading to false positives (tests pass, but real system fails) or false negatives (tests fail, but real system works).\n*   **Limited Scope:** Only test the internal logic of a unit, not its interaction with the broader system, external services, or user interfaces.\n*   **Can Miss Architectural Issues:** Won't detect problems related to network latency, database connection issues, incorrect API endpoints, or security vulnerabilities in the interaction layer.\n*   **Over-Mocking Can Be Fragile:** If mocks are too complex or tightly coupled to implementation details, they can make tests brittle and hard to maintain when the underlying implementation changes.\n\n## Integration Tests\n\n**Definition:** Test the interactions between different units or components of a system. They",
+        "usage": {
+          "candidatesTokenCount": 512,
+          "promptTokenCount": 10,
+          "promptTokensDetails": [
+            {
+              "modality": "TEXT",
+              "tokenCount": 10
+            }
+          ],
+          "totalTokenCount": 522
+        }
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 41.737499996088445,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-echo",
+          "provider_model": {}
+        },
+        "model": "mock:echo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:echo",
+          "prompt": "Compare the tradeoffs between unit tests and integration tests."
+        },
+        "raw_response": {
+          "response": "[echo:mock-echo] Compare the tradeoffs between unit tests and integration tests."
+        },
+        "status": "success",
+        "text": "[echo:mock-echo] Compare the tradeoffs between unit tests and integration tests.",
+        "usage": null
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 96.7411000165157,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-reasoner",
+          "provider_model": {
+            "stance": "concise"
+          }
+        },
+        "model": "mock:reasoner",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:reasoner",
+          "prompt": "Compare the tradeoffs between unit tests and integration tests."
+        },
+        "raw_response": {
+          "response": "analysis:\n- step 1: outline tradeoff\n- step 2: estimate path\n- step 3: project opportunity\n- step 4: contrast opportunity"
+        },
+        "status": "success",
+        "text": "analysis:\n- step 1: outline tradeoff\n- step 2: estimate path\n- step 3: project opportunity\n- step 4: contrast opportunity",
+        "usage": null
+      },
+      {
+        "error_code": null,
+        "error_message": null,
+        "format_compliance": 1.0,
+        "hedge_count": 0,
+        "latency_ms": 96.86859999783337,
+        "meta": {
+          "format_compliance": 1.0,
+          "hedge_count": 0,
+          "model": "mock-reasoner",
+          "provider_model": {
+            "stance": "concise"
+          }
+        },
+        "model": "mock:pseudo",
+        "ok": true,
+        "provider": "mock",
+        "raw_request": {
+          "model_id": "mock:pseudo",
+          "prompt": "Compare the tradeoffs between unit tests and integration tests."
+        },
+        "raw_response": {
+          "response": "analysis:\n- step 1: outline tradeoff\n- step 2: estimate path\n- step 3: project opportunity\n- step 4: contrast opportunity"
+        },
+        "status": "success",
+        "text": "analysis:\n- step 1: outline tradeoff\n- step 2: estimate path\n- step 3: project opportunity\n- step 4: contrast opportunity",
+        "usage": null
+      }
+    ],
+    "run_hash": "5114e1d3f47c948b80c71713823e5db26ec9de026cf8658bd2b6419b56261c23",
+    "schema_version": "1.1.0",
+    "status": "success",
+    "synthesis": {
+      "attribution": [
+        {
+          "sentence_index": 0,
+          "source_model_id": "mock:echo",
+          "span": null
+        }
+      ],
+      "confidence": 0.9255765199161425,
+      "method": "best_of_n",
+      "ok": true,
+      "rationale": "Selected mock:echo via best_of_n scoring: coverage=1.00, redundancy=0.17, conciseness=0.94, score=2.78.",
+      "strategy_id": "best_of_n",
+      "synthesized_text": "[echo:mock-echo] Compare the tradeoffs between unit tests and integration tests.",
+      "text": "[echo:mock-echo] Compare the tradeoffs between unit tests and integration tests."
+    }
+  },
+  "run_hash": "5114e1d3f47c948b80c71713823e5db26ec9de026cf8658bd2b6419b56261c23",
+  "schema_version": "1.1.0",
+  "timestamp_utc": "2026-03-04T03:46:46.729858Z"
+}
